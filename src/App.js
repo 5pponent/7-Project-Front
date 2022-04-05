@@ -29,7 +29,7 @@ function App() {
 
   useEffect(() => {
     async function fetchMembers() {
-      const result = await axios("./7-Project/members");
+      const result = await axios.get("./7-Project/members");
       setMembers(result.data);
     };
     fetchMembers();
