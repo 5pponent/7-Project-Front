@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 
 function App() {
   const classes = useStyles();
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState();
 
   useEffect(() => {
     async function fetchMembers() {
@@ -34,16 +34,12 @@ function App() {
     };
     fetchMembers();
   },[]);
-
-  const stateRefresh = async () => {
-    const result = await axios.get("./7-Project/members");
-    setMembers(result.data);
-  }
   
   return (
     <TableContainer>
       <Paper className={classes.root}>
         <Table className={classes.table}>
+
           <TableHead>
             <TableRow>
               <TableCell>번호</TableCell><TableCell>이미지</TableCell>
@@ -51,6 +47,7 @@ function App() {
               <TableCell>성별</TableCell><TableCell>직업</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {members ? members.map((m) => {
               return(
@@ -62,12 +59,14 @@ function App() {
                   birthday={m.birthday}
                   gender={m.gender}
                   job={m.job}
-                  stateRefresh={stateRefresh}
                 />
               );
-            }) : <TableRow>
+            }) : 
+            <TableRow>
+              <TableCell colSpan="6" align="center">
                 <CircularProgress></CircularProgress>
-              </TableRow>}
+              </TableCell>
+            </TableRow>}
           </TableBody>
         </Table>
       </Paper>
