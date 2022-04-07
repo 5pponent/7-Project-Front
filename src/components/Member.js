@@ -1,6 +1,5 @@
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import React from 'react';
 
 function Member(props) {
     return (
