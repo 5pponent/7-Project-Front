@@ -10,7 +10,7 @@
 
 Install React app in your current directory
 
-##### `npm install axios`
+##### `npm install --save axios`
 
 Install axios\
 Based Promise HTTP Client.\
