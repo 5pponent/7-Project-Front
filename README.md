@@ -1,6 +1,6 @@
 ## 7팀 웹 프로젝트 [FrontEnd]
 
-### Tech
+### Techs
 
 `JavaScript` `React` `Node.js`
 
