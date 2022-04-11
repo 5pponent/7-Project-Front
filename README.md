@@ -21,7 +21,6 @@ Usage : `import axios from 'axios'`\
 ##### `npm install @material-ui/core`
 [Usage](https://mui.com/getting-started/usage/)\
 [Example Projects](https://mui.com/material-ui/getting-started/example-projects/)\
-Search components you need
 
 ### Develop
 
