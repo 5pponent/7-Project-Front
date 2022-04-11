@@ -6,6 +6,9 @@
 
 ### Need Libraries
 
+* axios
+* material-ui
+
 ##### `npm install -g create-react-app`
 
 Install React app in your current directory
