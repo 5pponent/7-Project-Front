@@ -4,7 +4,7 @@
 
 `JavaScript` `React` `Node.js`
 
-### Need Libraries
+### Libraries
 
 * axios
 * material-ui
