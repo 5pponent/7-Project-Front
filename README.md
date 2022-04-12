@@ -12,7 +12,7 @@
 
 ##### `npm install -g create-react-app`
 
-Install React app in your current directory
+Install React app
 
 ##### `npm install --save axios`
 
