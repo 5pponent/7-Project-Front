@@ -1,14 +1,13 @@
 import './App.css';
-import MemberTable from './components/MemberTable';
-import MemberCreate from './components/MemberCreate';
+import FeedLine from './components/feedline/FeedLine';
 
 function App() {
   
-  return(
-    <div>
-      <MemberTable></MemberTable>
-      <MemberCreate></MemberCreate>
-    </div>
+
+  return (
+    <>
+      <FeedLine></FeedLine>
+    </>
   );
 }
 
