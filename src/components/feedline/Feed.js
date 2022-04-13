@@ -1,9 +1,12 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
@@ -19,30 +22,51 @@ const Item = styled(Paper) (({ theme }) => ({
 
 export default function Feed(props) {
 
+	const [anchorEl, setAnchorEl] = useState(null);
+	const handleMenuClick = (e) => { // 더보기 메뉴 클릭 이벤트
+		setAnchorEl(e.currentTarget);
+	};
+	const handleMenuClose = () => { // 더보기 메뉴 클릭 이벤트
+		setAnchorEl(null);
+	};
+
 	const content = `Truncation should be conditionally applicable on this long line of text
  		as this is a much longer line than what the container can support.`;
 	const [user, date] = ['이름', '작성일'];
 
 	return (
 		<Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
-			<Item>
+			<Paper style={{margin: 12}}>
 				<Stack>
 					<Grid container>
 						<Grid item xs={9}> {/* 컨텐츠 */}
-							<Item elevation={1}>{content}</Item>
+							<Item elevation={0}>{content}</Item>
 						</Grid>
-						<Grid item xs={3}> {/* 버튼 */}
-							<Box display="flex" justifyContent="flex-end">
-								<IconButton>
+						<Grid item xs={3}> {/* 더보기 버튼 */}
+							<Box display="flex" justifyContent="flex-end" p={2}>
+								<IconButton
+									aria-controls="simple-menu"
+									aria-haspopup="true"
+									onClick={handleMenuClick}
+								>
 									<MoreVertRoundedIcon></MoreVertRoundedIcon>
 								</IconButton>
+								{/* 더보기 메뉴 */}
+								<Menu 
+									anchorEl={anchorEl}
+									open={Boolean(anchorEl)}
+									onClose={handleMenuClose}
+								>
+									<MenuItem onClick={handleMenuClose}>저장하기</MenuItem>
+									<MenuItem onClick={handleMenuClose}>신고하기</MenuItem>
+								</Menu>
 							</Box>
 						</Grid>
 					</Grid>
 
 					<Grid container>
 						<Grid item xs={9}> {/* 좋아요, 댓글 */}
-							<Item elevation={1}>
+							<Item elevation={0}>
 								<IconButton>
 									<ThumbUpAltRoundedIcon sx={{ fontSize: 30 }}/>
 								</IconButton>
@@ -66,7 +90,7 @@ export default function Feed(props) {
 						</Grid>
 					</Grid>
 				</Stack>
-			</Item>
+			</Paper>
 		</Box>
 	);
 }
