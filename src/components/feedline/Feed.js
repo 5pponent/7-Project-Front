@@ -14,7 +14,6 @@ import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import { Typography } from '@material-ui/core';
 import Skeleton from '@mui/material/Skeleton';
-import { ButtonBase, CssBaseline } from '@mui/material';
 
 const Item = styled(Paper) (({ theme }) => ({
   padding: theme.spacing(1),
@@ -22,6 +21,7 @@ const Item = styled(Paper) (({ theme }) => ({
 
 }));
 
+// 컨텐츠 글 4줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
 	overflow: hidden;	
 	display: -webkit-box;
