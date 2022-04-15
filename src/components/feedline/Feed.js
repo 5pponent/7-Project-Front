@@ -13,12 +13,21 @@ import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import { Typography } from '@material-ui/core';
+import Skeleton from '@mui/material/Skeleton';
+import { ButtonBase, CssBaseline } from '@mui/material';
 
 const Item = styled(Paper) (({ theme }) => ({
-  padding: theme.spacing(2),
+  padding: theme.spacing(1),
   margin: theme.spacing(2),
-	
+
 }));
+
+const Content = styled(Typography)`
+	overflow: hidden;	
+	display: -webkit-box;
+	-webkit-line-clamp: 4;
+	-webkit-box-orient: vertical;
+`
 
 export default function Feed(props) {
 
@@ -30,20 +39,18 @@ export default function Feed(props) {
 		setAnchorEl(null);
 	};
 
-	const content = `Truncation should be conditionally applicable on this long line of text
- 		as this is a much longer line than what the container can support.`;
-	const [user, date] = ['이름', '작성일'];
-
 	return (
 		<Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
 			<Paper style={{margin: 12}}>
 				<Stack>
 					<Grid container>
-						<Grid item xs={9}> {/* 컨텐츠 */}
-							<Item elevation={0}>{content}</Item>
+						<Grid item xs={11} sx={{cursor: 'pointer'}}> {/* 컨텐츠 */}
+							<Item elevation={0}>
+								<Content>{props.content}</Content>
+							</Item>
 						</Grid>
-						<Grid item xs={3}> {/* 더보기 버튼 */}
-							<Box display="flex" justifyContent="flex-end" p={2}>
+						<Grid item xs={1}> {/* 더보기 버튼 */}
+							<Box p={2}>
 								<IconButton
 									aria-controls="simple-menu"
 									aria-haspopup="true"
@@ -77,15 +84,16 @@ export default function Feed(props) {
 						</Grid>
 						<Grid item xs={3}> {/* 프로필 */}
 							<Item elevation={0}>
-								<Grid container spacing={2}>
-									<Grid item>
-										<Avatar alt="profile image" src="https://placeimg.com/100/100/people"/>
+									<Grid container spacing={2} sx={{cursor: 'pointer'}}>
+										<Grid item>
+											{props.image ? <Avatar alt="profile image" src={props.image}/>
+											: <Skeleton variant="circular" width={40} height={40} />}
+										</Grid>
+										<Grid item>
+											<Typography>{props.name}</Typography>
+											<Typography variant="body2" color="#c8c8c8">{props.time}</Typography>
+										</Grid>
 									</Grid>
-									<Grid item>
-										<Typography>{user}</Typography>
-										<Typography>{date}</Typography>
-									</Grid>
-								</Grid>
 							</Item>
 						</Grid>
 					</Grid>
