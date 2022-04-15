@@ -6,6 +6,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import ScrollTop from './components/ScrollTop';
 import HeaderAppBar from './components/Header/HeaderAppBar';
+import Fab from '@mui/material/Fab';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 export default function App() {
   const name = "사용자명";
@@ -22,7 +24,11 @@ export default function App() {
         <FeedLine/>
       </Container>
 
-      <ScrollTop></ScrollTop>
+      <ScrollTop>
+        <Fab color="primary" size="large" aria-label="scroll back to top">
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
     </React.Fragment>
   );
 }

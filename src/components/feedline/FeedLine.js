@@ -42,7 +42,7 @@ export default function FeedLine() {
 		<>
 			<CssBaseline />
 			<Container maxWidth="md">
-				<Box sx={{ bgcolor: '#e7ebf0', height: 'auto', minWidth: 853}}>
+				<Box sx={{ bgcolor: '#e7ebf0', height: 'auto', minWidth: 853, marginTop: 1}}>
 					{
 						feeds ? feeds.map((f) => {
 							return (

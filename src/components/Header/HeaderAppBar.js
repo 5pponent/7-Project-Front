@@ -49,6 +49,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+  paddingTop: theme.spacing(2),
+  paddingBottom: theme.spacing(2),
+}));
+
 const Title = styled(Typography)(() => ({
 	margin: 'auto',
 	fontSize: '32px',
@@ -67,7 +72,7 @@ export default function Header(props) {
 
 	return(
 		<AppBar>  {/* 헤더 AppBar */}
-			<Toolbar>
+			<StyledToolbar>
 				<Box sx={{ width: "15%" }}> {/* 검색 */}
 					<Search>	
 						<SearchIconWrapper>
@@ -92,7 +97,7 @@ export default function Header(props) {
 					</Grid>
 				</Box>
 				
-			</Toolbar>
+			</StyledToolbar>
 		</AppBar>
 	);
 }

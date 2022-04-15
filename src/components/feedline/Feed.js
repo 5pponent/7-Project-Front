@@ -16,9 +16,8 @@ import { Typography } from '@material-ui/core';
 import Skeleton from '@mui/material/Skeleton';
 
 const Item = styled(Paper) (({ theme }) => ({
-  padding: theme.spacing(1),
+  padding: theme.spacing(2),
   margin: theme.spacing(2),
-
 }));
 
 // 컨텐츠 글 4줄까지만 표시, 이후엔 ...으로 생략

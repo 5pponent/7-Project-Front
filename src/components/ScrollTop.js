@@ -2,8 +2,7 @@ import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Zoom from '@mui/material/Zoom';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
-import Fab from '@mui/material/Fab';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
 
 ScrollTop.propTypes = {
     children: PropTypes.element.isRequired,
@@ -22,7 +21,6 @@ export default function ScrollTop(props) {
 		const anchor = (e.target.ownerDocument || document).querySelector(
 			'#back-to-top-anchor',
 		);
-
 		if (anchor) {
 			anchor.scrollIntoView({
 				behavior: 'smooth',
@@ -36,12 +34,9 @@ export default function ScrollTop(props) {
 			<Box
 				onClick={handleClick}
 				role="presentation"
-				sx={{ position: 'fixed', bottom: 120, right: 90 }}
+				sx={{ position: 'fixed', bottom: 100, right: 90 }}
 			>
 				{children}
-				<Fab color="primary" size="large" aria-label="scroll back to top">
-          <KeyboardArrowUpIcon />
-        </Fab>
 			</Box>
 		</Zoom>
 	);
