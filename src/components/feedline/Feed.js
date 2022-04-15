@@ -60,6 +60,14 @@ export default function Feed(props) {
 								</IconButton>
 								{/* 더보기 메뉴 */}
 								<Menu 
+									anchorOrigin={{
+										vertical: 'bottom',
+										horizontal: 'right',
+									}}
+									transformOrigin={{
+										vertical: 'top',
+										horizontal: 'right',
+									}}
 									anchorEl={anchorEl}
 									open={Boolean(anchorEl)}
 									onClose={handleMenuClose}
@@ -91,7 +99,7 @@ export default function Feed(props) {
 										</Grid>
 										<Grid item>
 											<Typography>{props.name}</Typography>
-											<Typography variant="body2" color="#c8c8c8">{props.time}</Typography>
+											<Typography variant="body2" color="textSecondary">{props.time}</Typography>
 										</Grid>
 									</Grid>
 							</Item>

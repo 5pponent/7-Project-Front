@@ -39,7 +39,7 @@ export default function FeedLine() {
 	];
 
 	return (
-		<React.Fragment>
+		<>
 			<CssBaseline />
 			<Container maxWidth="md">
 				<Box sx={{ bgcolor: '#e7ebf0', height: 'auto', minWidth: 853}}>
@@ -64,6 +64,6 @@ export default function FeedLine() {
 					</Box>
 				</Box>
 			</Container>
-		</React.Fragment>
+		</>
 	);
 }
