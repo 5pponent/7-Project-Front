@@ -71,7 +71,7 @@ export default function CustomizedMenus() {
         disableElevation
         onClick={handleClick}
       >
-         <MoreVertIcon />
+         <MoreVertIcon sx={{ fontSize: 30 }}/>
       </IconButton>
 
       {/* 메뉴, 리스트 */}
@@ -86,7 +86,7 @@ export default function CustomizedMenus() {
           </MenuItem>
         </Tooltip>
 
-        <Tooltip title="Calendar" placement="left" arrow>
+        <Tooltip title="Schedule" placement="left" arrow>
           <MenuItem onClick={handleClose} disableRipple>
             <CalendarTodayIcon />
           </MenuItem>

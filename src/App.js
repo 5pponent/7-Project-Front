@@ -1,5 +1,5 @@
 import './App.css';
-import FeedLine from './components/feedline/FeedLine';
+import FeedLineSelect from './components/feedline/FeedLineSelect'
 import * as React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -8,6 +8,7 @@ import ScrollTop from './components/ScrollTop';
 import HeaderAppBar from './components/Header/HeaderAppBar';
 import Fab from '@mui/material/Fab';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
 
 export default function App() {
   const name = "사용자명";
@@ -21,7 +22,7 @@ export default function App() {
       <Toolbar id="back-to-top-anchor" />
 
       <Container> {/* 컨텐츠 영역 */}
-        <FeedLine/>
+        <FeedLineSelect></FeedLineSelect>
       </Container>
 
       <ScrollTop>

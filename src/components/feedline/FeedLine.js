@@ -1,13 +1,12 @@
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import { CircularProgress } from '@material-ui/core';
 import Feed from './Feed';
 
 export default function FeedLine() {
 
-	 const feeds = [
+	const feeds = [
 		{
 			"feed_seq": "1",
 			"content": "Truncation should be conditionally applicable on this long line of text as this is a much longer line than what the container can support.",
@@ -41,29 +40,28 @@ export default function FeedLine() {
 	return (
 		<>
 			<CssBaseline />
-			<Container maxWidth="md">
-				<Box sx={{ bgcolor: '#e7ebf0', height: 'auto', minWidth: 853, marginTop: 1}}>
-					{
-						feeds ? feeds.map((f) => {
-							return (
-								<Feed
-									key={f.feed_seq}
-									content={f.content}
-									image={f.image}
-									name={f.name}
-									time={f.time}
-								/>
-							);
-						}) : 
-						<Box display="flex" justifyContent="center" style={{padding: 50}}>
-							<CircularProgress size={60}></CircularProgress>
-						</Box>
-					}
-					<Box display="flex" justifyContent="center" style={{padding: 50}}>
+
+			<Box sx={{ bgcolor: '#e7ebf0', minWidth: 800, width: 800, margin: '0 auto' }}>
+				{
+					feeds ? feeds.map((f) => {
+						return (
+							<Feed
+								key={f.feed_seq}
+								content={f.content}
+								image={f.image}
+								name={f.name}
+								time={f.time}
+							/>
+						);
+					}) : 
+					<Box display="flex" justifyContent="center" style={{ padding: 50 }}>
 						<CircularProgress size={60}></CircularProgress>
 					</Box>
+				}
+				<Box display="flex" justifyContent="center" style={{ padding: 50 }}>
+					<CircularProgress size={60}></CircularProgress>
 				</Box>
-			</Container>
+			</Box>
 		</>
 	);
 }

@@ -6,9 +6,11 @@ import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import HeaderMenu from './HeaderMenu';
-import { Grid } from '@mui/material';
 import { Box } from '@material-ui/core';
 import { Avatar } from '@mui/material';
+import ButtonBase from '@mui/material/ButtonBase';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -17,19 +19,15 @@ const Search = styled('div')(({ theme }) => ({
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
   [theme.breakpoints.up('sm')]: {
     width: 'auto'
   },
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
+  padding: theme.spacing(0, 1),
   height: '100%',
   position: 'absolute',
-  pointerEvents: 'none',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -41,40 +39,34 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '17ch',
-    },
+		width: 150
   },
 }));
 
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-  paddingTop: theme.spacing(2),
-  paddingBottom: theme.spacing(2),
-}));
-
 const Title = styled(Typography)(() => ({
-	margin: 'auto',
-	fontSize: '32px',
-	fontWeight: 'bold'
+	fontSize: '20px',
+	fontWeight: 'bold',
 }));
 
-const Item = styled(Typography)(({theme}) => ({
+const Item = styled(Typography)(() => ({
 	margin: 'auto 0',
-	paddingRight: theme.spacing(2),
+	padding: 3,
 	fontSize: '12px',
+	overflow: 'hidden'
 }));
 
 export default function Header(props) {
 
 	const title = "모두의 일기장";
 
+	// 새로고침 함수
+	const pageReload = () => { window.location.replace("/"); };
+
 	return(
-		<AppBar>  {/* 헤더 AppBar */}
-			<StyledToolbar>
-				<Box sx={{ width: "15%" }}> {/* 검색 */}
-					<Search>	
+		<AppBar sx={{ bgcolor: "#2c92ff" }}>  {/* 헤더 AppBar */}
+			<Toolbar>
+				<Box> {/* 검색 */}
+					<Search>
 						<SearchIconWrapper>
 							<SearchIcon />
 						</SearchIconWrapper>
@@ -85,19 +77,20 @@ export default function Header(props) {
 					</Search>
 				</Box>
 
-				<Box sx={{ flexGrow: 1, textAlign: "center" }}> {/* 타이틀 */}
-					<Title variant="h5" component="div">{title}</Title>	
-				</Box>
-					
-				<Box>	{/* 우측 사용자 프로필, 메뉴 */}
-					<Grid container>
-						<Item>{props.name}</Item>
-						<Item><Avatar src={props.image}/></Item>
-						<Item><HeaderMenu></HeaderMenu></Item>
-					</Grid>
+				<ButtonBase onClick={pageReload} sx={{margin: 'auto'}}> {/* 타이틀 */}
+					<Box overflow='hidden'>  
+						<MenuBookIcon sx={{ fontSize: 55 }}/>
+						<Title>{title}</Title>
+					</Box>
+				</ButtonBase>
+
+				<Box sx={{ display: 'flex' }}> {/* 우측 사용자 프로필, 메뉴 */}
+					<Item>{props.name}</Item>
+					<Item><Avatar src={props.image}/></Item>
+					<Item><HeaderMenu/></Item>
 				</Box>
 				
-			</StyledToolbar>
+			</Toolbar>
 		</AppBar>
 	);
 }

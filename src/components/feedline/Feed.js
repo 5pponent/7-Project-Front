@@ -14,6 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import { Typography } from '@material-ui/core';
 import Skeleton from '@mui/material/Skeleton';
+import { Divider } from '@mui/material';
 
 const Item = styled(Paper) (({ theme }) => ({
   padding: theme.spacing(2),
@@ -39,8 +40,8 @@ export default function Feed(props) {
 	};
 
 	return (
-		<Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
-			<Paper style={{margin: 12}}>
+		<Box sx={{ overflow: 'hidden' }}>
+			<Paper style={{margin: 10}}>
 				<Stack>
 					<Grid container>
 						<Grid item xs={11} sx={{cursor: 'pointer'}}> {/* 컨텐츠 */}
@@ -72,6 +73,7 @@ export default function Feed(props) {
 									onClose={handleMenuClose}
 								>
 									<MenuItem onClick={handleMenuClose}>저장하기</MenuItem>
+									<Divider/>
 									<MenuItem onClick={handleMenuClose}>신고하기</MenuItem>
 								</Menu>
 							</Box>
