@@ -23,7 +23,7 @@ Supports Promise API, Intercepts request and response , Parses JSON data\
 
 ##### `npm install @material-ui/core`
 ##### `npm install @mui/material @mui/styled-engine-sc styled-components`
-##### `npm install @material-ul/icons`
+##### `npm install @mui/icons-material`
 [Usage](https://mui.com/getting-started/usage/)\
 [Example Projects](https://mui.com/material-ui/getting-started/example-projects/)
 
