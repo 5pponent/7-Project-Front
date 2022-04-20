@@ -44,10 +44,9 @@ function Create() {
     <>
       <form onSubmit={e => {
         e.preventDefault();
-        const flname = e.target.flname.value;
       }}>
         <Stack width='800px' margin='0 auto'>
-          <input type="text" name="flname" value="새 피드라인"></input>
+          <input type="text" name="flname"></input>
           <input type="submit" value="생성"></input>
         </Stack>
       </form>

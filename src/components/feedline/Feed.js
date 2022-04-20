@@ -15,6 +15,9 @@ import Grid from '@mui/material/Grid';
 import { Typography } from '@material-ui/core';
 import Skeleton from '@mui/material/Skeleton';
 import { Divider } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import Dialog from'@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
 
 const Item = styled(Paper) (({ theme }) => ({
   padding: theme.spacing(2),
@@ -29,8 +32,7 @@ const Content = styled(Typography)`
 	-webkit-box-orient: vertical;
 `
 
-export default function Feed(props) {
-
+function MoreMenu() {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const handleMenuClick = (e) => { // 더보기 메뉴 클릭 이벤트
 		setAnchorEl(e.currentTarget);
@@ -39,43 +41,56 @@ export default function Feed(props) {
 		setAnchorEl(null);
 	};
 
+	return(
+		<>
+			<IconButton
+				aria-controls="simple-menu"
+				aria-haspopup="true"
+				onClick={handleMenuClick}
+			>
+				<MoreVertRoundedIcon/>
+			</IconButton>
+			<Menu 
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'right',
+				}}
+				transformOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+				}}
+				anchorEl={anchorEl}
+				open={Boolean(anchorEl)}
+				onClose={handleMenuClose}
+			>
+				<MenuItem onClick={handleMenuClose}>저장하기</MenuItem>
+				<Divider/>
+				<MenuItem onClick={handleMenuClose}>신고하기</MenuItem>
+			</Menu>
+		</>	
+	);
+}
+
+export default function Feed(props) {
+
+	const [open, setOpen] = useState(false);
+	const openContent = () => { setOpen(true); };
+	const closeContent = () => { setOpen(false); };
+
 	return (
 		<Box sx={{ overflow: 'hidden' }}>
 			<Paper style={{margin: 10}}>
 				<Stack>
 					<Grid container>
-						<Grid item xs={11} sx={{cursor: 'pointer'}}> {/* 컨텐츠 */}
+						<Grid item xs={11} sx={{cursor: 'pointer'}}
+							onClick={openContent}> {/* 컨텐츠 */}
 							<Item elevation={0}>
 								<Content>{props.content}</Content>
 							</Item>
 						</Grid>
 						<Grid item xs={1}> {/* 더보기 버튼 */}
 							<Box p={2}>
-								<IconButton
-									aria-controls="simple-menu"
-									aria-haspopup="true"
-									onClick={handleMenuClick}
-								>
-									<MoreVertRoundedIcon></MoreVertRoundedIcon>
-								</IconButton>
-								{/* 더보기 메뉴 */}
-								<Menu 
-									anchorOrigin={{
-										vertical: 'bottom',
-										horizontal: 'right',
-									}}
-									transformOrigin={{
-										vertical: 'top',
-										horizontal: 'right',
-									}}
-									anchorEl={anchorEl}
-									open={Boolean(anchorEl)}
-									onClose={handleMenuClose}
-								>
-									<MenuItem onClick={handleMenuClose}>저장하기</MenuItem>
-									<Divider/>
-									<MenuItem onClick={handleMenuClose}>신고하기</MenuItem>
-								</Menu>
+								<MoreMenu/>
 							</Box>
 						</Grid>
 					</Grid>
@@ -106,6 +121,36 @@ export default function Feed(props) {
 							</Item>
 						</Grid>
 					</Grid>
+
+					{/* 컨텐츠 상세보기 다이얼로그 */}
+					<Dialog open={open} onClose={closeContent} fullWidth={true} maxWidth='md'>
+						<DialogContent>
+							<Grid container>
+								<Grid item xs={2}>
+									<Avatar src={props.image}/>
+									{props.name}
+								</Grid>
+								<Grid item xs={9} p={1}>
+									{props.content}
+								</Grid>
+								<Grid item xs={1}>
+									<Stack paddingLeft={5}>
+										<IconButton onClick={closeContent}>
+											<CloseIcon color='text.secondary'/>
+										</IconButton>
+										<MoreMenu/>
+									</Stack>
+								</Grid>
+							</Grid>
+							<IconButton>
+								<ThumbUpAltRoundedIcon sx={{ fontSize: 30 }}/>
+							</IconButton>
+							<IconButton>
+								<AddCommentRoundedIcon sx={{ fontSize: 30}}></AddCommentRoundedIcon>
+							</IconButton>
+							<Divider/>
+						</DialogContent>
+					</Dialog>
 				</Stack>
 			</Paper>
 		</Box>
