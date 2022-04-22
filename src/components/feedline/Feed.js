@@ -18,17 +18,18 @@ import { Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Dialog from'@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
+import Comment from './Comment';
 
 const Item = styled(Paper) (({ theme }) => ({
   padding: theme.spacing(2),
   margin: theme.spacing(2),
 }));
 
-// 컨텐츠 글 4줄까지만 표시, 이후엔 ...으로 생략
+// 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
 	overflow: hidden;	
 	display: -webkit-box;
-	-webkit-line-clamp: 4;
+	-webkit-line-clamp: 5;
 	-webkit-box-orient: vertical;
 `
 
@@ -72,6 +73,21 @@ function MoreMenu() {
 }
 
 export default function Feed(props) {
+
+	const comments = [
+    {
+      "comment_idx" : 1,
+      "name" : "유저1",
+      "image" : "https://placeimg.com/100/100/people/1",
+      "content" : "그들은 그들은 꽃 투명하되 인생을 위하여 힘있다. 우리 동력은 천지는 얼마나 황금시대를 봄바람이다. 원대하고, 있음으로써 못할 않는 것이다. 물방아 오직 타오르고 위하여서."
+    },
+    {
+      "comment_idx" : 2,
+      "name" : "유저2",
+      "image" : "https://placeimg.com/100/100/people/2",
+      "content" : "그들의 있는 불어 산야에 뜨거운지라, 피가 있는 구할 속잎나고, 사막이다. 끓는 고동을 내는 우리 황금시대의 위하여서. 이상은 눈이 청춘의 사막이다. 그들의 기쁘며, 얼마나 불어 광야에서 그들에게 있을 말이다."
+    }
+  ];
 
 	const [open, setOpen] = useState(false);
 	const openContent = () => { setOpen(true); };
@@ -125,13 +141,13 @@ export default function Feed(props) {
 					{/* 컨텐츠 상세보기 다이얼로그 */}
 					<Dialog open={open} onClose={closeContent} fullWidth={true} maxWidth='md'>
 						<DialogContent>
-							<Grid container>
-								<Grid item xs={2}>
+							<Grid container paddingBottom={3}>
+								<Grid item xs={1}>
 									<Avatar src={props.image}/>
 									{props.name}
 								</Grid>
-								<Grid item xs={9} p={1}>
-									{props.content}
+								<Grid item xs={10} p={1}>
+									<Typography>{props.content}</Typography>
 								</Grid>
 								<Grid item xs={1}>
 									<Stack paddingLeft={5}>
@@ -142,13 +158,32 @@ export default function Feed(props) {
 									</Stack>
 								</Grid>
 							</Grid>
-							<IconButton>
-								<ThumbUpAltRoundedIcon sx={{ fontSize: 30 }}/>
-							</IconButton>
-							<IconButton>
-								<AddCommentRoundedIcon sx={{ fontSize: 30}}></AddCommentRoundedIcon>
-							</IconButton>
+
+							<Box>
+								<IconButton>
+									<ThumbUpAltRoundedIcon sx={{ fontSize: 30 }}/>
+								</IconButton>좋아요 수
+								<IconButton sx={{ marginLeft: "20px" }}>
+									<AddCommentRoundedIcon sx={{ fontSize: 30 }}></AddCommentRoundedIcon>
+								</IconButton>{comments.length}
+							</Box>
+							
 							<Divider/>
+
+							<Stack p={1}>
+								{
+									comments ? comments.map((c) => {
+										return (
+											<Comment
+												key={c.comment_idx}
+												name={c.name}
+												image={c.image}
+												content={c.content}
+											/>
+										);
+									}) : "댓글이 없습니다."
+								}
+							</Stack>
 						</DialogContent>
 					</Dialog>
 				</Stack>
