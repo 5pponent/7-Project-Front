@@ -1,7 +1,6 @@
 import FeedLineSelect from './components/feedline/FeedLineSelect'
 import Toolbar from '@mui/material/Toolbar';
 import CssBaseline from '@mui/material/CssBaseline';
-import Container from '@mui/material/Container';
 import ScrollTop from './components/ScrollTop';
 import HeaderAppBar from './components/Header/HeaderAppBar';
 import Fab from '@mui/material/Fab';
@@ -29,9 +28,7 @@ export default function App() {
       <HeaderAppBar name={name} image={image} getMode={getMode}/>
       
       {/* 컨텐츠 영역 */}
-      <Container>
-        {content}
-      </Container>
+      {content}
 
       <ScrollTop><Fab size="large"><KeyboardArrowUpIcon/></Fab></ScrollTop>
     </>
