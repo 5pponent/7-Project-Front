@@ -38,7 +38,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    paddingLeft: `calc(1em + ${theme.spacing(3)})`,
 		width: 150
   },
 }));
@@ -60,7 +60,9 @@ export default function Header(props) {
 	const title = "모두의 일기장";
 
 	// 새로고침 함수
-	const pageReload = () => { window.location.replace("/"); };
+	const handleClickLogo = () => {
+		props.getMode("MAIN");
+	}
 
 	return(
 		<AppBar sx={{ bgcolor: "#2c92ff" }}>  {/* 헤더 AppBar */}
@@ -77,17 +79,17 @@ export default function Header(props) {
 					</Search>
 				</Box>
 
-				<ButtonBase onClick={pageReload} sx={{margin: 'auto'}}> {/* 타이틀 */}
+				<ButtonBase onClick={handleClickLogo} sx={{margin: 'auto'}}> {/* 타이틀 */}
 					<Box overflow='hidden'>  
 						<MenuBookIcon sx={{ fontSize: 55 }}/>
 						<Title>{title}</Title>
 					</Box>
 				</ButtonBase>
 
-				<Box sx={{ display: 'flex' }}> {/* 우측 사용자 프로필, 메뉴 */}
+				<Box sx={{ display: 'flex' }}> {/* 우측 사용자 프로필, 더보기 메뉴 */}
 					<Item>{props.name}</Item>
 					<Item><Avatar src={props.image}/></Item>
-					<Item><HeaderMenu/></Item>
+					<Item><HeaderMenu getMode={props.getMode}/></Item>
 				</Box>
 				
 			</Toolbar>
