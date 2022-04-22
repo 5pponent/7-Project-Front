@@ -39,7 +39,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(3)})`,
-		width: 150
+		width: '100%'
   },
 }));
 
@@ -50,9 +50,12 @@ const Title = styled(Typography)(() => ({
 
 const Item = styled(Typography)(() => ({
 	margin: 'auto 0',
+	marginRight: '10px',
 	padding: 3,
 	fontSize: '12px',
-	overflow: 'hidden'
+	textOverflow: 'ellipsis',
+	overflow: 'hidden',
+	whiteSpace: 'nowrap'
 }));
 
 export default function Header(props) {
@@ -60,15 +63,14 @@ export default function Header(props) {
 	const title = "모두의 일기장";
 
 	// 새로고침 함수
-	const handleClickLogo = () => {
-		props.getMode("MAIN");
-	}
+	const handleClickLogo = () => {	props.getMode("MAIN"); };
+	const handleClickMyProfile = () => { props.getMode("MYPAGE"); };
 
 	return(
 		<AppBar sx={{ bgcolor: "#2c92ff" }}>  {/* 헤더 AppBar */}
-			<Toolbar>
+			<Toolbar disableGutters>
 				<Box> {/* 검색 */}
-					<Search>
+					<Search sx={{ minWidth: "210px", marginLeft: "20px" }}>
 						<SearchIconWrapper>
 							<SearchIcon />
 						</SearchIconWrapper>
@@ -79,17 +81,17 @@ export default function Header(props) {
 					</Search>
 				</Box>
 
-				<ButtonBase onClick={handleClickLogo} sx={{margin: 'auto'}}> {/* 타이틀 */}
+				<ButtonBase onClick={handleClickLogo} sx={{width: "80%"}}> {/* 타이틀 */}
 					<Box overflow='hidden'>  
 						<MenuBookIcon sx={{ fontSize: 55 }}/>
 						<Title>{title}</Title>
 					</Box>
 				</ButtonBase>
 
-				<Box sx={{ display: 'flex' }}> {/* 우측 사용자 프로필, 더보기 메뉴 */}
+				<Box sx={{ display: 'flex', width: "20%", justifyContent: "flex-end", marginRight: "15px" }}> {/* 우측 사용자 프로필, 더보기 메뉴 */}
 					<Item>{props.name}</Item>
-					<Item><Avatar src={props.image}/></Item>
-					<Item><HeaderMenu getMode={props.getMode}/></Item>
+					<ButtonBase onClick={handleClickMyProfile}><Avatar src={props.image}/></ButtonBase>
+					<HeaderMenu getMode={props.getMode}/>
 				</Box>
 				
 			</Toolbar>
