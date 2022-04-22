@@ -49,7 +49,7 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-export default function CustomizedMenus() {
+export default function CustomizedMenus(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (e) => {
@@ -58,6 +58,22 @@ export default function CustomizedMenus() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleClickChat = () => {
+    props.getMode("CHAT");
+    handleClose();
+  }
+  const handleClickSchedule = () => {
+    props.getMode("SCHEDULE");
+    handleClose();
+  }
+  const handleClickMessanger = () => {
+    props.getMode("MESSANGER");
+    handleClose();
+  }
+  const handleClickSetting = () => {
+    props.getMode("SETTING");
+    handleClose();
+  }
 
   return (
     <>
@@ -81,25 +97,23 @@ export default function CustomizedMenus() {
         onClose={handleClose}
       >
         <Tooltip title="Chat" placement="left" arrow>
-          <MenuItem onClick={handleClose} disableRipple>
-            <ChatIcon />
-          </MenuItem>
+          <MenuItem onClick={handleClickChat} disableRipple><ChatIcon /></MenuItem>
         </Tooltip>
 
         <Tooltip title="Schedule" placement="left" arrow>
-          <MenuItem onClick={handleClose} disableRipple>
+          <MenuItem onClick={handleClickSchedule} disableRipple>
             <CalendarTodayIcon />
           </MenuItem>
         </Tooltip>
 
         <Tooltip title="Following / Follower" placement="left" arrow>
-          <MenuItem onClick={handleClose} disableRipple>
+          <MenuItem onClick={handleClickMessanger} disableRipple>
             <PeopleAltIcon />
           </MenuItem>
         </Tooltip>  
 
         <Tooltip title="Setting" placement="left" arrow>
-          <MenuItem onClick={handleClose} disableRipple>
+          <MenuItem onClick={handleClickSetting} disableRipple>
             <SettingsIcon />
           </MenuItem>
         </Tooltip>  
