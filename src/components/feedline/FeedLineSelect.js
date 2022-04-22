@@ -41,16 +41,14 @@ function TabPanel(props) {
 
 function Create() {
   return (
-    <>
-      <form onSubmit={e => {
-        e.preventDefault();
-      }}>
-        <Stack width='800px' margin='0 auto'>
-          <input type="text" name="flname"></input>
-          <input type="submit" value="생성"></input>
-        </Stack>
-      </form>
-    </>
+    <form onSubmit={e => {
+      e.preventDefault();
+    }}>
+      <Stack width='800px' margin='0 auto'>
+        <input type="text" name="flname"></input>
+        <input type="submit" value="생성"></input>
+      </Stack>
+    </form>
   );
 }
 
