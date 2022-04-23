@@ -6,6 +6,7 @@ import HeaderAppBar from './components/Header/HeaderAppBar';
 import Fab from '@mui/material/Fab';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from 'react';
+import Login from './LoginPage/Login';
 
 
 export default function App() {
@@ -23,14 +24,15 @@ export default function App() {
   
   return (
     <>
-      <CssBaseline /><Toolbar id="back-to-top-anchor" />
+      <Login></Login>
+      {/* <CssBaseline /><Toolbar id="back-to-top-anchor" /> */}
 
-      <HeaderAppBar name={name} image={image} getMode={getMode}/>
+      {/* <HeaderAppBar name={name} image={image} getMode={getMode}/> */}
       
       {/* 컨텐츠 영역 */}
-      {content}
+      {/* {content} */}
 
-      <ScrollTop><Fab size="large"><KeyboardArrowUpIcon/></Fab></ScrollTop>
+      {/* <ScrollTop><Fab size="large"><KeyboardArrowUpIcon/></Fab></ScrollTop> */}
     </>
   );
 }
