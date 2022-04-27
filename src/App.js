@@ -14,6 +14,8 @@ export default function App() {
   const name = "사용자명";
   const image = "https://placeimg.com/100/100/people/0";
 
+  const [gridstyle, paperStyle] = useState(false);
+
   // const [mode, setMode] = useState('MAIN');
   let content = null;
 

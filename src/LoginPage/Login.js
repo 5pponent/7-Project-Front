@@ -129,13 +129,13 @@ import { Grid , Paper, FormControlLabel, TextField, Checkbox, Button, Link } fro
 const Login=()=> {
 
 
-        const Gridstyle={margin: "100px 0px 500px 500px" , width: "350px", height:"200px"}
+        const gridstyle={margin: "100px 0px 50% 50%" , width: "350px", height:"200px"}
         const paperStyle={display:'flex',flexDirection:'column',padding:20, hegiht:'70vh', widht:280, margin: "20px auto"}
 
 
         return (
             <>
-                <Grid style={Gridstyle}>
+                <Grid style={gridstyle}>
                     <Paper elecation={10} style={paperStyle}>
                         <Grid align='center'>
                             {/* 로고 */}
