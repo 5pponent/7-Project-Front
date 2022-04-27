@@ -9,28 +9,39 @@ import { useState } from 'react';
 
 
 export default function App() {
-  const name = "사용자명";
-  const image = "https://placeimg.com/100/100/people/0";
+  let name = "사용자명";
+  let image = "https://placeimg.com/100/100/people/0";
 
+  const [login, setLogin] = useState(true);
   const [mode, setMode] = useState('MAIN');
   let content = null;
 
   // 컨텐츠 페이지 제어를 위한 함수, 자식 컴포넌트에게 물려주어 mode의 변경을 체크
-  const getMode = (mode) => { setMode(mode); }
+  const getMode = (mode) => { setMode(mode); console.log(mode); }
 
   if ( mode === 'MAIN' ){ content = <FeedLineSelect></FeedLineSelect> }
   else { content = null; }
   
-  return (
-    <>
-      <CssBaseline /><Toolbar id="back-to-top-anchor" />
 
-      <HeaderAppBar name={name} image={image} getMode={getMode}/>
-      
-      {/* 컨텐츠 영역 */}
-      {content}
+  if ( login ){
+    return (
+      <>
+        <CssBaseline /><Toolbar id="back-to-top-anchor" />
 
-      <ScrollTop><Fab size="large"><KeyboardArrowUpIcon/></Fab></ScrollTop>
-    </>
-  );
+        <HeaderAppBar name={name} image={image} getMode={getMode}/>
+        
+        {/* 컨텐츠 영역 */}
+        {content}
+
+        <ScrollTop><Fab size="large"><KeyboardArrowUpIcon/></Fab></ScrollTop>
+      </>
+    );
+  }
+  else {
+    return (
+      <>
+        로그인창
+      </>
+    );
+  }
 }
