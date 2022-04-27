@@ -7,24 +7,26 @@ import Fab from '@mui/material/Fab';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from 'react';
 import Login from './LoginPage/Login';
+import Register from './LoginPage/Register';
 
 
 export default function App() {
   const name = "사용자명";
   const image = "https://placeimg.com/100/100/people/0";
 
-  const [mode, setMode] = useState('MAIN');
+  // const [mode, setMode] = useState('MAIN');
   let content = null;
 
   // 컨텐츠 페이지 제어를 위한 함수, 자식 컴포넌트에게 물려주어 mode의 변경을 체크
-  const getMode = (mode) => { setMode(mode); }
+  // const getMode = (mode) => { setMode(mode); }
 
-  if ( mode === 'MAIN' ){ content = <FeedLineSelect></FeedLineSelect> }
-  else { content = null; }
+  // if ( mode === 'MAIN' ){ content = <FeedLineSelect></FeedLineSelect> }
+  // else { content = null; }
   
   return (
     <>
-      <Login></Login>
+    <Register></Register>
+      {/* <Login></Login> */}
       {/* <CssBaseline /><Toolbar id="back-to-top-anchor" /> */}
 
       {/* <HeaderAppBar name={name} image={image} getMode={getMode}/> */}
