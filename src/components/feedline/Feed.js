@@ -146,7 +146,8 @@ export default function Feed(props) {
 									<Avatar src={props.image}/>
 									{props.name}
 								</Grid>
-								<Grid item xs={10} p={1}>
+								<Grid item xs={10}>
+									<Typography color="textSecondary" fontSize="8px">{props.time}</Typography>
 									<Typography>{props.content}</Typography>
 								</Grid>
 								<Grid item xs={1}>
