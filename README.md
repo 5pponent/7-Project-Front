@@ -1,8 +1,8 @@
 ## 7팀 웹 프로젝트 [FrontEnd]
 
-### Tools 
+### Techs
 
-`JavaScript` `React` `Node.js`
+`HTML` `CSS` `JavaScript` `React` `Node.js`
 
 ### Libraries
 
@@ -23,6 +23,7 @@ Supports Promise API, Intercepts request and response , Parses JSON data\
 
 ##### `npm install @material-ui/core`
 ##### `npm install @mui/material @mui/styled-engine-sc styled-components`
+##### `npm install @mui/icons-material`
 [Usage](https://mui.com/getting-started/usage/)\
 [Example Projects](https://mui.com/material-ui/getting-started/example-projects/)
 
