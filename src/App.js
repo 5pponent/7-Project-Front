@@ -6,13 +6,13 @@ import HeaderAppBar from './components/Header/HeaderAppBar';
 import Fab from '@mui/material/Fab';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from 'react';
-
+import Login from './components/Login/Login';
 
 export default function App() {
   let name = "사용자명";
   let image = "https://placeimg.com/100/100/people/0";
 
-  const [login, setLogin] = useState(true);
+  const [login, setLogin] = useState(false);
   const [mode, setMode] = useState('MAIN');
   let content = null;
 
@@ -40,7 +40,7 @@ export default function App() {
   else {
     return (
       <>
-        로그인창
+        <Login></Login>
       </>
     );
   }
