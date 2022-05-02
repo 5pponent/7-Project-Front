@@ -12,9 +12,8 @@ import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
-import { Typography } from '@material-ui/core';
 import Skeleton from '@mui/material/Skeleton';
-import { Divider } from '@mui/material';
+import { Divider, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Dialog from'@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -147,7 +146,7 @@ export default function Feed(props) {
 									{props.name}
 								</Grid>
 								<Grid item xs={10}>
-									<Typography color="textSecondary" fontSize="8px">{props.time}</Typography>
+									<Typography color="textSecondary" fontSize="12px">{props.time}</Typography>
 									<Typography>{props.content}</Typography>
 								</Grid>
 								<Grid item xs={1}>
@@ -172,18 +171,18 @@ export default function Feed(props) {
 							<Divider/>
 
 							<Stack p={1}>
-								{
-									comments ? comments.map((c) => {
-										return (
-											<Comment
-												key={c.comment_idx}
-												name={c.name}
-												image={c.image}
-												content={c.content}
-											/>
-										);
-									}) : "댓글이 없습니다."
-								}
+							{
+								comments ? comments.map((c) => {
+									return (
+										<Comment
+											key={c.comment_idx}
+											name={c.name}
+											image={c.image}
+											content={c.content}
+										/>
+									);
+								}) : "댓글이 없습니다."
+							}
 							</Stack>
 						</DialogContent>
 					</Dialog>
