@@ -1,8 +1,8 @@
 ## 7팀 웹 프로젝트 [FrontEnd]
 
-### Tools 
+### Techs
 
-`JavaScript` `React` `Node.js`
+`HTML` `CSS` `JavaScript` `React` `Node.js`
 
 ### Libraries
 
