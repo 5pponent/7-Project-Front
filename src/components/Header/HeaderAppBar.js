@@ -6,8 +6,7 @@ import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import HeaderMenu from './HeaderMenu';
-import { Box } from '@material-ui/core';
-import { Avatar } from '@mui/material';
+import { Avatar, Box } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 
@@ -60,20 +59,15 @@ const Item = styled(Typography)(() => ({
 
 export default function Header(props) {
 
-	const title = "모두의 일기장";
-
-	// 새로고침 함수
 	const handleClickLogo = () => {	props.getMode("MAIN"); };
 	const handleClickMyProfile = () => { props.getMode("MYPAGE"); };
 
 	return(
-		<AppBar sx={{ bgcolor: "#2c92ff" }}>  {/* 헤더 AppBar */}
-			<Toolbar disableGutters>
+		<AppBar >  {/* 헤더 AppBar */}
+			<Toolbar disableGutters sx={{ bgcolor: '#2c92ff', color: 'white' }}>
 				<Box> {/* 검색 */}
 					<Search sx={{ minWidth: "210px", marginLeft: "20px" }}>
-						<SearchIconWrapper>
-							<SearchIcon />
-						</SearchIconWrapper>
+						<SearchIconWrapper><SearchIcon /></SearchIconWrapper>
 						<StyledInputBase
 							placeholder="프로필 검색"
 							inputProps={{ 'aria-label': 'search' }}
@@ -82,9 +76,9 @@ export default function Header(props) {
 				</Box>
 
 				<ButtonBase onClick={handleClickLogo} sx={{width: "80%"}}> {/* 타이틀 */}
-					<Box overflow='hidden'>  
+					<Box>  
 						<MenuBookIcon sx={{ fontSize: 55 }}/>
-						<Title>{title}</Title>
+						<Title>모두의 일기장</Title>
 					</Box>
 				</ButtonBase>
 

@@ -1,55 +1,27 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Typography from '@mui/material/Typography';
-import { Grid , Paper, FormControlLabel, TextField, Checkbox, Button, FormLabel, RadioGroup, FormControl, Radio } from '@material-ui/core';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import { Button, Grid, Stack, TextField } from '@mui/material';
 
-const Register=()=> {
-    const gridstyle={margin:"0 auto", width: "350px"}
-    const paperStyle={display:'flex',flexDirection:'column',padding:20, widht:280, margin: "20px auto"}
-    const marginTop = { marginTop: 5 }
-    
-    
+export default function Register() {
 
-    return(
-        <>
-            <Grid style={gridstyle}>
-                <Paper elecation={15} style={paperStyle}>
-                    <Grid align='center'>
-                        {/* 로고 */}
-                        <h2>Sign Up</h2>
-                    </Grid>
-                    <Typography variant='caption' align='center' gutterBottom>create an account</Typography>
-                </Paper>
-                <form>
-                    <TextField fullWidth label='Name' placeholder="Enter your name" />
-                    <TextField fullWidth label='Email' placeholder="Enter your email" />
-                    <TextField fullWidth label='Password' placeholder="Enter your password" type='password'/>
-                    <FormControlLabel
-                        control={<Checkbox 
-                            
-                        />}label="show"
-                    />
-                    <TextField fullWidth label='Confirm Password' placeholder="Confirm your password" type='password'/>
-                    <TextField fullWidth label='Phone Number' placeholder="Enter your phone number" />
-                    <FormControl component="fieldset" style={marginTop}>
-                        <FormLabel component="legend">Gender</FormLabel>
-                        <RadioGroup aria-label="gender" name="gender" style={{ display: 'initial' }}>
-                            <FormControlLabel value="female" control={<Radio />} label="Female" />
-                            <FormControlLabel value="male" control={<Radio />} label="Male" />
-                        </RadioGroup>
-                    </FormControl>
-                    <FormControlLabel
-                        control={<Checkbox name="checkedA" />}
-                        label="약관에 동의합니다."
-                    />
-                    <Button type='submit' variant='contained' color='primary'>Sign up</Button>
-                </form>
+  return(
+		<Stack spacing={2}>
+			<Grid align='center'>
+				<MenuBookIcon color='action' sx={{ fontSize: 130 }}/>
+				<Typography variant='h4' color='primary' fontWeight='bold'>모두의 일기장</Typography>
+			</Grid>
 
+			<form>
+				<Stack spacing={1}>
+					<TextField fullWidth label='ID'/>
+					<TextField fullWidth label='PW' type='password'/>
+					<TextField fullWidth label='PW 확인' type='password'/>
+					<TextField fullWidth label='Email'/>
 
-            </Grid>
-        
-        
-        </>
-    )
+					<Button type='submit' variant='contained' color='primary'>회원가입</Button>
+				</Stack>
+			</form>
+		</Stack>
+  )
 }
-
-export default Register;

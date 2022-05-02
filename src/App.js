@@ -16,8 +16,8 @@ export default function App() {
   const [mode, setMode] = useState('MAIN');
   let content = null;
 
-  // 컨텐츠 페이지 제어를 위한 함수, 자식 컴포넌트에게 물려주어 mode의 변경을 체크
-  const getMode = (mode) => { setMode(mode); console.log(mode); }
+  const getMode = (mode) => { setMode(mode); console.log(mode); };
+  const getLogin = (stat) => { setLogin(stat); };
 
   if ( mode === 'MAIN' ){ content = <FeedLineSelect></FeedLineSelect> }
   else { content = null; }
@@ -28,20 +28,15 @@ export default function App() {
       <>
         <CssBaseline /><Toolbar id="back-to-top-anchor" />
 
-        <HeaderAppBar name={name} image={image} getMode={getMode}/>
+        <HeaderAppBar name={name} image={image} getMode={getMode} bgcolor="#2c92ff"/>
         
-        {/* 컨텐츠 영역 */}
         {content}
 
-        <ScrollTop><Fab size="large"><KeyboardArrowUpIcon/></Fab></ScrollTop>
+        <ScrollTop><Fab size="large" color='primary'><KeyboardArrowUpIcon/></Fab></ScrollTop>
       </>
     );
   }
   else {
-    return (
-      <>
-        <Login></Login>
-      </>
-    );
+    return <Login getLogin={getLogin}></Login>
   }
 }

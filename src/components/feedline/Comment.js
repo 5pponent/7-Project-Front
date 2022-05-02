@@ -3,8 +3,6 @@ import { Avatar, Grid, Stack, Typography } from "@mui/material";
 
 export default function Comment(props) {
 
-
-
 	return (
 		<>
 			<Grid container marginTop="20px">
