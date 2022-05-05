@@ -41,7 +41,7 @@ export default function Login(props) {
       </Stack>
       <Dialog open={open} onClose={handleClickClose} maxWidth='xs' fullWidth={true}>
         <DialogContent>
-          <Register></Register>
+          <Register getLogin={props.getLogin}></Register>
         </DialogContent>
       </Dialog>
     </>

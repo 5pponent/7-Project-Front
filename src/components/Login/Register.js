@@ -3,7 +3,9 @@ import Typography from '@mui/material/Typography';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { Button, Grid, Stack, TextField } from '@mui/material';
 
-export default function Register() {
+export default function Register(props) {
+
+	const handleClickRegist = () => { props.getLogin(true); };
 
   return(
 		<Stack spacing={2}>
@@ -19,7 +21,8 @@ export default function Register() {
 					<TextField fullWidth label='PW 확인' type='password'/>
 					<TextField fullWidth label='Email'/>
 
-					<Button type='submit' variant='contained' color='primary'>회원가입</Button>
+					<Button type='submit' variant='contained' color='primary'
+						onClick={handleClickRegist}>회원가입</Button>
 				</Stack>
 			</form>
 		</Stack>

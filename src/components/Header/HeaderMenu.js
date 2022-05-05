@@ -78,17 +78,19 @@ export default function CustomizedMenus(props) {
   return (
     <>
       {/* 메뉴 아이콘 */}
-      <IconButton
-        aria-controls={open ? 'demo-customized-menu' : undefined}
-        aria-expanded={open ? 'true' : undefined}
-        aria-haspopup="true"
-        variant="contained"
-        color="inherit"
-        disableElevation
-        onClick={handleClick}
-      >
-         <MoreVertIcon sx={{ fontSize: 30 }}/>
-      </IconButton>
+      <Tooltip title="메뉴" placement="bottom" arrow>
+        <IconButton
+          aria-controls={open ? 'demo-customized-menu' : undefined}
+          aria-expanded={open ? 'true' : undefined}
+          aria-haspopup="true"
+          variant="contained"
+          color="inherit"
+          disableElevation
+          onClick={handleClick}
+        >
+          <MoreVertIcon sx={{ fontSize: 30 }}/>
+        </IconButton>
+      </Tooltip>
 
       {/* 메뉴, 리스트 */}
       <StyledMenu
@@ -96,29 +98,29 @@ export default function CustomizedMenus(props) {
         open={open}
         onClose={handleClose}
       >
-        <Tooltip title="Chat" placement="left" arrow>
+        <Tooltip title="채팅" placement="left" arrow>
           <MenuItem onClick={handleClickChat} disableRipple><ChatIcon /></MenuItem>
         </Tooltip>
 
-        <Tooltip title="Schedule" placement="left" arrow>
+        <Tooltip title="스케쥴" placement="left" arrow>
           <MenuItem onClick={handleClickSchedule} disableRipple>
             <CalendarTodayIcon />
           </MenuItem>
         </Tooltip>
 
-        <Tooltip title="Following / Follower" placement="left" arrow>
+        <Tooltip title="팔로우 / 팔로워" placement="left" arrow>
           <MenuItem onClick={handleClickMessanger} disableRipple>
             <PeopleAltIcon />
           </MenuItem>
         </Tooltip>  
 
-        <Tooltip title="Setting" placement="left" arrow>
+        <Tooltip title="설정" placement="left" arrow>
           <MenuItem onClick={handleClickSetting} disableRipple>
             <SettingsIcon />
           </MenuItem>
         </Tooltip>  
 
-        <Tooltip title="Close Menu" placement="left" arrow>
+        <Tooltip title="메뉴 닫기" placement="left" arrow>
           <MenuItem onClick={handleClose} disableRipple>
             <CloseIcon />
           </MenuItem>

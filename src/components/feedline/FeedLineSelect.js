@@ -52,7 +52,7 @@ function Create() {
   );
 }
 
-export default function FeedLineSelect() {
+export default function FeedLineSelect(props) {
 
   const [value, setValue] = React.useState(0);
 
@@ -61,7 +61,7 @@ export default function FeedLineSelect() {
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: 'divider', 
-        margin: '0 auto', marginTop: 3, width: '800px' }}>
+        margin: '0 auto', width: '800px' }}>
         <Tabs 
           value={value} 
           onChange={handleChange}
@@ -70,9 +70,14 @@ export default function FeedLineSelect() {
           <Tab label="Item Two" {...a11yProps(1)} />
         </Tabs>
       </Box>
-        
+      
       <TabPanel value={value} index={0}>
-        <FeedLine></FeedLine>
+        <FeedLine 
+          userName={props.userName} 
+          userImg={props.userImg} 
+          getMode={props.getMode}
+          getUser={props.getUser}
+        />
       </TabPanel>
 
       <TabPanel value={value} index={1}>
