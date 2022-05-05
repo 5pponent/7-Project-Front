@@ -6,10 +6,11 @@ import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import HeaderMenu from './HeaderMenu';
-import { Avatar, Box } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-
+import SmallProfile from '../SmallProfile';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -47,20 +48,14 @@ const Title = styled(Typography)(() => ({
 	fontWeight: 'bold',
 }));
 
-const Item = styled(Typography)(() => ({
-	margin: 'auto 0',
-	marginRight: '10px',
-	padding: 3,
-	fontSize: '12px',
-	textOverflow: 'ellipsis',
-	overflow: 'hidden',
-	whiteSpace: 'nowrap'
-}));
-
 export default function Header(props) {
 
 	const handleClickLogo = () => {	props.getMode("MAIN"); };
-	const handleClickMyProfile = () => { props.getMode("MYPAGE"); };
+	const handleClickLogout = () => { props.getLogin(false); props.getMode('MAIN') };
+	const handleClickMyProfile = () => { 
+		props.getMode("PROFILE");
+		props.getUser([props.name, props.image]);
+	};
 
 	return(
 		<AppBar >  {/* 헤더 AppBar */}
@@ -68,10 +63,7 @@ export default function Header(props) {
 				<Box> {/* 검색 */}
 					<Search sx={{ minWidth: "210px", marginLeft: "20px" }}>
 						<SearchIconWrapper><SearchIcon /></SearchIconWrapper>
-						<StyledInputBase
-							placeholder="프로필 검색"
-							inputProps={{ 'aria-label': 'search' }}
-						/>
+						<StyledInputBase placeholder="프로필 검색" />
 					</Search>
 				</Box>
 
@@ -83,8 +75,16 @@ export default function Header(props) {
 				</ButtonBase>
 
 				<Box sx={{ display: 'flex', width: "20%", justifyContent: "flex-end", marginRight: "15px" }}> {/* 우측 사용자 프로필, 더보기 메뉴 */}
-					<Item>{props.name}</Item>
-					<ButtonBase onClick={handleClickMyProfile}><Avatar src={props.image}/></ButtonBase>
+					<Tooltip title="로그아웃" placement="bottom" arrow>
+						<IconButton onClick={handleClickLogout}>
+							<LogoutIcon sx={{color: 'white'}} />
+						</IconButton>
+					</Tooltip>
+					<Tooltip title="프로필" placement="bottom" arrow>
+						<ButtonBase onClick={handleClickMyProfile}>
+							<SmallProfile image={props.image} name={props.name}/>
+						</ButtonBase>
+					</Tooltip>
 					<HeaderMenu getMode={props.getMode}/>
 				</Box>
 				

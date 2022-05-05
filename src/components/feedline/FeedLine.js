@@ -1,10 +1,10 @@
 import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import { CircularProgress } from '@material-ui/core';
 import Feed from './Feed';
+import { CircularProgress } from '@mui/material';
 
-export default function FeedLine() {
+// 여기서 가져올 피드의 정보(특정 유저의 피드, 모든 피드 ...)를 api로 요청
+export default function FeedLine(props) {
 
 	const feeds = [
 		{
@@ -39,8 +39,6 @@ export default function FeedLine() {
 
 	return (
 		<>
-			<CssBaseline />
-
 			<Box sx={{ bgcolor: '#e7ebf0', minWidth: 800, width: 800, margin: '0 auto' }}>
 				{
 					feeds ? feeds.map((f) => {
@@ -51,6 +49,10 @@ export default function FeedLine() {
 								image={f.image}
 								name={f.name}
 								time={f.time}
+								userName={props.userName}
+								userImg={props.userImg}
+								getMode={props.getMode}
+								getUser={props.getUser}
 							/>
 						);
 					}) : 
