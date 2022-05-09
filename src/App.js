@@ -9,19 +9,24 @@ import Login from './components/Login/Login';
 import Profile from './components/Profile/Profile';
 import { Box } from '@mui/material';
 import Setting from './components/SettingPage/Setting';
+import ChatApp from './components/Chatting/ChatApp';
 
 export default function App() {
-  let name = "사용자명";
-  let image = "https://placeimg.com/100/100/people/00";
+  const name = "사용자명";
+  const image = "https://placeimg.com/100/100/people/00";
+  const email = "ahdwjdtprtm@gmail.com";
+  const id = "ahdwjdtprtm";
 
   const [login, setLogin] = useState(false);
   const [mode, setMode] = useState('MAIN');
   const [user, setUser] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
   let content = null;
 
-  const getMode = (mode) => { setMode(mode); console.log(mode); };
+  const getMode = (mode) => { setMode(mode); };
   const getLogin = (stat) => { setLogin(stat); };
   const getUser = (usr) => { setUser(usr); console.log(usr); };
+  const getDarkMode = (dm) => { setDarkMode(dm); console.log(dm); };
 
   if ( mode === 'MAIN' ){ 
     content = <FeedLineSelect 
@@ -35,10 +40,25 @@ export default function App() {
     content = <Profile 
       userName={user[0]}
       userImg={user[1]}
+      userEmail={user[2]}
+      getMode={getMode}
+      getUser={getUser}
+    />
+  }
+  else if ( mode === 'CHAT' ) {
+    content = <ChatApp
+      userName={name}
+      userImg={image}
+      getMode={getMode}
     />
   }
   else if ( mode === 'SETTING' ) {
-    content = <Setting />
+    content = <Setting
+      name={name}
+      id={id}
+      email={email}
+      getDarkMode={getDarkMode}
+    />
   }
   else { content = null; }
 
@@ -48,9 +68,9 @@ export default function App() {
         <Toolbar id="back-to-top-anchor" />
 
         <HeaderAppBar 
-          name={name} 
-          image={image} 
-          getMode={getMode} 
+          name={name}
+          image={image}
+          getMode={getMode}
           getLogin={getLogin}
           getUser={getUser}
         />

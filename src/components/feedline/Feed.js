@@ -177,14 +177,14 @@ export default function Feed(props) {
 							
 							<Divider/>
 							
-							<Grid container spacing={1} paddingTop='15px'>
+							<Grid container marginTop='15px'>
 								<Grid item xs={1}>
 									<SmallProfile image={props.userImg} name={props.userName}/>
 								</Grid>
 								{/* 댓글 작성 */}
-								<Grid item xs={11} sx={{verticalAlign: 'center'}}>
+								<Grid item xs={11}>
 									<form>
-										<Stack direction='row' spacing={1}>
+										<Stack direction='row' margin='10px' spacing={1}>
 											<TextField multiline size='small' margin='none' fullWidth/>
 											<Button type='submit' variant='contained'>입력</Button>
 										</Stack>

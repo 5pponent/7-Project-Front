@@ -50,7 +50,12 @@ export default function Profile(props) {
 				<StyledInputBase placeholder="피드 검색" />
 			</Search>
 			<Box sx={{ height: '600px', overflow: 'scroll' }}>
-				<FeedLine userName={userName} userImg={image} />
+				<FeedLine 
+					userName={userName} 
+					userImg={image} 
+					getMode={props.getMode} 
+					getUser={props.getUser}
+				/>
 			</Box>
 		</>
 	);

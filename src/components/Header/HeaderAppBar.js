@@ -58,7 +58,7 @@ export default function Header(props) {
 	};
 
 	return(
-		<AppBar >  {/* 헤더 AppBar */}
+		<AppBar sx={{zIndex: 'tooltip'}}>  {/* 헤더 AppBar */}
 			<Toolbar disableGutters sx={{ bgcolor: '#2c92ff', color: 'white' }}>
 				<Box> {/* 검색 */}
 					<Search sx={{ minWidth: "210px", marginLeft: "20px" }}>
