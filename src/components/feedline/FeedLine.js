@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Feed from './Feed';
 import { CircularProgress } from '@mui/material';
 
-// 여기서 가져올 피드의 정보(특정 유저의 피드, 모든 피드 ...)를 api로 요청
 export default function FeedLine(props) {
 
 	const feeds = [
