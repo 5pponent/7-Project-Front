@@ -77,16 +77,15 @@ export default function Feed(props) {
 			"content" : "그들의 있는 불어 산야에 뜨거운지라, 피가 있는 구할 속잎나고, 사막이다. 끓는 고동을 내는 우리 황금시대의 위하여서. 이상은 눈이 청춘의 사막이다. 그들의 기쁘며, 얼마나 불어 광야에서 그들에게 있을 말이다. 그 말을 듣는 것 조차 하지 못할 것인 사람이다."
 		}
 	];
-
 	const [open, setOpen] = useState(false);
 	const openContent = () => { setOpen(true); };
 	const closeContent = () => { setOpen(false); };
 	const [anchor, setAnchor] = useState(null);
 	const handleClickProfile = (e) => { setAnchor(e.currentTarget); };
 	const handleCloseProfile = () => { setAnchor(null); };
-	const handleClickProfileView = () => { 
-		props.getMode('PROFILE');
+	const handleClickProfileView = (e) => { 
 		props.getUser([props.name, props.image]);
+		props.getMode("PROFILE");
 	}
 
 	return (
@@ -112,7 +111,7 @@ export default function Feed(props) {
 									<ThumbUpAltRoundedIcon sx={{ fontSize: 30 }}/>
 								</IconButton>
 								<IconButton>
-									<AddCommentRoundedIcon sx={{ fontSize: 30}}></AddCommentRoundedIcon>
+									<AddCommentRoundedIcon sx={{ fontSize: 30 }}/>
 								</IconButton>
 							</Item>
 						</Grid>
@@ -183,12 +182,10 @@ export default function Feed(props) {
 								</Grid>
 								{/* 댓글 작성 */}
 								<Grid item xs={11}>
-									<form>
-										<Stack direction='row' margin='10px' spacing={1}>
-											<TextField multiline size='small' margin='none' fullWidth/>
-											<Button type='submit' variant='contained'>입력</Button>
-										</Stack>
-									</form>
+									<Stack direction='row' margin='10px' spacing={1}>
+										<TextField multiline size='small' margin='none' fullWidth/>
+										<Button type='submit' variant='contained'>입력</Button>
+									</Stack>
 								</Grid>
 							</Grid>
 

@@ -25,18 +25,6 @@ const StyledToggleButton = styled(ToggleButton)(({theme}) => ({
   }
 }));
 
-function SelectedLine(props) {
-
-  return (
-    <FeedLine
-      userName={props.userName} 
-      userImg={props.userImg} 
-      getMode={props.getMode}
-      getUser={props.getUser}
-    />
-  );
-}
-
 export default function FeedLineSelect(props) {
 
   const [line, setLine] = useState("1");
@@ -63,7 +51,12 @@ export default function FeedLineSelect(props) {
       
       <Box sx={{paddingTop: '55px'}} />
 
-      <SelectedLine/>
+      <FeedLine
+        userName={props.userName} 
+        userImg={props.userImg} 
+        getMode={props.getMode}
+        getUser={props.getUser}
+      />
     </>
   );
 }

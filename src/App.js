@@ -23,8 +23,8 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   let content = null;
 
-  const getMode = (mode) => { setMode(mode); };
   const getLogin = (stat) => { setLogin(stat); };
+  const getMode = (mode) => { setMode(mode); };
   const getUser = (usr) => { setUser(usr); console.log(usr); };
   const getDarkMode = (dm) => { setDarkMode(dm); console.log(dm); };
 

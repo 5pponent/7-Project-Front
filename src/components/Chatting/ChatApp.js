@@ -1,131 +1,36 @@
 import Fab from '@mui/material/Fab';
 import SendIcon from '@mui/icons-material/Send';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import { Divider, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import Grid from '@mui/material/Grid';
 import ChatUserList from './ChatUserList';
+import ChatLog from './ChatLog';
+import SmallProfile from '../SmallProfile';
 
-export default function Chat(props){
+export default function Chat(props) {
 
   // const ariaLabel = { 'aria-label': 'description' };
 
-  return(
+  return (
     <Grid container width='1000px' margin='auto' marginTop='25px'>
-      <Grid item xs={3.5} paddingRight='5px'>
+      <Grid item xs={3.5}>
         <TextField label="Search" fullWidth/>
+      </Grid>
+      <Grid item xs={0.2} />
+      <Grid item xs={8.3}>
+        <SmallProfile name='대화 상대 이름' image='' />
+      </Grid>
+
+      <Grid item xs={3.5}>
         <ChatUserList />
       </Grid>
-      
-      <Grid item xs={8.5}>
-        <List sx={{height: '75vh', overflow: 'auto'}}>
-          <ListItem key="1">
-            {/* 채팅 내역 */}
-            <Grid container>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" primary="Hey man, What's up ?"></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText align="right" secondary="09:30"></ListItemText>
-              </Grid>
-            </Grid>
-          </ListItem>
-        </List>
-        <Divider />
-        <Grid container marginTop={1}>
-          <Grid item xs={11}><TextField fullWidth/></Grid>
-          <Grid item xs={1} align='center'>
+      <Grid item xs={0.2} />
+      <Grid item xs={8.3} border='1px solid #e0e0e0'>
+        <ChatLog />
+        <Grid container marginTop={1} p={1}>
+          <Grid item xs={10.5}>
+            <TextField fullWidth/>
+          </Grid>
+          <Grid item xs={1.5} align='center'>
             <Fab color="primary"><SendIcon /></Fab>
           </Grid>
         </Grid>
