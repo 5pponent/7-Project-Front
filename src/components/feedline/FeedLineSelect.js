@@ -1,5 +1,6 @@
-import { AppBar, Box, styled, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { AppBar, Box, IconButton, styled, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
 import { useState } from 'react';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import FeedLine from './FeedLine';
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
@@ -16,7 +17,6 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     },
   },
 }));
-
 const StyledToggleButton = styled(ToggleButton)(({theme}) => ({
   "&.Mui-selected, &.Mui-selected:hover": {
     fontWeight: 'bold',
@@ -46,6 +46,12 @@ export default function FeedLineSelect(props) {
             <StyledToggleButton value="2">feedline2</StyledToggleButton>
             <StyledToggleButton value="new" sx={{width: '50px'}}>+</StyledToggleButton>
           </StyledToggleButtonGroup>
+          <Tooltip title="피드 작성" placement='left'>
+            <IconButton color='primary' sx={{float: 'right'}}>
+              <BorderColorIcon fontSize='medium'/>
+            </IconButton>
+          </Tooltip>
+          
         </Box>
       </AppBar>
       

@@ -6,9 +6,7 @@ import ChatUserList from './ChatUserList';
 import ChatLog from './ChatLog';
 import SmallProfile from '../SmallProfile';
 
-export default function Chat(props) {
-
-  // const ariaLabel = { 'aria-label': 'description' };
+export default function ChatApp(props) {
 
   return (
     <Grid container width='1000px' margin='auto' marginTop='25px'>
@@ -23,6 +21,7 @@ export default function Chat(props) {
       <Grid item xs={3.5}>
         <ChatUserList />
       </Grid>
+
       <Grid item xs={0.2} />
       <Grid item xs={8.3} border='1px solid #e0e0e0'>
         <ChatLog />

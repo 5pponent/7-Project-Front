@@ -10,6 +10,7 @@ import Profile from './components/Profile/Profile';
 import { Box } from '@mui/material';
 import Setting from './components/SettingPage/Setting';
 import ChatApp from './components/Chatting/ChatApp';
+import ScheduleApp from './components/Schedule/ScheduleApp';
 
 export default function App() {
   const name = "사용자명";
@@ -34,7 +35,7 @@ export default function App() {
       userImg={image} 
       getMode={getMode}
       getUser={getUser}
-    /> 
+    />
   }
   else if ( mode === 'PROFILE' ) {
     content = <Profile 
@@ -50,6 +51,11 @@ export default function App() {
       userName={name}
       userImg={image}
       getMode={getMode}
+    />
+  }
+  else if ( mode === 'SCHEDULE' ) {
+    content = <ScheduleApp
+
     />
   }
   else if ( mode === 'SETTING' ) {
