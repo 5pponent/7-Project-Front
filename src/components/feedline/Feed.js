@@ -8,16 +8,14 @@ import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
-import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
-import { Button, Divider, TextField, Typography } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Typography } from '@mui/material';
 import Dialog from'@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import Comment from './Comment';
-import SmallProfile from '../SmallProfile';
+import FeedDetail from './FeedDetail';
+import MoreMenu from './MoreMenu';
 
 const Item = styled(Paper) (({ theme }) => ({
 	padding: theme.spacing(2),
@@ -31,35 +29,6 @@ const Content = styled(Typography)`
 	-webkit-line-clamp: 5;
 	-webkit-box-orient: vertical;
 `
-
-function MoreMenu() {
-
-	const [anchorEl, setAnchorEl] = useState(null);
-	const handleMenuClick = (e) => { setAnchorEl(e.currentTarget); };
-	const handleMenuClose = () => { setAnchorEl(null); };
-
-	return(
-		<>
-			<IconButton onClick={handleMenuClick}>
-				<MoreVertRoundedIcon/>
-			</IconButton>
-			<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'right',
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'right',
-				}}
-			>
-				<MenuItem onClick={handleMenuClose}>저장하기</MenuItem>
-				<Divider/>
-				<MenuItem onClick={handleMenuClose}>신고하기</MenuItem>
-			</Menu>
-		</>	
-	);
-}
 
 export default function Feed(props) {
 
@@ -145,64 +114,15 @@ export default function Feed(props) {
 					{/* 컨텐츠 상세보기 다이얼로그 */}
 					<Dialog open={open} onClose={closeContent} fullWidth={true} maxWidth='md'>
 						<DialogContent>
-							<Grid container paddingBottom={3} spacing={2}>
-								<Grid item xs={1}>
-									<SmallProfile image={props.image} name={props.name}/>
-								</Grid>
-								<Grid item xs={10}>
-									<Typography color="textSecondary" fontSize="12px">
-										{props.time}
-									</Typography>
-									<Typography>{props.content}</Typography>
-								</Grid>
-								<Grid item xs={1}>
-									<Stack paddingLeft={2}>
-										<IconButton onClick={closeContent}>
-											<CloseIcon color='text.secondary'/>
-										</IconButton>
-										<MoreMenu/>
-									</Stack>
-								</Grid>
-							</Grid>
-
-							<Box>
-								<IconButton>
-									<ThumbUpAltRoundedIcon sx={{ fontSize: 30 }}/>
-								</IconButton>좋아요 수
-								<IconButton sx={{ marginLeft: "20px" }}>
-									<AddCommentRoundedIcon sx={{ fontSize: 30 }}></AddCommentRoundedIcon>
-								</IconButton>{comments.length}
-							</Box>
-							
-							<Divider/>
-							
-							<Grid container marginTop='15px'>
-								<Grid item xs={1}>
-									<SmallProfile image={props.userImg} name={props.userName}/>
-								</Grid>
-								{/* 댓글 작성 */}
-								<Grid item xs={11}>
-									<Stack direction='row' margin='10px' spacing={1}>
-										<TextField multiline size='small' margin='none' fullWidth/>
-										<Button type='submit' variant='contained'>입력</Button>
-									</Stack>
-								</Grid>
-							</Grid>
-
-							<Stack p={1}>
-							{
-								comments ? comments.map((c) => {
-									return (
-										<Comment
-											key={c.comment_idx}
-											name={c.name}
-											image={c.image}
-											content={c.content}
-										/>
-									);
-								}) : "댓글이 없습니다."
-							}
-							</Stack>
+							<FeedDetail
+								userName={props.userName}
+								userImg={props.userImg}
+								name={props.name}
+								content={props.content}
+								image={props.image}
+								comments={comments}
+								closeContent={closeContent}
+							/>
 						</DialogContent>
 					</Dialog>
 				</Stack>
@@ -210,5 +130,3 @@ export default function Feed(props) {
 		</Box>
 	);
 }
-
-

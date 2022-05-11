@@ -1,7 +1,8 @@
 import { styled } from '@mui/material/styles';
-import { Avatar, Divider, InputBase, Stack, Typography } from "@mui/material";
+import { Avatar, Divider, IconButton, InputBase, Stack, Tooltip, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import SearchIcon from '@mui/icons-material/Search';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import FeedLine from "../Feedline/FeedLine";
 
 const Search = styled('div')(({ theme }) => ({
@@ -30,6 +31,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+function FeedCreateButton() {
+	return (
+		<Tooltip title="피드 작성" placement='left'>
+			<IconButton color='primary' sx={{ marginRight: '10px' }} size='medium'>
+				<BorderColorIcon/>
+			</IconButton>
+		</Tooltip>
+	);
+}
+
 export default function Profile(props) {
 	
 	const userName = props.userName;
@@ -37,7 +48,7 @@ export default function Profile(props) {
 
 	return (
 		<>
-			<Stack p={2} alignItems='center' spacing={1}>
+			<Stack p={1} alignItems='center' spacing={1}>
 				<Avatar src={image} sx={{ width: 56, height: 56 }} />
 				<Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>{userName}</Typography>
 				<Typography variant='subtitle2'>재직분야</Typography>
@@ -45,11 +56,17 @@ export default function Profile(props) {
 				<Typography variant='subtitle2'>follower : 00 / follow : 00</Typography>
 			</Stack>
 			<Divider/>
-			<Search sx={{ marginBottom: '10px', margin: '8px auto' }}>
-				<SearchIconWrapper><SearchIcon /></SearchIconWrapper>
-				<StyledInputBase placeholder="피드 검색" />
-			</Search>
-			<Box sx={{ height: '600px', overflow: 'scroll' }}>
+			<Stack direction='row' sx={{ marginBottom: '10px', width: '800px', margin: '0 auto', padding: '10px' }}>
+				<Search>
+					<SearchIconWrapper><SearchIcon /></SearchIconWrapper>
+					<StyledInputBase placeholder="피드 검색" />
+				</Search>
+				<Box sx={{margin: '0 auto'}} />
+				{/* 본인 프로필일 경우만 글 작성 버튼 표시 */}
+				<FeedCreateButton/>
+			</Stack>
+			
+			<Box sx={{ height: '580px', overflow: 'auto' }}>
 				<FeedLine 
 					userName={userName} 
 					userImg={image} 
