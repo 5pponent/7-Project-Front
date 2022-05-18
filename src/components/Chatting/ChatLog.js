@@ -6,7 +6,7 @@ export default function ChatLog(props) {
 
 
   return (
-    <Stack container sx={{
+    <Stack sx={{
       height: '70vh', overflowY: 'auto', bgcolor: '#e7ebf0', 
       padding: '15px', wordBreak: 'break-all'
     }}>
@@ -19,7 +19,7 @@ export default function ChatLog(props) {
       <Chat direction='right' content="Hey man, What's up?" date="09:30" />
       <Chat direction='right' content="Hey man, What's up?" date="09:30" />
       <Chat direction='right' content="Hey man, What's up?" date="09:30" />
-      <Chat direction='right' content="Hey man, What's up?" date="09:30" />
+      <Chat direction='left' content="Hey man, What's up?" date="09:30" />
       <Chat direction='right' content="Hey man, What's up?" date="09:30" />
       <Chat direction='right' content="Hey man, What's up?" date="09:30" />
       <Chat direction='right' content="wlsaldasijgiosdhjgoilasjvenjrmhuvuyjnheusfkuvmjnhguesfjhmvklsdfmjhvulksimhfvimisee" date="09:30" />

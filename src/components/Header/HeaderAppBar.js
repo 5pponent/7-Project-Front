@@ -3,14 +3,16 @@ import InputBase from '@mui/material/InputBase';
 import { styled, alpha } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import Typography from '@mui/material/Typography';
-import * as React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import HeaderMenu from './HeaderMenu';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, Drawer, IconButton, Stack, Tooltip } from '@mui/material';
 import ButtonBase from '@mui/material/ButtonBase';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import EditIcon from '@mui/icons-material/Edit';
 import SmallProfile from '../SmallProfile';
-import LogoutIcon from '@mui/icons-material/Logout';
+import CreateFeed from '../Feedline/CreateFeed';
+import { useState } from 'react';
+import MuiSwitch from '../MUISwitch';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -18,9 +20,6 @@ const Search = styled('div')(({ theme }) => ({
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  [theme.breakpoints.up('sm')]: {
-    width: 'auto'
   },
 }));
 
@@ -39,7 +38,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(3)})`,
-		width: '100%'
   },
 }));
 
@@ -50,42 +48,64 @@ const Title = styled(Typography)(() => ({
 
 export default function Header(props) {
 
+	const [open, setOpen] = useState(false);
+	const getOpen = (stat) => { setOpen(stat); };
+	const handleClickDrawer = () => { setOpen(open ? false : true); };
 	const handleClickLogo = () => {	props.getMode("MAIN"); };
-	const handleClickLogout = () => { props.getLogin(false); props.getMode('MAIN') };
+	
 	const handleClickMyProfile = () => { 
 		props.getMode("PROFILE");
 		props.getUser([props.name, props.image]);
 	};
 
 	return(
-		<AppBar >  {/* 헤더 AppBar */}
-			<Toolbar disableGutters sx={{ bgcolor: '#2c92ff', color: 'white' }}>
-				<Box> {/* 검색 */}
-					<Search sx={{ minWidth: "210px", marginLeft: "20px" }}>
+		<AppBar>
+			<Toolbar sx={{ bgcolor: '#2c92ff', color: 'white' }}>
+				{/* 검색 */}
+				<Box sx={{ width: "300px", float: 'left'}}> 
+					<Search>
 						<SearchIconWrapper><SearchIcon /></SearchIconWrapper>
 						<StyledInputBase placeholder="프로필 검색" />
 					</Search>
 				</Box>
 
-				<ButtonBase onClick={handleClickLogo} sx={{width: "80%"}}> {/* 타이틀 */}
-					<Box>  
-						<MenuBookIcon sx={{ fontSize: 55 }}/>
-						<Title>모두의 일기장</Title>
-					</Box>
-				</ButtonBase>
+				{/* 타이틀 */}
+				<Stack onClick={handleClickLogo} alignItems='center' sx={{ cursor: 'pointer', width: '100%' }}>
+					<MenuBookIcon sx={{ fontSize: 55 }}/>
+					<Title>모두의 일기장</Title>
+				</Stack>
 
-				<Box sx={{ display: 'flex', width: "20%", justifyContent: "flex-end", marginRight: "15px" }}> {/* 우측 사용자 프로필, 더보기 메뉴 */}
-					<Tooltip title="로그아웃" placement="bottom" arrow>
-						<IconButton onClick={handleClickLogout}>
-							<LogoutIcon sx={{color: 'white'}} />
+				{/* 우측 메뉴 */}
+				<Box sx={{ display: 'flex', justifyContent: "flex-end", float: 'right', width: '300px' }}> {/* 우측 사용자 프로필, 더보기 메뉴 */}
+					
+					<MuiSwitch/>
+
+					<Tooltip title="피드 작성" placement="bottom" arrow>
+						<IconButton onClick={handleClickDrawer} sx={{marginRight: '5px'}}>
+							<EditIcon sx={{color: 'white'}}></EditIcon>
 						</IconButton>
 					</Tooltip>
+					
+					<Drawer
+            anchor='left'
+            open={open}
+            onClose={handleClickDrawer}
+          >
+            <CreateFeed 
+							name={props.name}
+							image={props.image}
+							getOpen={getOpen}
+						/>
+          </Drawer>
 					<Tooltip title="프로필" placement="bottom" arrow>
-						<ButtonBase onClick={handleClickMyProfile}>
-							<SmallProfile image={props.image} name={props.name}/>
+						<ButtonBase onClick={handleClickMyProfile} sx={{margin:'0 5px'}}>
+							<SmallProfile image={props.image}/>
 						</ButtonBase>
 					</Tooltip>
-					<HeaderMenu getMode={props.getMode}/>
+					<HeaderMenu 
+						getMode={props.getMode}
+						getLogin={props.getLogin}
+					/>
 				</Box>
 				
 			</Toolbar>

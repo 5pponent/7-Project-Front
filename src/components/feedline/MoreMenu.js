@@ -16,11 +16,11 @@ export default function MoreMenu(props) {
 			<Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}
 				anchorOrigin={{
 					vertical: 'bottom',
-					horizontal: 'right',
+					horizontal: 'left',
 				}}
 				transformOrigin={{
 					vertical: 'top',
-					horizontal: 'right',
+					horizontal: 'left',
 				}}
 			>
 				<MenuItem onClick={handleMenuClose}>저장하기</MenuItem>

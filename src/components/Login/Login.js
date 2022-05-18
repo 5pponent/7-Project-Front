@@ -22,10 +22,11 @@ export default function Login(props) {
 
   return (
     <>
-      <Stack sx={{ width: 300, position: 'fixed', transform:'translate(-50%, -50%)', left: '50%', top: '50%' }} 
+      <Stack sx={{ width: 300, position: 'absolute', transform:'translate(-50%, -50%)', 
+        left: '50%', top: '50%', borderRadius: '30px', padding: '60px', boxShadow: 6 }} 
         spacing={2} align='center'>
         <Grid align='center'>
-          <MenuBookIcon color='action' sx={{ fontSize: 130 }}/>
+          <MenuBookIcon color='primary' sx={{ fontSize: 100 }}/>
           <Typography variant='h4' color='primary' fontWeight='bold'>모두의 일기장</Typography>
         </Grid>
         <form>

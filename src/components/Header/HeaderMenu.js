@@ -9,6 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import CloseIcon from '@mui/icons-material/Close';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Tooltip from '@mui/material/Tooltip';
 
 const StyledMenu = styled((props) => (
@@ -52,28 +53,13 @@ const StyledMenu = styled((props) => (
 export default function CustomizedMenus(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const handleClick = (e) => {
-    setAnchorEl(e.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleClickChat = () => {
-    props.getMode("CHAT");
-    handleClose();
-  }
-  const handleClickSchedule = () => {
-    props.getMode("SCHEDULE");
-    handleClose();
-  }
-  const handleClickMessanger = () => {
-    props.getMode("MESSANGER");
-    handleClose();
-  }
-  const handleClickSetting = () => {
-    props.getMode("SETTING");
-    handleClose();
-  }
+  const handleClick = (e) => { setAnchorEl(e.currentTarget); };
+  const handleClose = () => { setAnchorEl(null); };
+  const handleClickChat = () => { props.getMode("CHAT"); };
+  const handleClickSchedule = () => { props.getMode("SCHEDULE"); };
+  const handleClickMessanger = () => { props.getMode("MESSANGER"); };
+  const handleClickSetting = () => { props.getMode("SETTING"); };
+  const handleClickLogout = () => { props.getLogin(false); props.getMode('MAIN') };
 
   return (
     <>
@@ -118,7 +104,13 @@ export default function CustomizedMenus(props) {
           <MenuItem onClick={handleClickSetting} disableRipple>
             <SettingsIcon />
           </MenuItem>
-        </Tooltip>  
+        </Tooltip>
+
+        <Tooltip title="로그아웃" placement="left" arrow>
+          <MenuItem onClick={handleClickLogout}>
+            <LogoutIcon />
+          </MenuItem>
+        </Tooltip>
 
         <Tooltip title="메뉴 닫기" placement="left" arrow>
           <MenuItem onClick={handleClose} disableRipple>

@@ -70,7 +70,8 @@ export default function App() {
 
   if ( login ){
     return (
-      <>
+      <Box
+      >
         <Toolbar id="back-to-top-anchor" />
 
         <HeaderAppBar 
@@ -86,7 +87,7 @@ export default function App() {
         </Box>
 
         <ScrollTop><Fab size="large" color='primary'><KeyboardArrowUpIcon/></Fab></ScrollTop>
-      </>
+      </Box>
     );
   }
   else {

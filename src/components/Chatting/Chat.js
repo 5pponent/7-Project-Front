@@ -1,4 +1,4 @@
-import { Grid, ListItemText, Paper } from "@mui/material";
+import { Box, Grid, ListItemText } from "@mui/material";
 
 
 export default function Chat(props) {
@@ -6,10 +6,11 @@ export default function Chat(props) {
 
   return (
     <Grid item xs={12} align={props.direction}>
-      <Paper variant="outlined"
+      <Box
+        bgcolor={props.direction === 'left' ? '#b9e7f6' : 'white'}
         sx={{ 
-          maxWidth:'350px', padding: '15px', margin: '10px', 
-          display: 'inline-block', overflowY: 'visible'
+          maxWidth:'350px', padding: '15px', margin: '10px',
+          display: 'inline-block', overflowY: 'visible', borderRadius: '25px'
       }}>
         <ListItemText 
           align='left'
@@ -17,10 +18,9 @@ export default function Chat(props) {
         />
         <ListItemText 
           align={props.direction === 'left' ? 'right' : 'left'}
-          secondary={props.date} 
+          secondary={props.date}
         />
-      </Paper>
-      
+      </Box>
     </Grid>
   );
 }
