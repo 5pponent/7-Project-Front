@@ -61,9 +61,6 @@ export default function Profile(props) {
 					<SearchIconWrapper><SearchIcon /></SearchIconWrapper>
 					<StyledInputBase placeholder="피드 검색" />
 				</Search>
-				<Box sx={{margin: '0 auto'}} />
-				{/* 본인 프로필일 경우만 글 작성 버튼 표시 */}
-				<FeedCreateButton/>
 			</Stack>
 			
 			<Box sx={{ height: '580px', overflow: 'auto' }}>

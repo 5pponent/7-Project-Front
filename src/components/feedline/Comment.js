@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@mui/material";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import SmallProfile from "../SmallProfile";
 
 
@@ -12,7 +12,9 @@ export default function Comment(props) {
 			</Grid>
 
 			<Grid item xs={10}>
-				<Typography sx={{fontSize: '14px'}}>{props.content}</Typography>
+				<Box sx={{bgcolor: '#e7ebf0', borderRadius: '20px', padding: '15px'}}>
+					<Typography sx={{fontSize: '14px'}}>{props.content}</Typography>
+				</Box>
 			</Grid>
 
 		</Grid>

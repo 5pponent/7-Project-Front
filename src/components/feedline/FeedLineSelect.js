@@ -1,61 +1,15 @@
-import { AppBar, Box, IconButton, styled, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
-import { useState } from 'react';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
+import { Divider, Stack } from '@mui/material';
 import FeedLine from './FeedLine';
-
-const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-  '& .MuiToggleButtonGroup-grouped': {
-    border: 0,
-    '&.Mui-disabled': {
-      border: 0,
-    },
-    '&:not(:first-of-type)': {
-      borderRadius: theme.shape.borderRadius,
-    },
-    '&:first-of-type': {
-      borderRadius: theme.shape.borderRadius,
-    },
-  },
-}));
-const StyledToggleButton = styled(ToggleButton)(({theme}) => ({
-  "&.Mui-selected, &.Mui-selected:hover": {
-    fontWeight: 'bold',
-    color: 'gray',
-    backgroundColor: 'white',
-  }
-}));
 
 export default function FeedLineSelect(props) {
 
-  const [line, setLine] = useState("1");
-  const handleLineChange = (e, selected) => {
-    if(selected !== null) { setLine(selected); }
-  };
 
   return (
-    <>
-      <AppBar sx={{marginTop: '85px', boxShadow: 0, bgcolor: 'white'}}>
-        <Box sx={{width: 780, margin: '0 auto', bgcolor: '#e7ebf0', padding: '10px'}}>
-          <StyledToggleButtonGroup
-            color="standard"
-            exclusive
-            value={line}
-            onChange={handleLineChange}
-          >
-            <StyledToggleButton value="1">feedline1</StyledToggleButton>
-            <StyledToggleButton value="2">feedline2</StyledToggleButton>
-            <StyledToggleButton value="new" sx={{width: '50px'}}>+</StyledToggleButton>
-          </StyledToggleButtonGroup>
-          <Tooltip title="피드 작성" placement='left'>
-            <IconButton color='primary' sx={{float: 'right'}}>
-              <BorderColorIcon fontSize='medium'/>
-            </IconButton>
-          </Tooltip>
-          
-        </Box>
-      </AppBar>
-      
-      <Box sx={{paddingTop: '55px'}} />
+    <Stack>
+      <Stack spacing={1} width='800px' height='40px' bgcolor='#e7ebf0' margin='0 auto'
+        direction='row' divider={<Divider orientation='vertical' flexItem />}>
+        
+      </Stack>
 
       <FeedLine
         userName={props.userName} 
@@ -63,6 +17,6 @@ export default function FeedLineSelect(props) {
         getMode={props.getMode}
         getUser={props.getUser}
       />
-    </>
+    </Stack>
   );
 }

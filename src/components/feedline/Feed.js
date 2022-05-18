@@ -11,16 +11,11 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
-import { Typography } from '@mui/material';
+import { Divider, Typography } from '@mui/material';
 import Dialog from'@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
-
-const Item = styled(Paper) (({ theme }) => ({
-	padding: theme.spacing(2),
-	margin: theme.spacing(2),
-}));
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -58,75 +53,73 @@ export default function Feed(props) {
 	}
 
 	return (
-		<Box sx={{ overflow: 'hidden' }}>
-			<Paper style={{margin: 10}}>
-				<Stack>
-					<Grid container>
-						<Grid item xs={11} sx={{cursor: 'pointer'}}
-							onClick={openContent}> {/* 컨텐츠 */}
-							<Item elevation={0}>
-								<Content>{props.content}</Content>
-							</Item>
-						</Grid>
-						<Grid item xs={1} p={2}> {/* 더보기 버튼 */}
-							<MoreMenu/>
-						</Grid>
+		<>
+			<Paper sx={{ margin: '14px' }}>
+				<Grid container>
+					<Grid item xs={11} sx={{cursor: 'pointer'}}
+						onClick={openContent}> {/* 컨텐츠 */}
+						<Box p={4}>
+							<Content>{props.content}</Content>
+						</Box>
 					</Grid>
-
-					<Grid container>
-						<Grid item xs={9}> {/* 좋아요, 댓글 */}
-							<Item elevation={0}>
-								<IconButton>
-									<ThumbUpAltRoundedIcon sx={{ fontSize: 30 }}/>
-								</IconButton>
-								<IconButton>
-									<AddCommentRoundedIcon sx={{ fontSize: 30 }}/>
-								</IconButton>
-							</Item>
-						</Grid>
-						<Grid item xs={3}> {/* 프로필 */}
-							<Item elevation={0}>
-								<Grid container spacing={2} sx={{cursor: 'pointer'}} 
-									onClick={handleClickProfile}>
-									<Grid item>
-										<Avatar alt="profile image" src={props.image}/>
-									</Grid>
-									<Grid item>
-										<Typography>{props.name}</Typography>
-										<Typography variant="body2" color="textSecondary">
-											{props.time}</Typography>
-									</Grid>
+					<Grid item xs={1} p={2}> {/* 더보기 버튼 */}
+						<MoreMenu/>
+					</Grid>
+				</Grid>
+				<Divider/>
+				<Grid container p={2}>
+					<Grid item xs={9}> {/* 좋아요, 댓글 */}
+						<Box>
+							<IconButton>
+								<ThumbUpAltRoundedIcon sx={{ fontSize: 30 }}/>
+							</IconButton>
+							<IconButton>
+								<AddCommentRoundedIcon sx={{ fontSize: 30 }}/>
+							</IconButton>
+						</Box>
+					</Grid>
+					<Grid item xs={3}> {/* 프로필 */}
+						<Box>
+							<Grid container spacing={2} sx={{cursor: 'pointer'}} 
+								onClick={handleClickProfile}>
+								<Grid item>
+									<Avatar alt="profile image" src={props.image}/>
 								</Grid>
-								<Menu anchorEl={anchor} open={Boolean(anchor)} onClose={handleCloseProfile}
-									anchorOrigin={{
-										vertical: 'bottom',
-										horizontal: 'center',
-									}}
-								>
-									<MenuItem onClick={handleClickProfileView}>프로필</MenuItem>
-									<MenuItem>팔로우</MenuItem>
-									<MenuItem>차단</MenuItem>
-								</Menu>
-							</Item>
-						</Grid>
+								<Grid item>
+									<Typography>{props.name}</Typography>
+									<Typography variant="body2" color="textSecondary">{props.time}</Typography>
+								</Grid>
+							</Grid>
+							<Menu anchorEl={anchor} open={Boolean(anchor)} onClose={handleCloseProfile}
+								anchorOrigin={{
+									vertical: 'bottom',
+									horizontal: 'center',
+								}}
+							>
+								<MenuItem onClick={handleClickProfileView}>프로필</MenuItem>
+								<MenuItem>팔로우</MenuItem>
+								<MenuItem>차단</MenuItem>
+							</Menu>
+						</Box>
 					</Grid>
-
-					{/* 컨텐츠 상세보기 다이얼로그 */}
-					<Dialog open={open} onClose={closeContent} fullWidth={true} maxWidth='md'>
-						<DialogContent>
-							<FeedDetail
-								userName={props.userName}
-								userImg={props.userImg}
-								name={props.name}
-								content={props.content}
-								image={props.image}
-								comments={comments}
-								closeContent={closeContent}
-							/>
-						</DialogContent>
-					</Dialog>
-				</Stack>
+				</Grid>
 			</Paper>
-		</Box>
+
+			{/* 컨텐츠 상세보기 다이얼로그 */}
+			<Dialog open={open} onClose={closeContent} fullWidth={true} maxWidth='md'>
+				<DialogContent>
+					<FeedDetail
+						userName={props.userName}
+						userImg={props.userImg}
+						name={props.name}
+						content={props.content}
+						image={props.image}
+						time={props.time}
+						comments={comments}
+						closeContent={closeContent}
+					/>
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 }
