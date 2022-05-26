@@ -10,7 +10,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import EditIcon from '@mui/icons-material/Edit';
 import SmallProfile from '../SmallProfile';
-import CreateFeed from '../Feedline/CreateFeed';
+import CreateFeed from '../feedline/CreateFeed';
 import { useState } from 'react';
 import MuiSwitch from '../MUISwitch';
 
@@ -49,6 +49,8 @@ const Title = styled(Typography)(() => ({
 export default function Header(props) {
 
 	const [open, setOpen] = useState(false);
+	const [feedContent, setFeedContent] = useState('');
+	const getContent = (c) => { setFeedContent(c); };
 	const getOpen = (stat) => { setOpen(stat); };
 	const handleClickDrawer = () => { setOpen(open ? false : true); };
 	const handleClickLogo = () => {	props.getMode("MAIN"); };
@@ -95,6 +97,8 @@ export default function Header(props) {
 							name={props.name}
 							image={props.image}
 							getOpen={getOpen}
+							getContent={getContent}
+							feedContent={feedContent}
 						/>
           </Drawer>
 					<Tooltip title="프로필" placement="bottom" arrow>

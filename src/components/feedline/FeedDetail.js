@@ -47,7 +47,7 @@ export default function FeedDetail(props) {
 				{/* 댓글 작성 */}
 				<Grid item xs={11}>
 					<Stack direction='row' margin='10px' spacing={1}>
-						<TextField multiline size='small' margin='none' fullWidth/>
+						<TextField multiline size='small' fullWidth/>
 						<Button type='submit' variant='contained'>입력</Button>
 					</Stack>
 				</Grid>
