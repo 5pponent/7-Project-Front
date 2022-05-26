@@ -3,7 +3,7 @@ import { Avatar, Divider, IconButton, InputBase, Stack, Tooltip, Typography } fr
 import { Box } from "@mui/system";
 import SearchIcon from '@mui/icons-material/Search';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import FeedLine from "../Feedline/FeedLine";
+import FeedLine from "../feedline/FeedLine";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',

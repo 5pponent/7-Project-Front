@@ -1,16 +1,16 @@
-import FeedLineSelect from './components/Feedline/FeedLineSelect'
+import FeedLineSelect from './components/feedline/FeedLineSelect'
 import Toolbar from '@mui/material/Toolbar';
 import ScrollTop from './components/ScrollTop';
-import HeaderAppBar from './components/Header/HeaderAppBar';
+import HeaderAppBar from './components/header/HeaderAppBar';
 import Fab from '@mui/material/Fab';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useState } from 'react';
-import Login from './components/Login/Login';
-import Profile from './components/Profile/Profile';
+import Login from './components/login/Login';
+import Profile from './components/profile/Profile';
 import { Box } from '@mui/material';
-import Setting from './components/SettingPage/Setting';
-import ChatApp from './components/Chatting/ChatApp';
-import ScheduleApp from './components/Schedule/ScheduleApp';
+import Setting from './components/settingpage/Setting';
+import ChatApp from './components/chatting/ChatApp';
+import ScheduleApp from './components/schedule/ScheduleApp';
 
 export default function App() {
   const name = "사용자명";
@@ -70,8 +70,7 @@ export default function App() {
 
   if ( login ){
     return (
-      <Box
-      >
+      <Box>
         <Toolbar id="back-to-top-anchor" />
 
         <HeaderAppBar 
