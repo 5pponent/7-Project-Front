@@ -11,6 +11,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import Tooltip from '@mui/material/Tooltip';
+import axios from 'axios';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -59,7 +60,14 @@ export default function CustomizedMenus(props) {
   const handleClickSchedule = () => { props.getMode("SCHEDULE"); };
   const handleClickMessanger = () => { props.getMode("MESSANGER"); };
   const handleClickSetting = () => { props.getMode("SETTING"); };
-  const handleClickLogout = () => { props.getLogin(false); props.getMode('MAIN') };
+  const handleClickLogout = () => { 
+    props.toggleLoading(true);
+    axios.get("./logout")
+    .then().catch(err => console.log(err));
+    props.getLogin(false); 
+    props.getMode('MAIN');
+    props.toggleLoading(false);
+  };
 
   return (
     <>

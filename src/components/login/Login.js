@@ -18,19 +18,26 @@ export default function Login(props) {
   const handleClickOpen = () => { setOpen(true); }
   const handleClickClose = () => { setOpen(false); }
   const handleClickLogin = (e) => {
+    props.toggleLoading(true);
     e.preventDefault();
     axios.post("./login", loginInfo)
     .then((response) => {
       // 검증 결과 받아서 출력
       var result = response.data;
+      console.log(result);
       if (result.hasOwnProperty("errors")) {
         var errors = result.errors;
         errors.hasOwnProperty("id") ? setIdErrorMessage(errors.id) : setIdErrorMessage(null);
         errors.hasOwnProperty("password") ? setPwErrorMessage(errors.password) : setPwErrorMessage(null);
         errors.hasOwnProperty("global") ? setErrorMessage(errors.global) : setErrorMessage(null);
+        props.toggleLoading(false);
         return;
       }
       // 로그인 성공 로직
+      props.setName(result.name);
+      props.setEmail(result.email);
+      props.setId(result.id);
+      props.toggleLoading(false);
       setErrorMessage(null);
       props.getLogin(true);
     })
@@ -71,7 +78,13 @@ export default function Login(props) {
       </Stack>
       <Dialog open={open} onClose={handleClickClose} maxWidth='xs' fullWidth={true}>
         <DialogContent>
-          <Register getLogin={props.getLogin}></Register>
+          <Register 
+            getLogin={props.getLogin} 
+            toggleLoading={props.toggleLoading}
+            setName={props.setName}
+            setEmail={props.setEmail}
+            setId={props.setId}
+          />
         </DialogContent>
       </Dialog>
     </>
