@@ -68,7 +68,7 @@ export default function Feed(props) {
 				</Grid>
 				<Divider/>
 				<Grid container p={2}>
-					<Grid item xs={9}> {/* 좋아요, 댓글 */}
+					<Grid item xs={10}> {/* 좋아요, 댓글 */}
 						<Box>
 							<IconButton>
 								<ThumbUpAltRoundedIcon sx={{ fontSize: 30 }}/>
@@ -78,9 +78,9 @@ export default function Feed(props) {
 							</IconButton>
 						</Box>
 					</Grid>
-					<Grid item xs={3}> {/* 프로필 */}
+					<Grid item xs={2}> {/* 프로필 */}
 						<Box>
-							<Grid container spacing={2} sx={{cursor: 'pointer'}} 
+							<Grid container spacing={1} sx={{cursor: 'pointer'}} 
 								onClick={handleClickProfile}>
 								<Grid item>
 									<Avatar alt="profile image" src={props.image}/>

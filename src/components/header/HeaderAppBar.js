@@ -109,6 +109,7 @@ export default function Header(props) {
 					<HeaderMenu 
 						getMode={props.getMode}
 						getLogin={props.getLogin}
+						toggleLoading={props.toggleLoading}
 					/>
 				</Box>
 				
