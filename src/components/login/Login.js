@@ -24,24 +24,22 @@ export default function Login(props) {
     .then((response) => {
       // 검증 결과 받아서 출력
       var result = response.data;
-      console.log(result);
-      if (result.hasOwnProperty("errors")) {
-        var errors = result.errors;
-        errors.hasOwnProperty("id") ? setIdErrorMessage(errors.id) : setIdErrorMessage(null);
-        errors.hasOwnProperty("password") ? setPwErrorMessage(errors.password) : setPwErrorMessage(null);
-        errors.hasOwnProperty("global") ? setErrorMessage(errors.global) : setErrorMessage(null);
-        props.toggleLoading(false);
-        return;
-      }
-      // 로그인 성공 로직
+      console.log(response);
       props.setName(result.name);
       props.setEmail(result.email);
       props.setId(result.id);
-      props.toggleLoading(false);
       setErrorMessage(null);
+      props.toggleLoading(false);
       props.getLogin(true);
     })
-    .catch(err => console.log(err));
+    .catch((err) => {
+      var errors = err.response.data.errors;
+      console.log(errors);
+      errors.hasOwnProperty("id") ? setIdErrorMessage(errors.id) : setIdErrorMessage(null);
+      errors.hasOwnProperty("password") ? setPwErrorMessage(errors.password) : setPwErrorMessage(null);
+      errors.hasOwnProperty("global") ? setErrorMessage(errors.global) : setErrorMessage(null);
+      props.toggleLoading(false);
+    });
   }
   const handleValueChange = (e) => {
     const {name, value} = e.target;

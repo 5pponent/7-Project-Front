@@ -30,24 +30,11 @@ export default function Register(props) {
 		e.preventDefault();
 		axios.post("./join", registInfo)
 		.then((response) => {
-			// 검증 결과 받아서 출력
+			props.toggleLoading(true);
 			var result = response.data;
 			console.log(result);
-			if (result.hasOwnProperty("errors")) {
-				var errors = result.errors;
-				errors.hasOwnProperty("id") ? setIdErrorMessage(errors.id) : setIdErrorMessage(null);
-				errors.hasOwnProperty("password") ? setPwErrorMessage(errors.password) : setPwErrorMessage(null);
-				errors.hasOwnProperty("passwordCheck") ? setPwchkErrorMessage(errors.passwordCheck) : setPwchkErrorMessage(null);
-				errors.hasOwnProperty("name") ? setNameErrorMessage(errors.name) : setNameErrorMessage(null);
-				errors.hasOwnProperty("email") ? setEmailErrorMessage(errors.email) : setEmailErrorMessage(null);
-				props.toggleLoading(false);
-				return;
-			}
-			// 회원가입 검증 후 세션 획득을 위해 로그인 요청
 			axios.post("./login", {"id": result.id, "password": result.password})
 			.then((response) => {
-				// 회원가입 성공 로직
-				props.toggleLoading(true);
 				result = response.data;
 				props.setName(result.name);
 				props.setEmail(result.email);
@@ -57,7 +44,16 @@ export default function Register(props) {
 			})
 			.catch(err => console.log(err));
 		})
-		.catch(err => console.log(err));
+		.catch((err) => {
+			var errors = err.response.data.errors;
+			console.log(errors);
+			errors.hasOwnProperty("id") ? setIdErrorMessage(errors.id) : setIdErrorMessage(null);
+			errors.hasOwnProperty("password") ? setPwErrorMessage(errors.password) : setPwErrorMessage(null);
+			errors.hasOwnProperty("passwordCheck") ? setPwchkErrorMessage(errors.passwordCheck) : setPwchkErrorMessage(null);
+			errors.hasOwnProperty("name") ? setNameErrorMessage(errors.name) : setNameErrorMessage(null);
+			errors.hasOwnProperty("email") ? setEmailErrorMessage(errors.email) : setEmailErrorMessage(null);
+			props.toggleLoading(false);
+		});
 	};
 
   return(
