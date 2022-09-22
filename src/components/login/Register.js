@@ -7,17 +7,26 @@ import axios from 'axios';
 export default function Register(props) {
 
 	const [registInfo, setRegistInfo] = useState({
-		id: null,
-		password: null,
-		passwordCheck: null,
-		name: null,
-		email: null
+		uid: "",
+		password: "",
+		passwordCheck: "",
+		name: "",
+		email: ""
 	});
 	const [idErrorMessage, setIdErrorMessage] = useState(null);
 	const [pwErrorMessage, setPwErrorMessage] = useState(null);
 	const [pwchkErrorMessage, setPwchkErrorMessage] = useState(null);
 	const [nameErrorMessage, setNameErrorMessage] = useState(null);
 	const [emailErrorMessage, setEmailErrorMessage] = useState(null);
+
+	const clearErrorMessage = () => {
+		setIdErrorMessage(null);
+		setPwErrorMessage(null);
+		setPwchkErrorMessage(null);
+		setNameErrorMessage(null);
+		setEmailErrorMessage(null);
+	}
+
 	const handleValueChange = (e) => {
     const {name, value} = e.target;
     setRegistInfo({
@@ -25,35 +34,34 @@ export default function Register(props) {
       [name]: value
     });
   }
+
 	const handleClickRegist = (e) => {
-		props.toggleLoading(true);
 		e.preventDefault();
-		axios.post("./join", registInfo)
+		clearErrorMessage();
+		props.toggleLoading(true);
+
+		axios.post("/auth/join", registInfo)
 		.then((response) => {
-			props.toggleLoading(true);
-			var result = response.data;
-			console.log(result);
-			axios.post("./login", {"id": result.id, "password": result.password})
-			.then((response) => {
-				result = response.data;
-				props.setName(result.name);
-				props.setEmail(result.email);
-				props.setId(result.id);
-				props.toggleLoading(false);
-				props.getLogin(true);
-			})
-			.catch(err => console.log(err));
+			console.log(response.data);
+			props.setLogin(true)
 		})
 		.catch((err) => {
-			var errors = err.response.data.errors;
-			console.log(errors);
-			errors.hasOwnProperty("id") ? setIdErrorMessage(errors.id) : setIdErrorMessage(null);
-			errors.hasOwnProperty("password") ? setPwErrorMessage(errors.password) : setPwErrorMessage(null);
-			errors.hasOwnProperty("passwordCheck") ? setPwchkErrorMessage(errors.passwordCheck) : setPwchkErrorMessage(null);
-			errors.hasOwnProperty("name") ? setNameErrorMessage(errors.name) : setNameErrorMessage(null);
-			errors.hasOwnProperty("email") ? setEmailErrorMessage(errors.email) : setEmailErrorMessage(null);
-			props.toggleLoading(false);
-		});
+			var error = err.response.data;
+			console.log(error);
+			if (Array.isArray(error)) {
+				for (const err of error) {
+					if (err.cause === "uid") setIdErrorMessage(err.message)
+					else if (err.cause === "password") setPwErrorMessage(err.message)
+					else if (err.cause === "passwordCheck") setPwchkErrorMessage(err.message)
+					else if (err.cause === "name") setNameErrorMessage(err.message)
+					else if (err.cause === "email") setEmailErrorMessage(err.message)
+				}
+			} else {
+				if (error.message === "비밀번호가 일치하지 않습니다.") setPwchkErrorMessage(error.message)
+				else setIdErrorMessage(error.message)
+			}
+		})
+		.finally(() => { props.toggleLoading(false); })
 	};
 
   return(
@@ -65,7 +73,7 @@ export default function Register(props) {
 
 			<Box component="form">
 				<Stack spacing={1}>
-					<TextField fullWidth label='ID' onChange={handleValueChange} name="id"
+					<TextField fullWidth label='ID' onChange={handleValueChange} name="uid"
 						error={idErrorMessage ? true : false} helperText={idErrorMessage} />
 
 					<TextField fullWidth label='PW' type='password' onChange={handleValueChange} name="password"

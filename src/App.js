@@ -4,7 +4,7 @@ import ScrollTop from './components/ScrollTop';
 import HeaderAppBar from './components/header/HeaderAppBar';
 import Fab from '@mui/material/Fab';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import Login from './components/login/Login';
 import Profile from './components/profile/Profile';
 import { Box } from '@mui/material';
@@ -12,21 +12,43 @@ import Setting from './components/settingpage/Setting';
 import ChatApp from './components/chatting/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
 import LoadingProcess from './components/LoadingProcess';
+import axios from 'axios';
 
 export default function App() {
+
+  useEffect(() => {
+    axios.get("/user")
+      .then((response) => {
+        setLogin(true);
+        console.log(response.data);
+        setUserInfo(response.data);
+      })
+      .catch((error) => {
+        setLogin(false);
+        console.log(error.response.data);
+      })
+  }, []);
+
   // 로그인한 유저 정보
-  const [name, setName] = useState("사용자명");
-  const [image, setImage] = useState("https://placeimg.com/100/100/people/00");
-  const [email, setEmail] = useState("ahdwjdtprtm@gmail.com");
-  const [id, setId] = useState("ahdwjdtprtm");
-  const [job, setJob] = useState("직업");
+  const [userInfo, setUserInfo] = useState({
+    id: null,
+    name: "",
+    email: "",
+    followerCount: "",
+    followingCount: "",
+    occupation: "",
+    interests: [],
+    image: null
+  });
 
   // 어플리케이션 관련 정보
   const [loading, setLoading] = useState(false);
-  const [login, setLogin] = useState(false);
+  const [login, setLogin] = useState(null);
   const [mode, setMode] = useState('MAIN');
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
+
+  // 보여질 페이지
   let content = null;
 
   // 하위 컴포넌트로부터 변경된 state를 얻기 위한 메소드
@@ -36,27 +58,27 @@ export default function App() {
   const getUser = (usr) => { setUser(usr); console.log(usr); };
   const getDarkMode = (dm) => { setDarkMode(dm); console.log(dm); };
 
-  if ( mode === 'MAIN' ){ 
+  if ( mode === 'MAIN' ) { 
     content = <FeedLineSelect 
-      userName={name} 
-      userImg={image} 
+      userName={userInfo.name} 
+      userImg={userInfo.image} 
       getMode={getMode}
       getUser={getUser}
     />
   }
   else if ( mode === 'PROFILE' ) {
     content = <Profile 
-      userName={user[0]}
-      userImg={user[1]}
-      userEmail={user[2]}
+      userName={userInfo.name}
+      userImg={userInfo.image}
+      userEmail={userInfo.email}
       getMode={getMode}
       getUser={getUser}
     />
   }
   else if ( mode === 'CHAT' ) {
     content = <ChatApp
-      userName={name}
-      userImg={image}
+      userName={userInfo.name}
+      userImg={userInfo.image}
       getMode={getMode}
     />
   }
@@ -67,9 +89,8 @@ export default function App() {
   }
   else if ( mode === 'SETTING' ) {
     content = <Setting
-      name={name}
-      id={id}
-      email={email}
+      name={userInfo.name}
+      email={userInfo.email}
       getDarkMode={getDarkMode}
     />
   }
@@ -81,8 +102,8 @@ export default function App() {
         <Toolbar id="back-to-top-anchor" />
 
         <HeaderAppBar 
-          name={name}
-          image={image}
+          name={userInfo.name}
+          image={userInfo.image}
           getMode={getMode}
           getLogin={getLogin}
           getUser={getUser}
@@ -104,9 +125,6 @@ export default function App() {
         <Login 
           getLogin={getLogin} 
           toggleLoading={toggleLoading} 
-          setName={setName}
-          setEmail={setEmail}
-          setId={setId}
         />
         <LoadingProcess open={loading} />
       </>

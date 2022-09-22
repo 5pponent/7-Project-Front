@@ -52,6 +52,7 @@ const StyledMenu = styled((props) => (
 }));
 
 export default function CustomizedMenus(props) {
+  
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (e) => { setAnchorEl(e.currentTarget); };
@@ -60,13 +61,16 @@ export default function CustomizedMenus(props) {
   const handleClickSchedule = () => { props.getMode("SCHEDULE"); };
   const handleClickMessanger = () => { props.getMode("MESSANGER"); };
   const handleClickSetting = () => { props.getMode("SETTING"); };
+
   const handleClickLogout = () => { 
     props.toggleLoading(true);
-    axios.get("./logout")
-    .then().catch(err => console.log(err));
-    props.getLogin(false); 
-    props.getMode('MAIN');
-    props.toggleLoading(false);
+    axios.get("/auth/logout")
+      .then((response) => {
+        props.getLogin(false); 
+        props.getMode('MAIN');
+      })
+      .catch(err => console.log(err))
+      .finally(() => { props.toggleLoading(false); });
   };
 
   return (
