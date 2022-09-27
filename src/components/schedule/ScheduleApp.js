@@ -54,7 +54,6 @@ import { Button, DialogContent } from '@mui/material';
 import { Dialog } from '@material-ui/core';
 import ScheduleAdd from './ScheduleAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Checkbox from '@mui/material/Checkbox';
 
 
 
@@ -84,10 +83,6 @@ export default function ScheduleApp(props) {
     }
 
 
-    const events=[];
-
-    const [newEvent, setNewEvent] = useState({ title: "", start: "", end: "" });
-
 
     return(
 
@@ -102,10 +97,8 @@ export default function ScheduleApp(props) {
                 <TableCell >시간</TableCell>
                 <TableCell >날짜</TableCell>
                 <TableCell align='center'>메모</TableCell>
-                <TableCell>
-                  <DeleteIcon value={newEvent.title} onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}/>
-                    
-                </TableCell>
+                <TableCell/>
+    
               </TableRow>
             </TableHead>
             <TableBody>
@@ -118,12 +111,7 @@ export default function ScheduleApp(props) {
                 <TableCell >{row.time}</TableCell>
                 <TableCell >{row.date}</TableCell>
                 <TableCell >{row.memo}</TableCell>
-                <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          
-                        />
-                      </TableCell>
+                <TableCell ><DeleteIcon/></TableCell>
                 </TableRow>
             ))}
             </TableBody>
