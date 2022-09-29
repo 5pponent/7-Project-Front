@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    S3_BUCKET: "arn:aws:s3:::di4ry.com"
+    S3_BUCKET: "di4ry.com"
 
 phases:
   install:
@@ -21,7 +21,7 @@ phases:
       - echo Build completed on `date`
       - echo Delete all resources in this bucket
       - aws s3 rm s3://${S3_BUCKET} --recursive
-      - aws s3 sync ./build s3://hson-web-test.hist.co.kr
+      - aws s3 sync ./build s3://${S3_BUCKET}
 cache:
   paths:
     - '/root/.npm/**/*'
