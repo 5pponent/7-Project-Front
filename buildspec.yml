@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    S3_BUCKET: "S3_BUCKET_NAME"
+    S3_BUCKET: "arn:aws:s3:::di4ry.com"
 
 phases:
   install:
