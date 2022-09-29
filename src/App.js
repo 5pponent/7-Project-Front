@@ -12,6 +12,7 @@ import Setting from './components/settingpage/Setting';
 import ChatApp from './components/chatting/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
 import LoadingProcess from './components/LoadingProcess';
+import FriendApp from './components/friend/FriendApp';
 
 export default function App() {
   // 로그인한 유저 정보
@@ -62,6 +63,11 @@ export default function App() {
   }
   else if ( mode === 'SCHEDULE' ) {
     content = <ScheduleApp
+
+    />
+  }
+  else if ( mode === 'FRIEND' ) {
+    content = <FriendApp
 
     />
   }
