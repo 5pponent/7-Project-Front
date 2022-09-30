@@ -74,11 +74,12 @@ export default function Login(props) {
         <Dialog open={open} onClose={handleClickClose} maxWidth='xs' fullWidth={true}>
           <DialogContent>
             <Register
-                getLogin={props.getLogin}
-                toggleLoading={props.toggleLoading}
-                setName={props.setName}
-                setEmail={props.setEmail}
-                setId={props.setId}
+              handleClickClose={handleClickClose}
+              getLogin={props.getLogin}
+              toggleLoading={props.toggleLoading}
+              setName={props.setName}
+              setEmail={props.setEmail}
+              setId={props.setId}
             />
           </DialogContent>
         </Dialog>

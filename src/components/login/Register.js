@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material';
-import {authApi} from "../../server/auth";
+import axios from "axios";
 
 export default function Register(props) {
 	const [mode, setMode] = useState('AUTH');
 	const [auth, setAuth] = useState(false);
 	const [authInfo, setAuthInfo] = useState({code: null, email: null})
 	const [registInfo, setRegistInfo] = useState({
-		uid: null,
+		email: null,
+		name: null,
 		password: null,
 		passwordCheck: null,
-		name: null
+		uid: null
 	});
 	const [idErrorMessage, setIdErrorMessage] = useState('');
 	const [pwErrorMessage, setPwErrorMessage] = useState('');
@@ -42,6 +43,26 @@ export default function Register(props) {
 		} else setCodeErrorMessage('');
 		return valid;
 	};
+	const registValidate = () => {
+		let valid = true;
+		if (!registInfo.uid) {
+			setIdErrorMessage('아이디를 입력해 주세요.');
+			valid = false;
+		} else setIdErrorMessage('');
+		if (!registInfo.password) {
+			setPwErrorMessage('비밀번호를 입력해 주세요.');
+			valid = false;
+		} else setPwErrorMessage('');
+		if (registInfo.password !== registInfo.passwordCheck) {
+			setPwchkErrorMessage('비밀번호가 일치하지 않습니다.');
+			valid = false;
+		} else setPwchkErrorMessage('');
+		if (!registInfo.name) {
+			setNameErrorMessage('이름을 입력해 주세요.');
+			valid = false;
+		} else setNameErrorMessage('');
+		return valid;
+	};
 
 	const handleValueChange = (e) => {
 		const {name, value} = e.target;
@@ -57,20 +78,26 @@ export default function Register(props) {
 			[name]: value
 		});
 	};
-	const handleClickCodeCheck = (e) => {
+	const handleClickCodeCheck = async (e) => {
 		e.preventDefault();
 		authValidate() &&
-		authApi.checkEmailAuthMail(authInfo)
+		await axios.post(`/auth/mail-auth-check`, authInfo)
 			.then(res => setMode('REGIST'))
 			.catch(error => setCodeErrorMessage('인증 코드가 일치하지 않습니다.'))
 	};
-	const handleSendMail = (e) => {
+	const handleSendMail = async (e) => {
 		e.preventDefault();
-		mailValidate() && authApi.authenticationEmail(authInfo.email, setAuth(true))
+		mailValidate() &&
+		await axios.post(`/auth/mail-auth`, {email: authInfo.email})
+			.then(res => setAuth(true))
+			.catch(error => console.log(error))
 	};
 	const handleClickRegist = (e) => {
 		e.preventDefault();
-		props.getLogin(true);
+		setRegistInfo({ ...registInfo, email: authInfo.email });
+		registValidate() && axios.post(`/auth/join`, registInfo)
+			.then(res => props.handleClickClose())
+			.catch(error => console.log(error))
 	};
 
   return(
