@@ -86,7 +86,7 @@ export default function Register(props) {
   const handleClickSendMail = async (e) => {
     e.preventDefault();
     mailValidate() &&
-    await axios.post(`/auth/mail-auth`, {email: authInfo.email})
+    await axios.post(`https://7i0y0cwrn1.execute-api.ap-northeast-2.amazonaws.com/diary-prod/auth/mail-auth`, {email: authInfo.email})
       .then(res => setAuth(true))
       .catch(error => setMailErrorMessage(error.response.data.message))
   };
