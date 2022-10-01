@@ -1,7 +1,6 @@
 {
   "name": "team7project",
   "version": "0.1.0",
-  "proxy": "https://7i0y0cwrn1.execute-api.ap-northeast-2.amazonaws.com/diary-prod",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.9.0",
