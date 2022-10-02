@@ -25,7 +25,7 @@ export default function Register(props) {
     let valid = true;
     let regEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
     if (regEmail.test(authInfo.email) === false || !authInfo.email) {
-      setMailErrorMessage('메일 주소를 올바르게 입력해 주세요.');
+      setMailErrorMessage('메일 주소를 바르게 입력해 주세요.');
       valid = false;
     } else setMailErrorMessage('');
     return valid;
