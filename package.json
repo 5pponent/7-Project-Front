@@ -1,7 +1,7 @@
 {
   "name": "team7project",
   "version": "0.1.0",
-  "proxy": "https://api.di4ry.com",
+  "proxy": "https://di4ry.com",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.9.0",
