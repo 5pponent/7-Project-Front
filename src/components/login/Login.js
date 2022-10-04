@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { Box, Button, Dialog, DialogContent, Grid, Stack, TextField, Typography } from '@mui/material';
 import Register from './Register';
@@ -9,28 +8,76 @@ import axios from 'axios';
 export default function Login(props) {
 
   const [open, setOpen] = useState(false);
-  const [mailAuth, setMainAuth] = useState(false);
-  const [loginInfo, setLoginInfo] = useState({uid: null, password: null});
-  const [mail, setMail] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [idErrorMessage, setIdErrorMessage] = useState(null);
-  const [pwErrorMessage, setPwErrorMessage] = useState(null);
-  const [codeErrorMessage, setCodeErrorMessage] = useState(null);
+  const [auth, setAuth] = useState(false);
+  const [loginInfo, setLoginInfo] = useState({password: null, uid: null});
+  const [authCode, setAuthCode] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [idErrorMessage, setIdErrorMessage] = useState('');
+  const [pwErrorMessage, setPwErrorMessage] = useState('');
+  const [codeErrorMessage, setCodeErrorMessage] = useState('');
+
+  const loginValidate = () => {
+    let valid = true;
+    if (!loginInfo.uid) {
+      setIdErrorMessage('아이디를 입력해 주세요.');
+      valid = false;
+    } else setIdErrorMessage('');
+    if (!loginInfo.password) {
+      setPwErrorMessage('비밀번호를 입력해 주세요.');
+      valid = false;
+    } else setPwErrorMessage('');
+    return valid;
+  };
+  const codeValidate = () => {
+    let valid = true;
+    if (!authCode) {
+      setCodeErrorMessage('인증 코드를 입력해 주세요.');
+      valid = false;
+    } else setCodeErrorMessage('');
+    return valid;
+  };
 
   const handleClickOpen = () => { setOpen(true) };
   const handleClickClose = () => { setOpen(false) };
-  const handleClickLogin = (e) => {
-    e.preventDefault();
-    props.getLogin(true);
-    console.log(loginInfo)
-  }
-  const handleValueChange = (e) => {
+  const handleAuthInfoChange = (e) => {setAuthCode(e.target.value)};
+  const handleLoginInfoChange = (e) => {
     const {name, value} = e.target;
     setLoginInfo({
       ...loginInfo,
       [name]: value
     });
-  }
+  };
+  const handleClickLogin = async (e) => {
+    e.preventDefault();
+    loginValidate() &&
+    await axios.post(`/auth/login`, loginInfo)
+      .then(res => {
+        console.log(res);
+        props.getLogin(true);
+      })
+      .catch(error => {
+        if (error.response.status === 401) {
+          setErrorMessage(error.response.data.message)
+        } else setErrorMessage('')
+        if (error.response.status === 302) {
+          setAuth(true);
+        }
+        console.log(error.response);
+      })
+  };
+  const handleClickAuthLogin = async (e) => {
+    e.preventDefault();
+    (loginValidate() & codeValidate()) &&
+    await axios.post(`/auth/mail-auth-login`, {code: authCode, ...loginInfo})
+      .then(res => {
+        props.getLogin(true);
+        console.log(res);
+      })
+      .catch(error => {
+        setCodeErrorMessage(error.response.data.message);
+        console.log(error);
+      })
+  };
 
   return (
       <>
@@ -46,22 +93,27 @@ export default function Login(props) {
 
           <Box component="form">
             <Stack spacing={1}>
-              <TextField label='ID' name="uid" onChange={handleValueChange}
+              <TextField label='ID' name="uid" onChange={handleLoginInfoChange}
                          helperText={idErrorMessage} error={!!idErrorMessage}
               />
-              <TextField label='PW' type='password' name="password" onChange={handleValueChange}
+              <TextField label='PW' type='password' name="password" onChange={handleLoginInfoChange}
                          helperText={pwErrorMessage} error={!!pwErrorMessage}
               />
-              {mailAuth &&
+              {auth &&
                   <>
-                    <TextField label='Email' type='mail' name="mail" onChange={handleValueChange}/>
-                    <TextField label='인증코드' name="code" onChange={handleValueChange}
+                    <Typography variant='subtitle2' color="text.secondary" sx={{textAlign: 'start'}}>등록된 이메일로 인증코드가 발송되었습니다.</Typography>
+                    <TextField label='인증코드' name="code" onChange={handleAuthInfoChange}
                                helperText={codeErrorMessage} error={!!codeErrorMessage}
                     />
+                    <Box sx={{textAlign: 'end'}}>
+                      <Button onClick={handleClickLogin} size='small' sx={{width: 'max-content'}}>인증코드 재전송</Button>
+                    </Box>
                   </>
               }
 
-              <Button type='submit' variant='contained' color='success' onClick={handleClickLogin}>로그인</Button>
+              <Button type='submit' variant='contained' color='success' onClick={auth ? handleClickAuthLogin : handleClickLogin}>
+                {auth ? '확인' : '로그인'}
+              </Button>
               <Typography color='red' fontSize={12}>{errorMessage}</Typography>
             </Stack>
           </Box>
@@ -74,11 +126,11 @@ export default function Login(props) {
         <Dialog open={open} onClose={handleClickClose} maxWidth='xs' fullWidth={true}>
           <DialogContent>
             <Register
-                getLogin={props.getLogin}
-                toggleLoading={props.toggleLoading}
-                setName={props.setName}
-                setEmail={props.setEmail}
-                setId={props.setId}
+              getLogin={props.getLogin}
+              toggleLoading={props.toggleLoading}
+              setName={props.setName}
+              setEmail={props.setEmail}
+              setId={props.setId}
             />
           </DialogContent>
         </Dialog>
