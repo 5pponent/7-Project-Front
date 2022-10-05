@@ -60,13 +60,15 @@ export default function CustomizedMenus(props) {
   const handleClickSchedule = () => { props.getMode("SCHEDULE"); };
   const handleClickMessanger = () => { props.getMode("MESSANGER"); };
   const handleClickSetting = () => { props.getMode("SETTING"); };
-  const handleClickLogout = () => { 
+  const handleClickLogout = () => {
     props.toggleLoading(true);
-    axios.get("./logout")
-    .then().catch(err => console.log(err));
-    props.getLogin(false); 
-    props.getMode('MAIN');
-    props.toggleLoading(false);
+    axios.get("/auth/logout")
+      .then(res => {
+        props.getLogin(false);
+        props.getMode('MAIN');
+        props.toggleLoading(false);
+      })
+      .catch(err => console.log(err));
   };
 
   return (
