@@ -42,9 +42,6 @@ export default function App() {
     />
   } else if (state.mode === 'PROFILE') {
     content = <Profile
-      userName={user[0]}
-      userImg={user[1]}
-      userEmail={user[2]}
       getUser={getUser}
     />
   } else if (state.mode === 'CHAT') {
