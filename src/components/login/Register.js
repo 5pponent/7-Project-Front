@@ -1,18 +1,20 @@
-import React, {useState} from 'react';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import {Box, Button, Grid, Stack, TextField, Typography} from '@mui/material';
+import React, {useContext, useState} from 'react';
+import {store} from "../../store/store";
 import axios from "axios";
+import {Box, Button, Grid, Stack, TextField, Typography} from '@mui/material';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 
 export default function Register(props) {
+  const [state, dispatch] = useContext(store);
+
   const [mode, setMode] = useState('AUTH');
   const [auth, setAuth] = useState(false);
-  const [authInfo, setAuthInfo] = useState({code: null, email: null})
+  const [authInfo, setAuthInfo] = useState({code: '', email: ''})
   const [registInfo, setRegistInfo] = useState({
-    email: null,
-    name: null,
-    password: null,
-    passwordCheck: null,
-    uid: null
+    name: '',
+    password: '',
+    passwordCheck: '',
+    uid: ''
   });
   const [idErrorMessage, setIdErrorMessage] = useState('');
   const [pwErrorMessage, setPwErrorMessage] = useState('');
@@ -75,13 +77,13 @@ export default function Register(props) {
   };
   const handleClickCodeCheck = async (e) => {
     e.preventDefault();
-		(mailValidate() & codeValidate()) &&
+    (mailValidate() & codeValidate()) &&
     await axios.post(`/auth/mail-auth-check`, authInfo)
       .then(res => setMode('REGIST'))
       .catch(error => {
-				setCodeErrorMessage(error.response.data.message);
-				console.log(error.response);
-			})
+        setCodeErrorMessage(error.response.data.message);
+        console.log(error.response);
+      })
   };
   const handleClickSendMail = async (e) => {
     e.preventDefault();
@@ -92,13 +94,15 @@ export default function Register(props) {
   };
   const handleClickRegist = async (e) => {
     e.preventDefault();
-    setRegistInfo({...registInfo, email: authInfo.email});
-    registValidate() && await axios.post(`/auth/join`, registInfo)
-      .then(res => props.getLogin(true))
+    registValidate() && await axios.post(`/auth/join`, {email: authInfo.email, ...registInfo})
+      .then(res => {
+        dispatch({type: 'Login'});
+        dispatch({type: 'User', payload: res});
+      })
       .catch(error => {
-				setIdErrorMessage(error.response.data.message);
-				console.log(error.response);
-			})
+        setIdErrorMessage(error.response.data.message);
+        console.log(error.response);
+      })
   };
 
   return (

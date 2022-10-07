@@ -2,8 +2,6 @@ import { Divider, Stack } from '@mui/material';
 import FeedLine from './FeedLine';
 
 export default function FeedLineSelect(props) {
-
-
   return (
     <Stack>
       <Stack spacing={1} width='900px' height='40px' bgcolor='#e7ebf0' margin='0 auto' minWidth='800px'
@@ -12,9 +10,6 @@ export default function FeedLineSelect(props) {
       </Stack>
 
       <FeedLine
-        userName={props.userName} 
-        userImg={props.userImg} 
-        getMode={props.getMode}
         getUser={props.getUser}
       />
     </Stack>

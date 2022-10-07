@@ -1,17 +1,16 @@
-import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import React, {useContext} from "react";
+import {store} from "../../store/store";
+import axios from 'axios';
+import {IconButton, Menu, MenuItem, Tooltip} from '@mui/material';
+import {styled, alpha} from '@mui/material/styles';
+import LogoutIcon from '@mui/icons-material/Logout';
 import ChatIcon from '@mui/icons-material/Chat';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CloseIcon from '@mui/icons-material/Close';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconButton } from '@mui/material';
-import LogoutIcon from '@mui/icons-material/Logout';
-import Tooltip from '@mui/material/Tooltip';
-import axios from 'axios';
+
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -26,7 +25,7 @@ const StyledMenu = styled((props) => (
     }}
     {...props}
   />
-))(({ theme }) => ({
+))(({theme}) => ({
   '& .MuiPaper-root': {
     color:
       theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
@@ -52,20 +51,34 @@ const StyledMenu = styled((props) => (
 }));
 
 export default function CustomizedMenus(props) {
+  const [state, dispatch] = useContext(store);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const handleClick = (e) => { setAnchorEl(e.currentTarget); };
-  const handleClose = () => { setAnchorEl(null); };
-  const handleClickChat = () => { props.getMode("CHAT"); };
-  const handleClickSchedule = () => { props.getMode("SCHEDULE"); };
-  const handleClickMessanger = () => { props.getMode("MESSANGER"); };
-  const handleClickSetting = () => { props.getMode("SETTING"); };
+  const handleClick = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleClickChat = () => {
+    dispatch({type: 'ChangeMode', payload: 'CHAT'})
+  };
+  const handleClickSchedule = () => {
+    dispatch({type: 'ChangeMode', payload: 'SCHEDULE'})
+  };
+  const handleClickMessanger = () => {
+    dispatch({type: 'ChangeMode', payload: 'MESSANGER'})
+  };
+  const handleClickSetting = () => {
+    dispatch({type: 'ChangeMode', payload: 'SETTING'})
+  };
   const handleClickLogout = () => {
     props.toggleLoading(true);
     axios.get("/auth/logout")
       .then(res => {
-        props.getLogin(false);
-        props.getMode('MAIN');
+        dispatch({type: 'Logout'});
+        dispatch({type: 'ChangeMode', payload: 'MAIN'})
         props.toggleLoading(false);
       })
       .catch(err => console.log(err));
@@ -84,7 +97,7 @@ export default function CustomizedMenus(props) {
           disableElevation
           onClick={handleClick}
         >
-          <MoreVertIcon sx={{ fontSize: 30 }}/>
+          <MoreVertIcon sx={{fontSize: 30}}/>
         </IconButton>
       </Tooltip>
 
@@ -95,38 +108,38 @@ export default function CustomizedMenus(props) {
         onClose={handleClose}
       >
         <Tooltip title="채팅" placement="left" arrow>
-          <MenuItem onClick={handleClickChat} disableRipple><ChatIcon /></MenuItem>
+          <MenuItem onClick={handleClickChat} disableRipple><ChatIcon/></MenuItem>
         </Tooltip>
 
         <Tooltip title="스케쥴" placement="left" arrow>
           <MenuItem onClick={handleClickSchedule} disableRipple>
-            <CalendarTodayIcon />
+            <CalendarTodayIcon/>
           </MenuItem>
         </Tooltip>
 
         <Tooltip title="팔로우 / 팔로워" placement="left" arrow>
           <MenuItem onClick={handleClickMessanger} disableRipple>
-            <PeopleAltIcon />
+            <PeopleAltIcon/>
           </MenuItem>
-        </Tooltip>  
+        </Tooltip>
 
         <Tooltip title="설정" placement="left" arrow>
           <MenuItem onClick={handleClickSetting} disableRipple>
-            <SettingsIcon />
+            <SettingsIcon/>
           </MenuItem>
         </Tooltip>
 
         <Tooltip title="로그아웃" placement="left" arrow>
           <MenuItem onClick={handleClickLogout}>
-            <LogoutIcon />
+            <LogoutIcon/>
           </MenuItem>
         </Tooltip>
 
         <Tooltip title="메뉴 닫기" placement="left" arrow>
           <MenuItem onClick={handleClose} disableRipple>
-            <CloseIcon />
+            <CloseIcon/>
           </MenuItem>
-        </Tooltip>  
+        </Tooltip>
       </StyledMenu>
     </>
   );
