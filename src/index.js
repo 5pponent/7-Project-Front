@@ -1,12 +1,15 @@
 import {createRoot} from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {StoreProvider} from "./store/store";
 
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
 root.render(
-  <App />,
+  <StoreProvider>
+    <App/>
+  </StoreProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

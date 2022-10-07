@@ -1,7 +1,6 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
+import { CircularProgress, Box } from '@mui/material';
 import Feed from './Feed';
-import { CircularProgress } from '@mui/material';
 
 export default function FeedLine(props) {
 
@@ -50,9 +49,6 @@ export default function FeedLine(props) {
 								image={f.image}
 								name={f.name}
 								time={f.time}
-								userName={props.userName}
-								userImg={props.userImg}
-								getMode={props.getMode}
 								getUser={props.getUser}
 							/>
 						);
