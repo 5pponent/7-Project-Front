@@ -4,8 +4,8 @@ import reducer from "./reducer";
 const initialState = {
   user: {
     email: 'ahdwjdtprtm@gmail.com',
-    followerCount: undefined,
-    followingCount: undefined,
+    followerCount: 0,
+    followingCount: 0,
     id: 'ahdwjdtprtm',
     image: {
       originalName: undefined,
@@ -19,7 +19,8 @@ const initialState = {
   },
   login: true,
   darkMode: false,
-  mode: 'MAIN'
+  mode: 'MAIN',
+  feedContent: ''
 };
 
 const store = createContext(initialState);

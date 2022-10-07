@@ -12,6 +12,8 @@ export default function reducer(state, action) {
       return {...state, mode: action.payload};
     case 'DarkMode':
       return {...state, darkMode: !state.darkMode};
+    case 'CreateFeed':
+      return {...state, feedContent: action.payload};
     default:
       return state;
   }

@@ -57,10 +57,6 @@ export default function Header(props) {
   const [state, dispatch] = useContext(store);
 
   const [open, setOpen] = useState(false);
-  const [feedContent, setFeedContent] = useState('');
-  const getContent = (c) => {
-    setFeedContent(c);
-  };
   const getOpen = (stat) => {
     setOpen(stat);
   };
@@ -112,8 +108,6 @@ export default function Header(props) {
           >
             <CreateFeed
               getOpen={getOpen}
-              getContent={getContent}
-              feedContent={feedContent}
             />
           </Drawer>
           <Tooltip title="프로필" placement="bottom" arrow>

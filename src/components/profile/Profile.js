@@ -1,3 +1,5 @@
+import {useContext} from "react";
+import {store} from "../../store/store";
 import {Avatar, Divider, IconButton, InputBase, Stack, Tooltip, Typography, Box} from "@mui/material";
 import {styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
@@ -41,18 +43,17 @@ function FeedCreateButton() {
 }
 
 export default function Profile(props) {
-
-  const userName = props.userName;
-  const image = props.userImg;
+  const [state, dispatch] = useContext(store);
 
   return (
     <>
       <Stack p={1} alignItems='center' spacing={1}>
-        <Avatar src={image} sx={{width: 56, height: 56}}/>
-        <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>{userName}</Typography>
-        <Typography variant='subtitle2'>재직분야</Typography>
-        <Typography variant='subtitle2'>이메일</Typography>
-        <Typography variant='subtitle2'>follower : 00 / follow : 00</Typography>
+        <Avatar src={state.user.image.savedName} sx={{width: 56, height: 56}}/>
+        <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>{state.user.name}</Typography>
+        <Typography variant='subtitle2'>재직분야 : {state.user.occupation}</Typography>
+        <Typography variant='subtitle2'>이메일 : {state.user.email}</Typography>
+        <Typography variant='subtitle2'>follower : {state.user.followerCount} / follow
+          : {state.user.followingCount}</Typography>
       </Stack>
       <Divider/>
       <Stack direction='row' sx={{marginBottom: '10px', width: '800px', margin: '0 auto', padding: '10px'}}>
@@ -63,11 +64,7 @@ export default function Profile(props) {
       </Stack>
 
       <Box sx={{height: '580px', overflow: 'auto'}}>
-        <FeedLine
-          userName={userName}
-          userImg={image}
-          getUser={props.getUser}
-        />
+        <FeedLine getUser={props.getUser}/>
       </Box>
     </>
   );

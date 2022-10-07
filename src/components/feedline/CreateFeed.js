@@ -20,18 +20,16 @@ export default function CreateFeed(props) {
   const [state, dispatch] = useContext(store);
 
   const [scope, setScope] = useState('');
-  const [content, setContent] = useState(props.feedContent);
   const handleChangeScope = (e) => {
     setScope(e.target.value);
     console.log(scope);
-  }
+  };
   const handleContentChange = (e) => {
-    setContent(e.target.value);
-    props.getContent(content);
-  }
+    dispatch({type: 'CreateFeed', payload: e.target.value});
+  };
   const closeDrawer = () => {
     props.getOpen(false);
-  }
+  };
 
   return (
     <Stack sx={{width: '500px'}}>
@@ -61,7 +59,7 @@ export default function CreateFeed(props) {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <TextField fullWidth rows={10} multiline value={content} onChange={handleContentChange}/>
+          <TextField fullWidth rows={10} multiline value={state.feedContent} onChange={handleContentChange}/>
         </Grid>
         <Grid item xs={12}>
           <Button variant='contained' fullWidth>게시</Button>
