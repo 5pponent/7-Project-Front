@@ -69,7 +69,7 @@ export default function Header(props) {
 
   const handleClickMyProfile = () => {
     dispatch({type: 'ChangeMode', payload: 'PROFILE'});
-    props.getUser([state.user.name, state.user.image.savedName]);
+    props.getUser([state.user.name, state.user.image ? state.user.image.savedName : 'https://placeimg.com/100/100/people/00']);
   };
 
   return (

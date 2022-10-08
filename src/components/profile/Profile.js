@@ -1,10 +1,12 @@
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
+import axios from "axios";
 import {store} from "../../store/store";
 import {Avatar, Divider, IconButton, InputBase, Stack, Tooltip, Typography, Box} from "@mui/material";
 import {styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import FeedLine from "../feedline/FeedLine";
+
 
 const Search = styled('div')(({theme}) => ({
   position: 'relative',
@@ -45,6 +47,19 @@ function FeedCreateButton() {
 export default function Profile(props) {
   const [state, dispatch] = useContext(store);
 
+  const [feed, setFeed] = useState({
+    currentPage: 0,
+    feeds: [],
+    totalElements: 0,
+    totalPages: 0
+  });
+
+  useEffect(() => {
+    axios.get(`/feed?userid=${state.user.id}`)
+      .then(res => setFeed(res.data))
+      .catch(error => console.log(error.response))
+  }, []);
+
   return (
     <>
       <Stack p={1} alignItems='center' spacing={1}>
@@ -64,7 +79,7 @@ export default function Profile(props) {
       </Stack>
 
       <Box sx={{height: '580px', overflow: 'auto'}}>
-        <FeedLine getUser={props.getUser}/>
+        <FeedLine getUser={props.getUser} feed={feed}/>
       </Box>
     </>
   );

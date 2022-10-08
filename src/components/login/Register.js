@@ -97,7 +97,7 @@ export default function Register(props) {
     registValidate() && await axios.post(`/auth/join`, {email: authInfo.email, ...registInfo})
       .then(res => {
         dispatch({type: 'Login'});
-        dispatch({type: 'User', payload: res});
+        dispatch({type: 'User', payload: res.data});
       })
       .catch(error => {
         setIdErrorMessage(error.response.data.message);
