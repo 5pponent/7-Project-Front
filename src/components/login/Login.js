@@ -60,7 +60,6 @@ export default function Login(props) {
     loginValidate() &&
     await axios.post(`/auth/login`, loginInfo)
       .then(res => {
-        console.log(res);
         dispatch({type: 'Login'});
         dispatch({type: 'User', payload: res.data});
       })
@@ -81,7 +80,6 @@ export default function Login(props) {
       .then(res => {
         dispatch({type: 'Login'});
         dispatch({type: 'User', payload: res.data});
-        console.log(res);
       })
       .catch(error => {
         setCodeErrorMessage(error.response.data.message);
