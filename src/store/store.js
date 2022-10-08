@@ -9,7 +9,7 @@ const initialState = {
     id: 'ahdwjdtprtm',
     image: {
       originalName: undefined,
-      savedName: 'https://placeimg.com/100/100/people/00'
+      savedName: undefined
     },
     interests: [
       undefined
@@ -17,7 +17,7 @@ const initialState = {
     name: '사용자명',
     occupation: '직업'
   },
-  login: true,
+  login: false,
   darkMode: false,
   mode: 'MAIN',
   feedContent: ''

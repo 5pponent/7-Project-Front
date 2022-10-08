@@ -48,7 +48,7 @@ export default function Profile(props) {
   return (
     <>
       <Stack p={1} alignItems='center' spacing={1}>
-        <Avatar src={state.user.image.savedName} sx={{width: 56, height: 56}}/>
+        <Avatar src={state.user.image ? state.user.image.savedName : 'https://placeimg.com/100/100/people/00'} sx={{width: 56, height: 56}}/>
         <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>{state.user.name}</Typography>
         <Typography variant='subtitle2'>재직분야 : {state.user.occupation}</Typography>
         <Typography variant='subtitle2'>이메일 : {state.user.email}</Typography>

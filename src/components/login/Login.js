@@ -62,7 +62,7 @@ export default function Login(props) {
       .then(res => {
         console.log(res);
         dispatch({type: 'Login'});
-        dispatch({type: 'User', payload: res});
+        dispatch({type: 'User', payload: res.data});
       })
       .catch(error => {
         if (error.response.status === 401) {
@@ -80,7 +80,7 @@ export default function Login(props) {
     await axios.post(`/auth/mail-auth-login`, {code: authCode, ...loginInfo})
       .then(res => {
         dispatch({type: 'Login'});
-        dispatch({type: 'User', payload: res});
+        dispatch({type: 'User', payload: res.data});
         console.log(res);
       })
       .catch(error => {
