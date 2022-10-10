@@ -70,7 +70,7 @@ export default function Login(props) {
         if (error.response.status === 302) {
           setAuth(true);
         }
-        console.log(error.response);
+        console.error(error.response);
       })
   };
   const handleClickAuthLogin = async (e) => {
@@ -83,7 +83,7 @@ export default function Login(props) {
       })
       .catch(error => {
         setCodeErrorMessage(error.response.data.message);
-        console.log(error);
+        console.error(error);
       })
   };
 

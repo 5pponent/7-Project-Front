@@ -78,10 +78,10 @@ export default function CustomizedMenus(props) {
     axios.get("/auth/logout")
       .then(res => {
         dispatch({type: 'Logout'});
-        dispatch({type: 'ChangeMode', payload: 'MAIN'})
+        dispatch({type: 'ChangeMode', payload: 'MAIN'});
         props.toggleLoading(false);
       })
-      .catch(err => console.log(err));
+      .catch(error => console.error(error));
   };
 
   return (

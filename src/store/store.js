@@ -2,25 +2,26 @@ import React, {createContext, useReducer} from "react";
 import reducer from "./reducer";
 
 const initialState = {
+  login: false,
+  darkMode: false,
+  mode: 'MAIN',
   user: {
     email: 'ahdwjdtprtm@gmail.com',
     followerCount: 0,
     followingCount: 0,
-    id: 'ahdwjdtprtm',
+    id: 0,
     image: {
       originalName: undefined,
-      savedName: undefined
+      source: undefined
     },
-    interests: [
-      undefined
-    ],
+    interests: [],
     name: '사용자명',
     occupation: '직업'
   },
-  login: false,
-  darkMode: false,
-  mode: 'MAIN',
-  feedContent: ''
+  feedContent: {
+    content: '',
+    image: [{file: '', description: ''}]
+  }
 };
 
 const store = createContext(initialState);
@@ -31,4 +32,4 @@ const StoreProvider = ({children}) => {
   return <Provider value={[state, dispatch]}>{children}</Provider>
 };
 
-export {store, StoreProvider};
+export {initialState, store, StoreProvider};

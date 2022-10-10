@@ -36,8 +36,7 @@ export default function Setting(props) {
   const [open, setOpen] = useState(false);
   const [info, setInfo] = useState({
     name: state.user.name,
-    email: state.user.email,
-    id: state.user.id
+    email: state.user.email
   });
   const handleChangeDisplay = (e) => {
     setLightMode(e.target.checked);
@@ -70,10 +69,6 @@ export default function Setting(props) {
               <Item item xs={3}><Label>Email</Label></Item>
               <Item item xs={9}>
                 {info.email}
-              </Item>
-              <Item item xs={3}><Label>ID</Label></Item>
-              <Item item xs={9}>
-                {info.id}
               </Item>
               <Item item xs={3}><Label>PW</Label></Item>
               <Item item xs={9}>

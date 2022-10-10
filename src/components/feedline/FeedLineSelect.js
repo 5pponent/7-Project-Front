@@ -14,7 +14,7 @@ export default function FeedLineSelect(props) {
   useEffect(() => {
     axios.get(`/feed`)
       .then(res => setFeed(res.data))
-      .catch(error => console.log(error.response))
+      .catch(error => console.error(error.response))
   }, []);
 
   return (

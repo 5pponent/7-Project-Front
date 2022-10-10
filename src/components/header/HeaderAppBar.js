@@ -57,19 +57,12 @@ export default function Header(props) {
   const [state, dispatch] = useContext(store);
 
   const [open, setOpen] = useState(false);
-  const getOpen = (stat) => {
-    setOpen(stat);
-  };
-  const handleClickDrawer = () => {
-    setOpen(!open);
-  };
-  const handleClickLogo = () => {
-    dispatch({type: 'ChangeMode', payload: 'MAIN'})
-  };
-
+  const getOpen = (stat) => {setOpen(stat)};
+  const handleClickDrawer = () => {setOpen(!open)};
+  const handleClickLogo = () => {dispatch({type: 'ChangeMode', payload: 'MAIN'})};
   const handleClickMyProfile = () => {
     dispatch({type: 'ChangeMode', payload: 'PROFILE'});
-    props.getUser([state.user.name, state.user.image ? state.user.image.savedName : 'https://placeimg.com/100/100/people/00']);
+    props.getUser([state.user.name, state.user.image ? state.user.image.source : 'https://placeimg.com/100/100/people/00']);
   };
 
   return (
