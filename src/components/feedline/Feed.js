@@ -60,7 +60,7 @@ export default function Feed(props) {
   const handleClickProfileView = (e) => {
     props.getUser([props.name, props.image]);
     dispatch({type: 'ChangeMode', payload: 'PROFILE'})
-  }
+  };
 
   return (
     <>
@@ -97,7 +97,7 @@ export default function Feed(props) {
                 </Grid>
                 <Grid item>
                   <Typography>{props.name}</Typography>
-                  <Typography variant="body2" color="textSecondary">{props.time}</Typography>
+                  <Typography variant="body2" color="textSecondary">{props.time.substr(0,10)}</Typography>
                 </Grid>
               </Grid>
               <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={handleCloseProfile}

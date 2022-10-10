@@ -3,6 +3,7 @@ import {CircularProgress, Box} from '@mui/material';
 import Feed from './Feed';
 
 export default function FeedLine(props) {
+
   const {currentPage, feeds, totalElements, totalPages} = props.feed;
 
   return (
@@ -14,9 +15,9 @@ export default function FeedLine(props) {
                 <Feed
                   key={f.id}
                   content={f.content}
-                  image={f.image}
-                  name={f.name}
-                  time={f.time}
+                  image={f.writer.image ? f.writer.image.savedName : 'https://placeimg.com/100/100/people/00'}
+                  name={f.writer.name}
+                  time={f.createTime}
                   getUser={props.getUser}
                 />
               );
