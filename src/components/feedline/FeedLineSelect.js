@@ -11,6 +11,8 @@ export default function FeedLineSelect(props) {
     totalPages: 0
   });
 
+  const getFeedList = (data) => {setFeed({...feed, feeds: data})}
+
   useEffect(() => {
     axios.get(`/feed`)
       .then(res => setFeed(res.data))
@@ -26,6 +28,7 @@ export default function FeedLineSelect(props) {
       <FeedLine
         getUser={props.getUser}
         feed={feed}
+        getFeedList={getFeedList}
       />
     </Stack>
   );

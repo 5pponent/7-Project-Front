@@ -26,18 +26,26 @@ export default function FeedDetail(props) {
         <Grid item xs={1}>
           <SmallProfile image={props.image} name={props.name}/>
         </Grid>
+
         <Grid item xs={10}>
           <Typography color="textSecondary" fontSize="12px">
             {props.time}
           </Typography>
           <Typography>{props.content}</Typography>
         </Grid>
+
         <Grid item xs={1}>
           <Stack paddingLeft={2}>
             <IconButton onClick={props.closeContent}>
               <CloseIcon color='text.secondary'/>
             </IconButton>
-            <MoreMenu/>
+            <MoreMenu
+              feedId={props.feedId}
+              writer={props.writer}
+              closeContent={props.closeContent}
+              feedList={props.feedList}
+              getFeedList={props.getFeedList}
+            />
           </Stack>
         </Grid>
       </Grid>
