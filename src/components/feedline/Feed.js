@@ -1,14 +1,14 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {store} from "../../store/store";
 import {
   Divider,
   Typography,
-	Box, Paper,
-	Avatar,
-	Menu,
+  Box, Paper,
+  Avatar,
+  Menu,
   MenuItem,
-	IconButton,
-	Grid
+  IconButton,
+  Grid
 } from '@mui/material';
 import {styled} from '@mui/material/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -44,19 +44,12 @@ export default function Feed(props) {
     }
   ];
   const [open, setOpen] = useState(false);
-  const openContent = () => {
-    setOpen(true);
-  };
-  const closeContent = () => {
-    setOpen(false);
-  };
   const [anchor, setAnchor] = useState(null);
-  const handleClickProfile = (e) => {
-    setAnchor(e.currentTarget);
-  };
-  const handleCloseProfile = () => {
-    setAnchor(null);
-  };
+
+  const openContent = () => {setOpen(true)};
+  const closeContent = () => {setOpen(false)};
+  const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
+  const handleCloseProfile = () => {setAnchor(null)};
   const handleClickProfileView = (e) => {
     props.getUser([props.name, props.image]);
     dispatch({type: 'ChangeMode', payload: 'PROFILE'})
@@ -72,11 +65,18 @@ export default function Feed(props) {
               <Content>{props.content}</Content>
             </Box>
           </Grid>
+
           <Grid item xs={1} p={2}> {/* 더보기 버튼 */}
-            <MoreMenu/>
+            <MoreMenu
+              feedId={props.feedId}
+              writer={props.writer}
+              feedList={props.feedList}
+              getFeedList={props.getFeedList}/>
           </Grid>
         </Grid>
+
         <Divider/>
+
         <Grid container p={2}>
           <Grid item xs={10}> {/* 좋아요, 댓글 */}
             <Box>
@@ -88,6 +88,7 @@ export default function Feed(props) {
               </IconButton>
             </Box>
           </Grid>
+
           <Grid item xs={2}> {/* 프로필 */}
             <Box>
               <Grid container spacing={1} sx={{cursor: 'pointer'}}
@@ -97,9 +98,10 @@ export default function Feed(props) {
                 </Grid>
                 <Grid item>
                   <Typography>{props.name}</Typography>
-                  <Typography variant="body2" color="textSecondary">{props.time.substr(0,10)}</Typography>
+                  <Typography variant="body2" color="textSecondary">{props.time.substr(0, 10)}</Typography>
                 </Grid>
               </Grid>
+
               <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={handleCloseProfile}
                     anchorOrigin={{
                       vertical: 'bottom',
@@ -112,6 +114,7 @@ export default function Feed(props) {
               </Menu>
             </Box>
           </Grid>
+
         </Grid>
       </Paper>
 
@@ -119,11 +122,15 @@ export default function Feed(props) {
       <Dialog open={open} onClose={closeContent} fullWidth={true} maxWidth='md'>
         <DialogContent>
           <FeedDetail
+            feedId={props.feedId}
+            writer={props.writer}
             name={props.name}
             content={props.content}
             image={props.image}
             time={props.time}
             comments={comments}
+            feedList={props.feedList}
+            getFeedList={props.getFeedList}
             closeContent={closeContent}
           />
         </DialogContent>

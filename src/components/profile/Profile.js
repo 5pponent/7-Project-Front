@@ -54,6 +54,8 @@ export default function Profile(props) {
     totalPages: 0
   });
 
+  const getFeedList = (data) => {setFeed({...feed, feeds: data})};
+
   useEffect(() => {
     axios.get(`/feed?userid=${state.user.id}`)
       .then(res => setFeed(res.data))
@@ -79,7 +81,7 @@ export default function Profile(props) {
       </Stack>
 
       <Box sx={{height: '580px', overflow: 'auto'}}>
-        <FeedLine getUser={props.getUser} feed={feed}/>
+        <FeedLine getUser={props.getUser} feed={feed} getFeedList={getFeedList}/>
       </Box>
     </>
   );
