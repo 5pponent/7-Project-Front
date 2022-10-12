@@ -13,8 +13,7 @@ export default function Register(props) {
   const [registInfo, setRegistInfo] = useState({
     name: '',
     password: '',
-    passwordCheck: '',
-    uid: ''
+    passwordCheck: ''
   });
   const [idErrorMessage, setIdErrorMessage] = useState('');
   const [pwErrorMessage, setPwErrorMessage] = useState('');
@@ -22,6 +21,8 @@ export default function Register(props) {
   const [nameErrorMessage, setNameErrorMessage] = useState('');
   const [mailErrorMessage, setMailErrorMessage] = useState('');
   const [codeErrorMessage, setCodeErrorMessage] = useState('');
+
+  const showForm = mode === 'REGIST' ? 'block' : 'none';
 
   const mailValidate = () => {
     let valid = true;
@@ -42,10 +43,6 @@ export default function Register(props) {
   };
   const registValidate = () => {
     let valid = true;
-    if (!registInfo.uid) {
-      setIdErrorMessage('아이디를 입력해 주세요.');
-      valid = false;
-    } else setIdErrorMessage('');
     if (!registInfo.password) {
       setPwErrorMessage('비밀번호를 입력해 주세요.');
       valid = false;
@@ -79,7 +76,10 @@ export default function Register(props) {
     e.preventDefault();
     (mailValidate() & codeValidate()) &&
     await axios.post(`/auth/mail-auth-check`, authInfo)
-      .then(res => setMode('REGIST'))
+      .then(res => {
+        setMode('REGIST');
+        setAuth(false);
+      })
       .catch(error => {
         setCodeErrorMessage(error.response.data.message);
         console.log(error.response);
@@ -92,12 +92,19 @@ export default function Register(props) {
       .then(res => setAuth(true))
       .catch(error => setMailErrorMessage(error.response.data.message))
   };
+  const getUserInfo = () => {
+    axios.get(`/user`, {
+      headers: {authorization: localStorage.getItem('token')}
+    })
+      .then(res => dispatch({type: 'User', payload: res.data}))
+      .catch(error => console.error(error))
+  };
   const handleClickRegist = async (e) => {
     e.preventDefault();
     registValidate() && await axios.post(`/auth/join`, {email: authInfo.email, ...registInfo})
       .then(res => {
         dispatch({type: 'Login'});
-        dispatch({type: 'User', payload: res.data});
+        getUserInfo();
       })
       .catch(error => {
         setIdErrorMessage(error.response.data.message);
@@ -112,11 +119,10 @@ export default function Register(props) {
         <Typography variant='h4' color='primary' fontWeight='bold'>모두의 일기장</Typography>
       </Grid>
 
-      {mode === 'AUTH' &&
         <Box component="form">
           <Stack spacing={1}>
             <TextField fullWidth label='Email' name="email" onChange={handleAuthInfoChange}
-                       error={!!mailErrorMessage} helperText={mailErrorMessage}
+                       error={!!mailErrorMessage} helperText={mailErrorMessage} disabled={mode === 'REGIST'}
             />
             <Box sx={{display: auth ? 'block' : 'none', textAlign: 'end'}}>
               <Button onClick={handleClickSendMail} size='small' sx={{width: 'max-content'}}>인증코드 재전송</Button>
@@ -126,35 +132,28 @@ export default function Register(props) {
                        error={!!codeErrorMessage} helperText={codeErrorMessage}
                        sx={{display: auth ? 'block' : 'none'}}
             />
-            <Button type='submit' variant='contained' color='primary'
-                    onClick={auth ? handleClickCodeCheck : handleClickSendMail}>
+
+            <Button type='submit' variant='contained' color='primary' onClick={auth ? handleClickCodeCheck : handleClickSendMail}
+                    sx={{display: mode === 'AUTH' ? 'block' : 'none'}}>
               {auth ? "확인" : "인증코드 발송"}
             </Button>
-          </Stack>
-        </Box>
-      }
 
-      {mode === 'REGIST' &&
-        <Box component="form">
-          <Stack spacing={1}>
-            <TextField fullWidth label='ID' onChange={handleValueChange} name="uid"
-                       error={!!idErrorMessage} helperText={idErrorMessage}
-            />
             <TextField fullWidth label='PW' type='password' onChange={handleValueChange} name="password"
-                       error={!!pwErrorMessage} helperText={pwErrorMessage}
+                       error={!!pwErrorMessage} helperText={pwErrorMessage} sx={{display: showForm}}
             />
             <TextField fullWidth label='PW 확인' type='password' onChange={handleValueChange} name="passwordCheck"
-                       error={!!pwchkErrorMessage} helperText={pwchkErrorMessage}
+                       error={!!pwchkErrorMessage} helperText={pwchkErrorMessage} sx={{display: showForm}}
             />
             <TextField fullWidth label='이름' onChange={handleValueChange} name="name"
-                       error={!!nameErrorMessage} helperText={nameErrorMessage}
+                       error={!!nameErrorMessage} helperText={nameErrorMessage} sx={{display: showForm}}
             />
 
-            <Button type='submit' variant='contained' color='primary'
-                    onClick={handleClickRegist}>회원가입</Button>
+            <Button type='submit' variant='contained' color='primary' onClick={handleClickRegist} sx={{display: showForm}}>
+              회원가입
+            </Button>
+
           </Stack>
         </Box>
-      }
     </Stack>
   )
 }

@@ -6,7 +6,7 @@ const initialState = {
   darkMode: false,
   mode: 'MAIN',
   user: {
-    email: 'ahdwjdtprtm@gmail.com',
+    email: undefined,
     followerCount: 0,
     followingCount: 0,
     id: 0,

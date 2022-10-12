@@ -14,7 +14,9 @@ export default function FeedLineSelect(props) {
   const getFeedList = (data) => {setFeed({...feed, feeds: data})}
 
   useEffect(() => {
-    axios.get(`/feed`)
+    axios.get(`/feed`, {
+      headers: {authorization: localStorage.getItem('token')}
+    })
       .then(res => setFeed(res.data))
       .catch(error => console.error(error.response))
   }, []);
