@@ -11,19 +11,19 @@ export default function Login(props) {
 
   const [open, setOpen] = useState(false);
   const [auth, setAuth] = useState(false);
-  const [loginInfo, setLoginInfo] = useState({password: null, uid: null});
+  const [loginInfo, setLoginInfo] = useState({password: null, email: null});
   const [authCode, setAuthCode] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [idErrorMessage, setIdErrorMessage] = useState('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [pwErrorMessage, setPwErrorMessage] = useState('');
   const [codeErrorMessage, setCodeErrorMessage] = useState('');
 
   const loginValidate = () => {
     let valid = true;
-    if (!loginInfo.uid) {
-      setIdErrorMessage('아이디를 입력해 주세요.');
+    if (!loginInfo.email) {
+      setEmailErrorMessage('이메일을 입력해 주세요.');
       valid = false;
-    } else setIdErrorMessage('');
+    } else setEmailErrorMessage('');
     if (!loginInfo.password) {
       setPwErrorMessage('비밀번호를 입력해 주세요.');
       valid = false;
@@ -39,15 +39,9 @@ export default function Login(props) {
     return valid;
   };
 
-  const handleClickOpen = () => {
-    setOpen(true)
-  };
-  const handleClickClose = () => {
-    setOpen(false)
-  };
-  const handleAuthInfoChange = (e) => {
-    setAuthCode(e.target.value)
-  };
+  const handleClickOpen = () => {setOpen(true)};
+  const handleClickClose = () => {setOpen(false)};
+  const handleAuthInfoChange = (e) => {setAuthCode(e.target.value)};
   const handleLoginInfoChange = (e) => {
     const {name, value} = e.target;
     setLoginInfo({
@@ -55,13 +49,21 @@ export default function Login(props) {
       [name]: value
     });
   };
+  const getUserInfo = () => {
+    axios.get(`/user`, {
+      headers: {authorization: localStorage.getItem('token')}
+    })
+      .then(res => dispatch({type: 'User', payload: res.data}))
+      .catch(error => console.error(error))
+  };
   const handleClickLogin = async (e) => {
     e.preventDefault();
     loginValidate() &&
     await axios.post(`/auth/login`, loginInfo)
       .then(res => {
+        localStorage.setItem('token', res.data.token);
         dispatch({type: 'Login'});
-        dispatch({type: 'User', payload: res.data});
+        getUserInfo();
       })
       .catch(error => {
         if (error.response.status === 401) {
@@ -78,8 +80,9 @@ export default function Login(props) {
     (loginValidate() & codeValidate()) &&
     await axios.post(`/auth/mail-auth-login`, {code: authCode, ...loginInfo})
       .then(res => {
+        localStorage.setItem('token', res.data.token);
         dispatch({type: 'Login'});
-        dispatch({type: 'User', payload: res.data});
+        getUserInfo();
       })
       .catch(error => {
         setCodeErrorMessage(error.response.data.message);
@@ -101,8 +104,8 @@ export default function Login(props) {
 
         <Box component="form">
           <Stack spacing={1}>
-            <TextField label='ID' name="uid" onChange={handleLoginInfoChange}
-                       helperText={idErrorMessage} error={!!idErrorMessage}
+            <TextField label='Email' name="email" onChange={handleLoginInfoChange}
+                       helperText={emailErrorMessage} error={!!emailErrorMessage}
             />
             <TextField label='PW' type='password' name="password" onChange={handleLoginInfoChange}
                        helperText={pwErrorMessage} error={!!pwErrorMessage}

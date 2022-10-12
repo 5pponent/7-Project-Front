@@ -57,7 +57,9 @@ export default function Profile(props) {
   const getFeedList = (data) => {setFeed({...feed, feeds: data})};
 
   useEffect(() => {
-    axios.get(`/feed?userid=${state.user.id}`)
+    axios.get(`/feed?userid=${state.user.id}`, {
+      headers: {authorization: localStorage.getItem('token')}
+    })
       .then(res => setFeed(res.data))
       .catch(error => console.log(error.response))
   }, []);

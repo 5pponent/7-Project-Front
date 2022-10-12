@@ -74,14 +74,9 @@ export default function CustomizedMenus(props) {
     dispatch({type: 'ChangeMode', payload: 'SETTING'})
   };
   const handleClickLogout = () => {
-    props.toggleLoading(true);
-    axios.get("/auth/logout")
-      .then(res => {
-        dispatch({type: 'Logout'});
-        dispatch({type: 'ChangeMode', payload: 'MAIN'});
-        props.toggleLoading(false);
-      })
-      .catch(error => console.error(error));
+    localStorage.removeItem('token');
+    dispatch({type: 'Logout'});
+    dispatch({type: 'ChangeMode', payload: 'MAIN'});
   };
 
   return (

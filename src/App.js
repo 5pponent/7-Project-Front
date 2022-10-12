@@ -51,9 +51,7 @@ export default function App() {
   } else if (state.mode === 'FRIEND') {
     content = <FriendApp/>
   } else if (state.mode === 'SETTING') {
-    content = <Setting
-      getDarkMode={getDarkMode}
-    />
+    content = <Setting getDarkMode={getDarkMode}/>
   } else {
     content = null;
   }
@@ -83,9 +81,7 @@ export default function App() {
   } else {
     return (
       <>
-        <Login
-          toggleLoading={toggleLoading}
-        />
+        <Login toggleLoading={toggleLoading}/>
         <LoadingProcess open={loading}/>
       </>
     );
