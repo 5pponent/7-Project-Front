@@ -21,7 +21,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
-  let content = null;
+  let content;
 
   // 하위 컴포넌트로부터 변경된 state를 얻기 위한 메소드
   const toggleLoading = (bool) => {

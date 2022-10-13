@@ -16,7 +16,9 @@ export default function MoreMenu(props) {
 		handleMenuClose();
 	};
 	const handleClickDelete = () => {
-		axios.delete(`/feed/${props.feedId}`)
+		axios.delete(`/feed/${props.feedId}`, {
+			headers: {authorization: localStorage.getItem('token')}
+		})
 			.then(res => {
 				props.closeContent && props.closeContent();
 				handleMenuClose();

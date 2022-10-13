@@ -68,7 +68,7 @@ export default function CustomizedMenus(props) {
     dispatch({type: 'ChangeMode', payload: 'SCHEDULE'})
   };
   const handleClickMessanger = () => {
-    dispatch({type: 'ChangeMode', payload: 'MESSANGER'})
+    dispatch({type: 'ChangeMode', payload: 'FRIEND'})
   };
   const handleClickSetting = () => {
     dispatch({type: 'ChangeMode', payload: 'SETTING'})

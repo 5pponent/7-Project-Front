@@ -14,12 +14,8 @@ export default function FeedLine(props) {
               return (
                 <Feed
                   key={f.id}
-                  feedId={f.id}
-                  writer={f.writer.id}
-                  content={f.content}
+                  feed={f}
                   image={f.writer.image ? f.writer.image.source : 'https://placeimg.com/100/100/people/00'}
-                  name={f.writer.name}
-                  time={f.createTime}
                   getUser={props.getUser}
                   feedList={feeds}
                   getFeedList={props.getFeedList}
