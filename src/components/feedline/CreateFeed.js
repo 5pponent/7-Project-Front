@@ -29,10 +29,13 @@ export default function CreateFeed(props) {
     const feedForm = new FormData();
     feedForm.append('content', state.feedContent.content);
     state.feedContent.image.map(item => feedForm.append('descriptions', item.description));
-    state.feedContent.image.map(item => feedForm.append('images', item.file));
+    // state.feedContent.image.map(item => feedForm.append('images', item.file));
+    [].map(item => feedForm.append('images', item));
     feedForm.append('showScope', scope);
 
-    await axios.post(`/feed`, feedForm)
+    await axios.post(`/feed`, feedForm, {
+      headers: {authorization: localStorage.getItem('token')}
+    })
       .then(res => {
         closeDrawer();
         dispatch({type: 'CreateFeed', payload: ''});

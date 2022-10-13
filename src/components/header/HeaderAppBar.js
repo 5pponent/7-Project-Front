@@ -108,9 +108,7 @@ export default function Header(props) {
               <SmallProfile/>
             </ButtonBase>
           </Tooltip>
-          <HeaderMenu
-            toggleLoading={props.toggleLoading}
-          />
+          <HeaderMenu toggleLoading={props.toggleLoading}/>
         </Box>
 
       </Toolbar>

@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
 import './anchorCss.css';
-import {store} from "../../store/store";
+import {store} from '../../store/store';
 import axios from 'axios';
 import {Box, Button, Dialog, DialogContent, Grid, Stack, TextField, Typography} from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -61,17 +61,18 @@ export default function Login(props) {
     loginValidate() &&
     await axios.post(`/auth/login`, loginInfo)
       .then(res => {
-        localStorage.setItem('token', res.data.token);
-        dispatch({type: 'Login'});
-        getUserInfo();
+        if (res.status === 201) {
+          setAuth(true);
+        } else {
+          localStorage.setItem('token', res.data.token);
+          dispatch({type: 'Login'});
+          getUserInfo();
+        }
       })
       .catch(error => {
         if (error.response.status === 401) {
           setErrorMessage(error.response.data.message);
         } else setErrorMessage('')
-        if (error.response.status === 302) {
-          setAuth(true);
-        }
         console.error(error.response);
       })
   };

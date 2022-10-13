@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {store} from "../../store/store";
 import {
   Divider,
@@ -17,6 +17,7 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
+import axios from "axios";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -28,6 +29,8 @@ const Content = styled(Typography)`
 
 export default function Feed(props) {
   const [state, dispatch] = useContext(store);
+  const {id, isLiked, writer, content, createTime} = props.feed;
+  const [feedDetail, setFeedDetail] = useState(null);
 
   const comments = [
     {
@@ -46,12 +49,21 @@ export default function Feed(props) {
   const [open, setOpen] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
-  const openContent = () => {setOpen(true)};
+  const openContent = async () => {
+    await axios.get(`/feed/${id}`, {
+      headers: {authorization: localStorage.getItem('token')}
+    })
+      .then(res => {
+        setFeedDetail(res.data);
+        setOpen(true);
+      })
+      .catch(error => console.error(error))
+  };
   const closeContent = () => {setOpen(false)};
   const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
   const handleCloseProfile = () => {setAnchor(null)};
-  const handleClickProfileView = (e) => {
-    props.getUser([props.name, props.image]);
+  const handleClickProfileView = () => {
+    props.getUser([writer.name, props.image]);
     dispatch({type: 'ChangeMode', payload: 'PROFILE'})
   };
 
@@ -59,17 +71,16 @@ export default function Feed(props) {
     <>
       <Paper sx={{margin: '14px'}}>
         <Grid container>
-          <Grid item xs={11} sx={{cursor: 'pointer'}}
-                onClick={openContent}> {/* 컨텐츠 */}
+          <Grid item xs={11} sx={{cursor: 'pointer'}} onClick={openContent}> {/* 컨텐츠 */}
             <Box p={4}>
-              <Content>{props.content}</Content>
+              <Content>{content}</Content>
             </Box>
           </Grid>
 
           <Grid item xs={1} p={2}> {/* 더보기 버튼 */}
             <MoreMenu
-              feedId={props.feedId}
-              writer={props.writer}
+              feedId={id}
+              writer={writer.id}
               feedList={props.feedList}
               getFeedList={props.getFeedList}/>
           </Grid>
@@ -81,7 +92,7 @@ export default function Feed(props) {
           <Grid item xs={10}> {/* 좋아요, 댓글 */}
             <Box>
               <IconButton>
-                <ThumbUpAltRoundedIcon sx={{fontSize: 30}}/>
+                <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
               </IconButton>
               <IconButton>
                 <AddCommentRoundedIcon sx={{fontSize: 30}}/>
@@ -97,8 +108,8 @@ export default function Feed(props) {
                   <Avatar alt="profile image" src={props.image}/>
                 </Grid>
                 <Grid item>
-                  <Typography>{props.name}</Typography>
-                  <Typography variant="body2" color="textSecondary">{props.time.substr(0, 10)}</Typography>
+                  <Typography>{writer.name}</Typography>
+                  <Typography variant="body2" color="textSecondary">{createTime.substring(0, 10)}</Typography>
                 </Grid>
               </Grid>
 
@@ -122,12 +133,7 @@ export default function Feed(props) {
       <Dialog open={open} onClose={closeContent} fullWidth={true} maxWidth='md'>
         <DialogContent>
           <FeedDetail
-            feedId={props.feedId}
-            writer={props.writer}
-            name={props.name}
-            content={props.content}
-            image={props.image}
-            time={props.time}
+            feedDetail={feedDetail}
             comments={comments}
             feedList={props.feedList}
             getFeedList={props.getFeedList}

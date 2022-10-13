@@ -19,19 +19,20 @@ import Comment from './Comment';
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
+  const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail
 
   return (
     <>
       <Grid container paddingBottom={3} spacing={2}>
         <Grid item xs={1}>
-          <SmallProfile image={props.image} name={props.name}/>
+          <SmallProfile image={writer.image ? writer.image.source : 'https://placeimg.com/100/100/people/00'} name={writer.name}/>
         </Grid>
 
         <Grid item xs={10}>
           <Typography color="textSecondary" fontSize="12px">
-            {props.time}
+            {createTime.substring(0, 10)}
           </Typography>
-          <Typography>{props.content}</Typography>
+          <Typography>{content}</Typography>
         </Grid>
 
         <Grid item xs={1}>
@@ -40,8 +41,8 @@ export default function FeedDetail(props) {
               <CloseIcon color='text.secondary'/>
             </IconButton>
             <MoreMenu
-              feedId={props.feedId}
-              writer={props.writer}
+              feedId={id}
+              writer={writer.id}
               closeContent={props.closeContent}
               feedList={props.feedList}
               getFeedList={props.getFeedList}
@@ -52,18 +53,18 @@ export default function FeedDetail(props) {
 
       <Box>
         <IconButton>
-          <ThumbUpAltRoundedIcon sx={{fontSize: 30}}/>
-        </IconButton>좋아요 수
+          <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
+        </IconButton>{likeCount}
         <IconButton sx={{marginLeft: "20px"}}>
           <AddCommentRoundedIcon sx={{fontSize: 30}}></AddCommentRoundedIcon>
-        </IconButton>{props.comments.length}
+        </IconButton>{commentCount}
       </Box>
 
       <Divider/>
 
       <Grid container marginTop='15px'>
         <Grid item xs={1}>
-          <SmallProfile image={state.user.image ? state.user.image.source : 'https://placeimg.com/100/100/people/00'} name={state.user.name}/>
+          <SmallProfile image={writer.image ? writer.image.source : 'https://placeimg.com/100/100/people/00'} name={state.user.name}/>
         </Grid>
         {/* 댓글 작성 */}
         <Grid item xs={11}>
