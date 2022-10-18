@@ -10,6 +10,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CloseIcon from '@mui/icons-material/Close';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import {useNavigate} from "react-router-dom";
 
 
 const StyledMenu = styled((props) => (
@@ -53,6 +54,8 @@ const StyledMenu = styled((props) => (
 export default function CustomizedMenus(props) {
   const [state, dispatch] = useContext(store);
 
+  let navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (e) => {
@@ -62,21 +65,20 @@ export default function CustomizedMenus(props) {
     setAnchorEl(null);
   };
   const handleClickChat = () => {
-    dispatch({type: 'ChangeMode', payload: 'CHAT'})
+    navigate('/chat');
   };
   const handleClickSchedule = () => {
-    dispatch({type: 'ChangeMode', payload: 'SCHEDULE'})
+    navigate('/schedule');
   };
-  const handleClickMessanger = () => {
-    dispatch({type: 'ChangeMode', payload: 'FRIEND'})
+  const handleClickMessenger = () => {
+    dispatch({type: 'ChangeMode', payload: 'FRIEND'});
   };
   const handleClickSetting = () => {
-    dispatch({type: 'ChangeMode', payload: 'SETTING'})
+    navigate('/setting');
   };
   const handleClickLogout = () => {
     localStorage.removeItem('token');
-    dispatch({type: 'Logout'});
-    dispatch({type: 'ChangeMode', payload: 'MAIN'});
+    navigate('/login');
   };
 
   return (
@@ -113,7 +115,7 @@ export default function CustomizedMenus(props) {
         </Tooltip>
 
         <Tooltip title="팔로우 / 팔로워" placement="left" arrow>
-          <MenuItem onClick={handleClickMessanger} disableRipple>
+          <MenuItem onClick={handleClickMessenger} disableRipple>
             <PeopleAltIcon/>
           </MenuItem>
         </Tooltip>
