@@ -20,6 +20,7 @@ import HeaderMenu from './HeaderMenu';
 import SmallProfile from '../SmallProfile';
 import CreateFeed from '../feedline/CreateFeed';
 import MuiSwitch from '../MUISwitch';
+import {useNavigate} from "react-router-dom";
 
 const Search = styled('div')(({theme}) => ({
   position: 'relative',
@@ -56,12 +57,16 @@ const Title = styled(Typography)(() => ({
 export default function Header(props) {
   const [state, dispatch] = useContext(store);
 
+  let navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const getOpen = (stat) => {setOpen(stat)};
   const handleClickDrawer = () => {setOpen(!open)};
-  const handleClickLogo = () => {dispatch({type: 'ChangeMode', payload: 'MAIN'})};
+  const handleClickLogo = () => {
+    navigate('/');
+  };
   const handleClickMyProfile = () => {
-    dispatch({type: 'ChangeMode', payload: 'PROFILE'});
+    navigate('/profile');
     props.getUser([state.user.name, state.user.image ? state.user.image.source : 'https://placeimg.com/100/100/people/00']);
   };
 
