@@ -18,7 +18,7 @@ const initialState = {
   },
   feedContent: {
     content: '',
-    image: [{file: '', description: ''}]
+    image: []
   }
 };
 

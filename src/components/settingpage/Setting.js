@@ -1,4 +1,5 @@
 import {useContext, useState} from "react";
+import axios from 'axios';
 import {store} from "../../store/store";
 import {
   Accordion,
@@ -33,11 +34,15 @@ export default function Setting(props) {
 
   const [lightMode, setLightMode] = useState(false);
   const [panel, setPanel] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [changePwOpen, setChangePwOpen] = useState(false);
+  const [checkPwOpen, setCheckPwOpen] = useState(false);
+  const [password, setPassword] = useState({password: ''});
   const [info, setInfo] = useState({
     name: state.user.name,
     email: state.user.email
   });
+  const [pwErrorMessage, setPwErrorMessage] = useState('');
+
   const handleChangeDisplay = (e) => {
     setLightMode(e.target.checked);
     console.log(lightMode);
@@ -45,11 +50,37 @@ export default function Setting(props) {
   const handleChangePanel = (p) => (e, isExpanded) => {
     setPanel(isExpanded ? p : false);
   };
-  const handleClickChangePW = () => {
-    setOpen(true);
+  const handleClickChangePW = () => {setChangePwOpen(true)};
+  const handleCloseChangePW = () => {setChangePwOpen(false)};
+  const handleClickSignOut = () => {setCheckPwOpen(true)};
+  const handleCloseSignOut = () => {
+    setCheckPwOpen(false);
+    setPwErrorMessage('');
+    setPassword({password: ''});
   };
-  const handleCloseChangePW = () => {
-    setOpen(false);
+  const handleChangePW = (e) => {setPassword({password: e.target.value})};
+  const signOutValid = () => {
+    let validate = true;
+    if (!password.password) {
+      setPwErrorMessage('비밀번호를 입력해 주세요.');
+      validate = false;
+    } else setPwErrorMessage('')
+    return validate;
+  };
+  const signOut = async () => {
+    signOutValid() &&
+    await axios.delete(`/user`, {
+      headers: {authorization: localStorage.getItem('token')},
+      data: password
+    })
+      .then(res => {
+        localStorage.removeItem('token');
+        dispatch({type: 'Logout'});
+      })
+      .catch(error => {
+        setPwErrorMessage(error.response.data.message);
+        console.error(error.response);
+      })
   };
 
   return (
@@ -66,25 +97,35 @@ export default function Setting(props) {
               <Item item xs={9}>
                 {info.name}
               </Item>
+
               <Item item xs={3}><Label>Email</Label></Item>
               <Item item xs={9}>
                 {info.email}
               </Item>
+
               <Item item xs={3}><Label>PW</Label></Item>
               <Item item xs={9}>
                 <Button size='small' onClick={handleClickChangePW}>변경</Button>
               </Item>
+
               <Item item xs={3}><Label>재직 분야</Label></Item>
               <Item item xs={9}>
 
               </Item>
+
               <Item item xs={3}><Label>관심 분야</Label></Item>
               <Item item xs={9}>
 
               </Item>
+
               <Item item xs={3}><Label>프로필 공개</Label></Item>
               <Item item xs={9}>
 
+              </Item>
+
+              <Item item xs={3}><Label>회원 탈퇴</Label></Item>
+              <Item item xs={9}>
+                <Button size='small' onClick={handleClickSignOut}>탈퇴</Button>
               </Item>
             </Grid>
           </AccordionDetails>
@@ -102,10 +143,18 @@ export default function Setting(props) {
           </AccordionDetails>
         </Accordion>
       </Paper>
-      <Dialog open={open} onClose={handleCloseChangePW}>
+
+      <Dialog open={changePwOpen} onClose={handleCloseChangePW}>
         <DialogContent>
-          <ChangePW></ChangePW>
+          <ChangePW/>
           <Button color='error' onClick={handleCloseChangePW} fullWidth>취소</Button>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={checkPwOpen} onClose={handleCloseSignOut}>
+        <DialogContent>
+          <CheckPW handleChangePW={handleChangePW} signOut={signOut} pwErrorMessage={pwErrorMessage}/>
+          <Button color='error' onClick={handleCloseSignOut} fullWidth>취소</Button>
         </DialogContent>
       </Dialog>
     </>
@@ -113,7 +162,6 @@ export default function Setting(props) {
 }
 
 function ChangePW() {
-
   return (
     <Stack spacing={2} sx={{marginBottom: '6px'}}>
       <Typography variant='h5' fontWeight='bold'>비밀번호 변경</Typography>
@@ -124,6 +172,23 @@ function ChangePW() {
         <TextField fullWidth label='새 PW 확인' type='password'/>
         <Button type='submit' variant='contained' color='success'>변경하기</Button>
       </Stack>
+    </Stack>
+  )
+}
+
+function CheckPW(props) {
+  return (
+    <Stack spacing={2} sx={{marginBottom: '6px'}}>
+      <Typography variant='h5' fontWeight='bold'>비밀번호 확인</Typography>
+      <TextField
+        fullWidth
+        label='PW'
+        type='password'
+        onChange={props.handleChangePW}
+        error={props.pwErrorMessage}
+        helperText={props.pwErrorMessage}
+      />
+      <Button type='submit' variant='contained' color='success' onClick={props.signOut}>회원 탈퇴</Button>
     </Stack>
   )
 }
