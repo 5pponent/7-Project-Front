@@ -82,7 +82,7 @@ export default function Profile(props) {
         </Search>
       </Stack>
 
-      <Box sx={{height: '580px', overflow: 'auto'}}>
+      <Box sx={{overflow: 'overlay'}}>
         <FeedLine getUser={props.getUser} feed={feed} getFeedList={getFeedList}/>
       </Box>
     </>

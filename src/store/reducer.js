@@ -1,4 +1,5 @@
 import React from 'react';
+import {initialState} from "./store";
 
 export default function reducer(state, action) {
   switch (action.type) {

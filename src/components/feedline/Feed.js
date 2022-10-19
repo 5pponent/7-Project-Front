@@ -8,7 +8,7 @@ import {
   Menu,
   MenuItem,
   IconButton,
-  Grid
+  Grid, Stack, Badge
 } from '@mui/material';
 import {styled} from '@mui/material/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -73,7 +73,7 @@ export default function Feed(props) {
 
   return (
     <>
-      <Paper sx={{margin: '14px'}}>
+      <Paper sx={{marginY: '30px'}} elevation={8}>
         <Grid container>
           <Grid item xs={11} sx={{cursor: 'pointer'}} onClick={openContent}> {/* 컨텐츠 */}
             <Box p={4}>
@@ -98,14 +98,18 @@ export default function Feed(props) {
 
         <Grid container p={2}>
           <Grid item xs={10}> {/* 좋아요, 댓글 */}
-            <Box>
+            <Stack direction={'row'} spacing={3}>
               <IconButton>
-                <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
-              </IconButton>{likeCount}
+                <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
+                  <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
+                </StyledBadge>
+              </IconButton>
               <IconButton>
-                <AddCommentRoundedIcon sx={{fontSize: 30}}/>
-              </IconButton>{commentCount}
-            </Box>
+                <StyledBadge badgeContent={commentCount} bgcolor={''} showZero>
+                  <AddCommentRoundedIcon sx={{fontSize: 30}}/>
+                </StyledBadge>
+              </IconButton>
+            </Stack>
           </Grid>
 
           <Grid item xs={2}> {/* 프로필 */}
@@ -151,3 +155,10 @@ export default function Feed(props) {
     </>
   );
 }
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: 15,
+    top: 40
+  },
+}));
