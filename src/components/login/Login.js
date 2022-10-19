@@ -9,8 +9,6 @@ import {useNavigate} from "react-router-dom";
 import LoadingProcess from "../LoadingProcess";
 
 export default function Login(props) {
-  const [state, dispatch] = useContext(store);
-
   let navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -22,6 +20,7 @@ export default function Login(props) {
   const [pwErrorMessage, setPwErrorMessage] = useState('');
   const [codeErrorMessage, setCodeErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
 
   const loginValidate = () => {
     let valid = true;
@@ -57,7 +56,7 @@ export default function Login(props) {
 
   const handleClickLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoading(true); setLoadingMessage('로그인을 시도중입니다..');
     loginValidate() &&
     await axios.post(`/auth/login`, loginInfo)
       .then(res => {
@@ -78,6 +77,7 @@ export default function Login(props) {
   };
   const handleClickAuthLogin = async (e) => {
     e.preventDefault();
+    setLoading(true); setLoadingMessage('로그인을 시도중입니다..');
     (loginValidate() & codeValidate()) &&
     await axios.post(`/auth/mail-auth-login`, {code: authCode, ...loginInfo})
       .then(res => {
@@ -88,11 +88,13 @@ export default function Login(props) {
         setCodeErrorMessage(error.response.data.message);
         console.error(error);
       })
+      .finally(() => setLoading(false));
+    setLoading(false);
   };
 
   return (
     <>
-      <LoadingProcess open={loading}/>
+      <LoadingProcess open={loading} message={loadingMessage}/>
       <Stack sx={{
         width: 300, position: 'absolute', transform: 'translate(-50%, -50%)',
         left: '50%', top: '50%', borderRadius: '30px', padding: '60px', boxShadow: 6

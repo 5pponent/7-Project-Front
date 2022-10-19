@@ -12,6 +12,7 @@ export default function Register(props) {
   let navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [mode, setMode] = useState('AUTH');
   const [auth, setAuth] = useState(false);
   const [authInfo, setAuthInfo] = useState({code: '', email: ''})
@@ -121,7 +122,7 @@ export default function Register(props) {
 
   return (
     <Stack spacing={2}>
-      <LoadingProcess open={loading}/>
+      <LoadingProcess open={loading} message={loadingMessage}/>
       <Grid align='center'>
         <MenuBookIcon color='primary' sx={{fontSize: 100}}/>
         <Typography variant='h4' color='primary' fontWeight='bold'>모두의 일기장</Typography>
