@@ -54,13 +54,7 @@ export default function Login(props) {
       [name]: value
     });
   };
-  const getUserInfo = () => {
-    axios.get(`/user`, {
-      headers: {authorization: localStorage.getItem('token')}
-    })
-      .then(res => dispatch({type: 'User', payload: res.data}))
-      .catch(error => console.error(error))
-  };
+
   const handleClickLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -69,13 +63,9 @@ export default function Login(props) {
       .then(res => {
         if (res.status === 200) {
           localStorage.setItem('token', res.data.token);
-          navigate(-1);
-        } else if (res.status === 201) {
-          setAuth(true);
-        } else {
-          localStorage.setItem('token', res.data.token);
-          getUserInfo();
+          navigate('/');
         }
+        else setAuth(true);
       })
       .catch(error => {
         if (error.response.status === 401) {
@@ -92,8 +82,7 @@ export default function Login(props) {
     await axios.post(`/auth/mail-auth-login`, {code: authCode, ...loginInfo})
       .then(res => {
         localStorage.setItem('token', res.data.token);
-        dispatch({type: 'Login'});
-        getUserInfo();
+        navigate('/');
       })
       .catch(error => {
         setCodeErrorMessage(error.response.data.message);
@@ -150,10 +139,7 @@ export default function Login(props) {
 
       <Dialog open={open} onClose={handleClickClose} maxWidth='xs' fullWidth={true}>
         <DialogContent>
-          <Register
-            getUserInfo={getUserInfo}
-            toggleLoading={props.toggleLoading}
-          />
+          <Register/>
         </DialogContent>
       </Dialog>
     </>
