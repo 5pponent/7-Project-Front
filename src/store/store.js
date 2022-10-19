@@ -2,9 +2,7 @@ import React, {createContext, useReducer} from "react";
 import reducer from "./reducer";
 
 const initialState = {
-  login: false,
   darkMode: false,
-  mode: 'MAIN',
   user: {
     email: undefined,
     followerCount: 0,

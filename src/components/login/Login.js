@@ -5,9 +5,13 @@ import {store} from '../../store/store';
 import {Box, Button, Dialog, DialogContent, Grid, Stack, TextField, Typography} from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import Register from './Register';
+import {useNavigate} from "react-router-dom";
+import LoadingProcess from "../LoadingProcess";
 
 export default function Login(props) {
   const [state, dispatch] = useContext(store);
+
+  let navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [auth, setAuth] = useState(false);
@@ -17,6 +21,7 @@ export default function Login(props) {
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [pwErrorMessage, setPwErrorMessage] = useState('');
   const [codeErrorMessage, setCodeErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const loginValidate = () => {
     let valid = true;
@@ -58,14 +63,17 @@ export default function Login(props) {
   };
   const handleClickLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     loginValidate() &&
     await axios.post(`/auth/login`, loginInfo)
       .then(res => {
-        if (res.status === 201) {
+        if (res.status === 200) {
+          localStorage.setItem('token', res.data.token);
+          navigate(-1);
+        } else if (res.status === 201) {
           setAuth(true);
         } else {
           localStorage.setItem('token', res.data.token);
-          dispatch({type: 'Login'});
           getUserInfo();
         }
       })
@@ -75,6 +83,8 @@ export default function Login(props) {
         } else setErrorMessage('')
         console.error(error.response);
       })
+      .finally(() => setLoading(false));
+    setLoading(false);
   };
   const handleClickAuthLogin = async (e) => {
     e.preventDefault();
@@ -93,6 +103,7 @@ export default function Login(props) {
 
   return (
     <>
+      <LoadingProcess open={loading}/>
       <Stack sx={{
         width: 300, position: 'absolute', transform: 'translate(-50%, -50%)',
         left: '50%', top: '50%', borderRadius: '30px', padding: '60px', boxShadow: 6
