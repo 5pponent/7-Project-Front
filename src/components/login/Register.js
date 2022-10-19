@@ -3,10 +3,15 @@ import {store} from "../../store/store";
 import axios from "axios";
 import {Box, Button, Grid, Stack, TextField, Typography} from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import LoadingProcess from "../LoadingProcess";
+import {useNavigate} from "react-router-dom";
 
 export default function Register(props) {
   const [state, dispatch] = useContext(store);
 
+  let navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState('AUTH');
   const [auth, setAuth] = useState(false);
   const [authInfo, setAuthInfo] = useState({code: '', email: ''})
@@ -87,33 +92,36 @@ export default function Register(props) {
   };
   const handleClickSendMail = async (e) => {
     e.preventDefault();
+    setLoading(true);
     mailValidate() &&
     await axios.post(`/auth/mail-auth`, {email: authInfo.email})
       .then(res => setAuth(true))
       .catch(error => setMailErrorMessage(error.response.data.message))
-  };
-  const getUserInfo = () => {
-    axios.get(`/user`, {
-      headers: {authorization: localStorage.getItem('token')}
-    })
-      .then(res => dispatch({type: 'User', payload: res.data}))
-      .catch(error => console.error(error))
+      .finally(() => {setLoading(false)});
+    setLoading(false);
   };
   const handleClickRegist = async (e) => {
     e.preventDefault();
+    setLoading(true);
     registValidate() && await axios.post(`/auth/join`, {email: authInfo.email, ...registInfo})
       .then(res => {
-        dispatch({type: 'Login'});
-        getUserInfo();
+        axios.post('/auth/login', {email: authInfo.email, password: registInfo.password})
+          .then(res => {localStorage.setItem('token', res.data.token)})
+          .catch(err => {console.log(err)})
+          .finally(() => {setLoading(false);});
+        navigate('/');
       })
       .catch(error => {
         setIdErrorMessage(error.response.data.message);
         console.log(error.response);
       })
+      .finally(() => {setLoading(false);})
+    setLoading(false);
   };
 
   return (
     <Stack spacing={2}>
+      <LoadingProcess open={loading}/>
       <Grid align='center'>
         <MenuBookIcon color='primary' sx={{fontSize: 100}}/>
         <Typography variant='h4' color='primary' fontWeight='bold'>모두의 일기장</Typography>

@@ -1,5 +1,3 @@
-import {useContext} from 'react';
-import {store} from "./store/store";
 import FeedLineSelect from './components/feedline/FeedLineSelect'
 import Login from './components/login/Login';
 import Profile from './components/profile/Profile';
