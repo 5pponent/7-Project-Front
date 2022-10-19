@@ -30,9 +30,13 @@ export default function FeedDetail(props) {
 
         <Grid item xs={10}>
           <Typography color="textSecondary" fontSize="12px">
-            {createTime.substring(0, 10)}
+            {createTime}
           </Typography>
-          <Typography>{content}</Typography>
+            {content.split('\n').map((value, index) => (
+              <Typography key={index}>
+                {value === '\r' ? <br/> : value}
+              </Typography>
+              ))}
         </Grid>
 
         <Grid item xs={1}>
