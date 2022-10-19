@@ -7,8 +7,6 @@ import LoadingProcess from "../LoadingProcess";
 import {useNavigate} from "react-router-dom";
 
 export default function Register(props) {
-  const [state, dispatch] = useContext(store);
-
   let navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -21,7 +19,6 @@ export default function Register(props) {
     password: '',
     passwordCheck: ''
   });
-  const [idErrorMessage, setIdErrorMessage] = useState('');
   const [pwErrorMessage, setPwErrorMessage] = useState('');
   const [pwchkErrorMessage, setPwchkErrorMessage] = useState('');
   const [nameErrorMessage, setNameErrorMessage] = useState('');
@@ -78,8 +75,10 @@ export default function Register(props) {
       [name]: value
     });
   };
+
   const handleClickCodeCheck = async (e) => {
     e.preventDefault();
+    setLoading(true); setLoadingMessage('인증 코드를 확인합니다..');
     (mailValidate() & codeValidate()) &&
     await axios.post(`/auth/mail-auth-check`, authInfo)
       .then(res => {
@@ -90,10 +89,12 @@ export default function Register(props) {
         setCodeErrorMessage(error.response.data.message);
         console.log(error.response);
       })
+      .finally(() => setLoading(false));
+    setLoading(false);
   };
   const handleClickSendMail = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoading(true); setLoadingMessage('인증 메일을 보내는 중입니다..');
     mailValidate() &&
     await axios.post(`/auth/mail-auth`, {email: authInfo.email})
       .then(res => setAuth(true))
@@ -103,19 +104,13 @@ export default function Register(props) {
   };
   const handleClickRegist = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoading(true); setLoadingMessage('회원가입을 진행중입니다..');
     registValidate() && await axios.post(`/auth/join`, {email: authInfo.email, ...registInfo})
       .then(res => {
-        axios.post('/auth/login', {email: authInfo.email, password: registInfo.password})
-          .then(res => {localStorage.setItem('token', res.data.token)})
-          .catch(err => {console.log(err)})
-          .finally(() => {setLoading(false);});
+        localStorage.setItem('token', res.data.token);
         navigate('/');
       })
-      .catch(error => {
-        setIdErrorMessage(error.response.data.message);
-        console.log(error.response);
-      })
+      .catch(error => {console.log(error.response);})
       .finally(() => {setLoading(false);})
     setLoading(false);
   };

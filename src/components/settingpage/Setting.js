@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MuiSwitch from "../MUISwitch";
+import {useNavigate} from "react-router-dom";
 
 const Label = styled(Typography)(() => ({
   fontSize: '14px',
@@ -31,6 +32,8 @@ const Item = styled(Grid)(() => ({
 
 export default function Setting(props) {
   const [state, dispatch] = useContext(store);
+
+  let navigate = useNavigate();
 
   const [lightMode, setLightMode] = useState(false);
   const [panel, setPanel] = useState(false);
@@ -75,12 +78,12 @@ export default function Setting(props) {
     })
       .then(res => {
         localStorage.removeItem('token');
-        dispatch({type: 'Logout'});
+        navigate('/login');
       })
       .catch(error => {
         setPwErrorMessage(error.response.data.message);
         console.error(error.response);
-      })
+      });
   };
 
   return (

@@ -1,11 +1,11 @@
-import {useContext} from "react";
+import {useContext, useEffect} from "react";
 import {store} from "../../store/store";
 import {
   Box,
   Button,
   Divider,
   Grid,
-  IconButton,
+  IconButton, ImageList, ImageListItem,
   Stack,
   TextField,
   Typography
@@ -16,10 +16,15 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import SmallProfile from "../SmallProfile";
 import MoreMenu from './MoreMenu';
 import Comment from './Comment';
+import {Image} from "@mui/icons-material";
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
   const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail
+
+  useEffect(() => {
+    console.log(props)
+  }, []);
 
   return (
     <>
@@ -37,6 +42,18 @@ export default function FeedDetail(props) {
                 {value === '\r' ? <br/> : value}
               </Typography>
               ))}
+          <ImageList cols={1}>
+            {
+              props.feedDetail.files.map(f => {
+                return (
+                  <ImageListItem key={f.id}>
+                    <img src={f.source}/>
+                    <Typography>{f.description}</Typography>
+                  </ImageListItem>
+                );
+              })
+            }
+          </ImageList>
         </Grid>
 
         <Grid item xs={1}>

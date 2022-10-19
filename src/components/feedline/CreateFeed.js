@@ -60,9 +60,7 @@ export default function CreateFeed(props) {
     const feedForm = new FormData();
     feedForm.append('content', state.feedContent.content);
     state.feedContent.image.map(item => feedForm.append('descriptions', item.description));
-    state.feedContent.image.length === 0 ?
-      feedForm.append('images', new Blob()) :
-      state.feedContent.image.map(item => feedForm.append('images', item.file));
+    state.feedContent.image.map(item => feedForm.append('images', item.file));
     feedForm.append('showScope', scope);
 
     await axios.post(`/feed`, feedForm, {
@@ -110,7 +108,7 @@ export default function CreateFeed(props) {
           </Grid>
 
           <Grid item xs={12}>
-            <TextField fullWidth rows={7} multiline placeholder={'내용을 입력해 주세요.'} value={state.feedContent.content}
+            <TextField fullWidth maxRows={10} multiline placeholder={'내용을 입력해 주세요.'} value={state.feedContent.content}
                        onChange={handleContentChange}/>
           </Grid>
 
