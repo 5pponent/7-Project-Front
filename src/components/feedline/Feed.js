@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {store} from "../../store/store";
 import {
   Divider,
@@ -29,7 +29,7 @@ const Content = styled(Typography)`
 
 export default function Feed(props) {
   const [state, dispatch] = useContext(store);
-  const {id, isLiked, writer, content, createTime} = props.feed;
+  const {commentCount, id, isLiked, likeCount, writer, content, createTime} = props.feed;
   const [feedDetail, setFeedDetail] = useState(null);
 
   const comments = [
@@ -67,13 +67,21 @@ export default function Feed(props) {
     dispatch({type: 'ChangeMode', payload: 'PROFILE'})
   };
 
+  useEffect(() => {
+    console.log(props.feed)
+  },[])
+
   return (
     <>
       <Paper sx={{margin: '14px'}}>
         <Grid container>
           <Grid item xs={11} sx={{cursor: 'pointer'}} onClick={openContent}> {/* 컨텐츠 */}
             <Box p={4}>
-              <Content>{content}</Content>
+              <Content>
+                {content.split('\n').map((value, index) => (
+                  <Typography key={index}>{value === '\r' ? <br/> : value}</Typography>
+                ))}
+              </Content>
             </Box>
           </Grid>
 
@@ -93,17 +101,16 @@ export default function Feed(props) {
             <Box>
               <IconButton>
                 <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
-              </IconButton>
+              </IconButton>{likeCount}
               <IconButton>
                 <AddCommentRoundedIcon sx={{fontSize: 30}}/>
-              </IconButton>
+              </IconButton>{commentCount}
             </Box>
           </Grid>
 
           <Grid item xs={2}> {/* 프로필 */}
             <Box>
-              <Grid container spacing={1} sx={{cursor: 'pointer'}}
-                    onClick={handleClickProfile}>
+              <Grid container spacing={1} sx={{cursor: 'pointer'}} onClick={handleClickProfile}>
                 <Grid item>
                   <Avatar alt="profile image" src={props.image}/>
                 </Grid>
@@ -130,7 +137,7 @@ export default function Feed(props) {
       </Paper>
 
       {/* 컨텐츠 상세보기 다이얼로그 */}
-      <Dialog open={open} onClose={closeContent} fullWidth={true} maxWidth='md'>
+      <Dialog open={open} onClose={closeContent} fullWidth maxWidth='md'>
         <DialogContent>
           <FeedDetail
             feedDetail={feedDetail}

@@ -92,19 +92,13 @@ export default function Register(props) {
       .then(res => setAuth(true))
       .catch(error => setMailErrorMessage(error.response.data.message))
   };
-  const getUserInfo = () => {
-    axios.get(`/user`, {
-      headers: {authorization: localStorage.getItem('token')}
-    })
-      .then(res => dispatch({type: 'User', payload: res.data}))
-      .catch(error => console.error(error))
-  };
   const handleClickRegist = async (e) => {
     e.preventDefault();
     registValidate() && await axios.post(`/auth/join`, {email: authInfo.email, ...registInfo})
       .then(res => {
+        localStorage.setItem('token', res.data.token);
         dispatch({type: 'Login'});
-        getUserInfo();
+        props.getUserInfo();
       })
       .catch(error => {
         setIdErrorMessage(error.response.data.message);

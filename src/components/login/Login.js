@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import './anchorCss.css';
-import {store} from '../../store/store';
 import axios from 'axios';
+import {store} from '../../store/store';
 import {Box, Button, Dialog, DialogContent, Grid, Stack, TextField, Typography} from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import Register from './Register';
@@ -140,6 +140,7 @@ export default function Login(props) {
       <Dialog open={open} onClose={handleClickClose} maxWidth='xs' fullWidth={true}>
         <DialogContent>
           <Register
+            getUserInfo={getUserInfo}
             toggleLoading={props.toggleLoading}
           />
         </DialogContent>
