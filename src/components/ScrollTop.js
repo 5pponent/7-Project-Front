@@ -1,43 +1,43 @@
-import useScrollTrigger from '@mui/material/useScrollTrigger';
-import Zoom from '@mui/material/Zoom';
-import Box from '@mui/material/Box';
-import PropTypes from 'prop-types';
+import { Fab, Fade } from "@mui/material";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useState } from "react";
+import { useEffect } from "react";
 
+export default function ScrollUpButton() {
 
-ScrollTop.propTypes = {
-    children: PropTypes.element.isRequired,
-    window: PropTypes.func,
-};
+  const [show, setShow] = useState(false);
+  const [scroll, setScroll] = useState(0);
 
-export default function ScrollTop(props) {
-	const { children, window } = props;
-	const trigger = useScrollTrigger({
-		target: window ? window() : undefined,
-		disableHysteresis: true,
-		threshold: 100,
-	});
+  const handleScroll = () => {
+    setScroll(window.pageYOffset);
+    if (scroll > 600) setShow(true);
+    else setShow(false);
+  }
 
-	const handleClick = (e) => {
-		const anchor = (e.target.ownerDocument || document).querySelector(
-			'#back-to-top-anchor',
-		);
-		if (anchor) {
-			anchor.scrollIntoView({
-				behavior: 'smooth',
-				block: 'center',
-			});
-		}
-	};
-  
-	return (
-		<Zoom in={trigger}>
-			<Box
-				onClick={handleClick}
-				role="presentation"
-				sx={{ position: 'fixed', bottom: 100, right: 90 }}
-			>
-				{children}
-			</Box>
-		</Zoom>
-	);
+  const handleClickButton = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setScroll(205);
+  }
+
+  useEffect(() => {
+    if (scroll > 600) setShow(true);
+  }, [scroll]);
+
+  const watch = () => window.addEventListener('scroll', handleScroll);
+  useEffect(() => {
+    watch();
+    return () => window.removeEventListener('scroll', handleScroll);
+  });
+
+  return (
+    <Fade in={show}>
+      <Fab
+        size='large'
+        color='primary'
+        sx={{ position: 'fixed', bottom: 50, right: 50 }}
+        onClick={handleClickButton}>
+        <KeyboardArrowUpIcon/>
+      </Fab>
+    </Fade>
+  );
 }

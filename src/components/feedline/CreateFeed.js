@@ -77,10 +77,7 @@ export default function CreateFeed(props) {
         dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
         console.log(res)
       })
-      .catch(error => {
-        navigate('/login');
-        console.error(error.response)
-      })
+      .catch(error => {console.error(error.response)})
       .finally(() => setLoading(false));
   };
 

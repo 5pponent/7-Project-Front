@@ -4,10 +4,10 @@ import Profile from './components/profile/Profile';
 import Setting from './components/settingpage/Setting';
 import ChatApp from './components/chatting/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
-import Template from "./Template";
+import Template from "./components/Template";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Snackbar} from "@mui/material";
-import {useContext} from "react";
+import {Dialog, DialogContent, Slide, Snackbar} from "@mui/material";
+import {forwardRef, useContext} from "react";
 import {store} from "./store/store";
 
 export default function App() {
@@ -47,6 +47,18 @@ export default function App() {
         }></Route>
 
       </Routes>
+
+      {/*이미지 자세히 보기 다이얼로그*/}
+      <Dialog
+        open={state.imageView.open}
+        onClose={() => {dispatch({type: 'CloseImageView'})}}
+        onClick={() => {dispatch({type: 'CloseImageView'})}}
+        maxWidth={'lg'}
+      >
+        <img style={{maxWidth: '800px'}} src={state.imageView.source}/>
+      </Dialog>
+
+      {/*알림용 스낵바*/}
       <Snackbar
         open={state.snackbar.open}
         autoHideDuration={5000}
@@ -57,3 +69,6 @@ export default function App() {
   );
 }
 
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});

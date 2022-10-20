@@ -50,8 +50,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Button, DialogContent } from '@mui/material';
-import { Dialog } from '@material-ui/core';
+import {Button, Dialog, DialogContent} from '@mui/material';
 import ScheduleAdd from './ScheduleAdd';
 import DeleteIcon from '@mui/icons-material/Delete';
 

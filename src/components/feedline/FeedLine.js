@@ -8,7 +8,7 @@ export default function FeedLine(props) {
 
   return (
     <>
-      <Box sx={{minWidth: 800, width: 800, margin: '0 auto', paddingTop: '3px'}}>
+      <Box sx={{minWidth: 800, width: 800, margin: '0 auto'}}>
         {
           feeds ? feeds.map(f => {
               return (

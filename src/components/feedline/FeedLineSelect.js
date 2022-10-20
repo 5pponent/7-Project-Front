@@ -23,7 +23,7 @@ export default function FeedLineSelect(props) {
 
   return (
     <Stack>
-      <Stack spacing={1} width='900px' height='40px' margin='0 auto' minWidth='800px'
+      <Stack spacing={1} width='900px' margin='0 auto' minWidth='800px'
         direction='row' divider={<Divider orientation='vertical' flexItem />}>
       </Stack>
 

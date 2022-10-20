@@ -10,16 +10,14 @@ import {
   Typography,
   AppBar,
   ButtonBase,
-  InputBase
+  InputBase, Avatar
 } from '@mui/material';
 import {styled, alpha} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import EditIcon from '@mui/icons-material/Edit';
 import HeaderMenu from './HeaderMenu';
-import SmallProfile from '../SmallProfile';
 import CreateFeed from '../feedline/CreateFeed';
-import MuiSwitch from '../MUISwitch';
 import {useNavigate} from "react-router-dom";
 
 const Search = styled('div')(({theme}) => ({
@@ -29,28 +27,38 @@ const Search = styled('div')(({theme}) => ({
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
 }));
-
 const SearchIconWrapper = styled('div')(({theme}) => ({
-  padding: theme.spacing(0, 1),
+  padding: theme.spacing(0, 2),
   height: '100%',
   position: 'absolute',
+  pointerEvents: 'none',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 }));
-
 const StyledInputBase = styled(InputBase)(({theme}) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(3)})`,
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
   },
 }));
-
 const Title = styled(Typography)(() => ({
-  fontSize: '20px',
+  fontSize: '24px',
   fontWeight: 'bold',
 }));
 
@@ -70,52 +78,57 @@ export default function Header(props) {
   };
 
   return (
-    <AppBar>
-      <Toolbar sx={{bgcolor: '#2c92ff', color: 'white'}}>
+    <AppBar style={{userSelect: 'none', position: 'sticky'}}>
+      <Toolbar
+        sx={{bgcolor: '#2c92ff', color: 'white'}}
+        style={{display: 'flex', justifyContent: 'space-between'}}
+        disableGutters
+      >
+
         {/* 검색 */}
-        <Box sx={{width: "300px", float: 'left'}}>
+        <FlexItem>
           <Search>
             <SearchIconWrapper><SearchIcon/></SearchIconWrapper>
             <StyledInputBase placeholder="프로필 검색"/>
           </Search>
-        </Box>
+        </FlexItem>
 
         {/* 타이틀 */}
-        <Stack onClick={handleClickLogo} alignItems='center' sx={{cursor: 'pointer', width: '100%'}}>
-          <MenuBookIcon sx={{fontSize: 55}}/>
-          <Title>모두의 일기장</Title>
-        </Stack>
+        <FlexItem>
+          <ButtonBase onClick={handleClickLogo}>
+            <MenuBookIcon sx={{fontSize: 50}}/>
+            &nbsp;&nbsp;&nbsp;
+            <Title>모두의 일기장</Title>
+          </ButtonBase>
+        </FlexItem>
 
         {/* 우측 메뉴 */}
-        <Box
-          sx={{display: 'flex', justifyContent: "flex-end", float: 'right', width: '300px'}}> {/* 우측 사용자 프로필, 더보기 메뉴 */}
-
-          <MuiSwitch/>
-
+        <FlexItem> {/* 우측 사용자 프로필, 더보기 메뉴 */}
           <Tooltip title="피드 작성" placement="bottom" arrow>
             <IconButton onClick={handleClickDrawer} sx={{marginRight: '5px'}}>
               <EditIcon sx={{color: 'white'}}></EditIcon>
             </IconButton>
           </Tooltip>
 
-          <Drawer
-            anchor='left'
-            open={open}
-            onClose={handleClickDrawer}
-          >
-            <CreateFeed
-              getOpen={getOpen}
-            />
+          <Drawer anchor='left' open={open} onClose={handleClickDrawer}>
+            <CreateFeed getOpen={getOpen}/>
           </Drawer>
+
           <Tooltip title="프로필" placement="bottom" arrow>
             <ButtonBase onClick={handleClickMyProfile} sx={{margin: '0 5px'}}>
-              <SmallProfile image={state.user.image ? state.user.image.source : ''}/>
+              <Avatar src={state.user.image ? state.user.image.source : ''}/>
             </ButtonBase>
           </Tooltip>
-          <HeaderMenu toggleLoading={props.toggleLoading}/>
-        </Box>
+
+          <HeaderMenu/>
+        </FlexItem>
 
       </Toolbar>
     </AppBar>
   );
 }
+
+const FlexItem = styled("div")(() => ({
+  width: '250px',
+  textAlign: 'center'
+}));

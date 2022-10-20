@@ -20,6 +20,10 @@ const initialState = {
     content: '',
     image: []
   },
+  imageView: {
+    open: false,
+    source: ''
+  },
   snackbar: {
     open: false,
     message: ''

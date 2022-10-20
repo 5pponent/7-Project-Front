@@ -10,11 +10,9 @@ import {
   IconButton,
   Grid,
   Stack,
-  Badge
+  Badge, Dialog, DialogContent
 } from '@mui/material';
 import {styled} from '@mui/material/styles';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
@@ -61,10 +59,7 @@ export default function Feed(props) {
         setFeedDetail(res.data);
         setOpen(true);
       })
-      .catch(error => {
-        console.error(error);
-        navigate(`/login`);
-      })
+      .catch(error => {console.error(error);})
   };
   const closeContent = () => {setOpen(false)};
   const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
