@@ -20,7 +20,7 @@ export default function reducer(state, action) {
             {
               file: action.payload.file,
               originalName: action.payload.originalName,
-              description: ''
+              description: ' '
             }
           ]
         }

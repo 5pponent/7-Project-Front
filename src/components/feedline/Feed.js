@@ -8,7 +8,9 @@ import {
   Menu,
   MenuItem,
   IconButton,
-  Grid, Stack, Badge
+  Grid,
+  Stack,
+  Badge
 } from '@mui/material';
 import {styled} from '@mui/material/styles';
 import Dialog from '@material-ui/core/Dialog';
@@ -25,6 +27,7 @@ const Content = styled(Typography)`
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
+  white-space: pre-wrap;
 `
 
 export default function Feed(props) {
@@ -67,10 +70,6 @@ export default function Feed(props) {
     dispatch({type: 'ChangeMode', payload: 'PROFILE'})
   };
 
-  useEffect(() => {
-    console.log(props.feed)
-  },[])
-
   return (
     <>
       <Paper sx={{marginY: '30px'}} elevation={8}>
@@ -78,9 +77,7 @@ export default function Feed(props) {
           <Grid item xs={11} sx={{cursor: 'pointer'}} onClick={openContent}> {/* 컨텐츠 */}
             <Box p={4}>
               <Content>
-                {content.split('\n').map((value, index) => (
-                  <Typography key={index}>{value === '\r' ? <br/> : value}</Typography>
-                ))}
+                {content}
               </Content>
             </Box>
           </Grid>
@@ -116,7 +113,7 @@ export default function Feed(props) {
             <Box>
               <Grid container spacing={1} sx={{cursor: 'pointer'}} onClick={handleClickProfile}>
                 <Grid item>
-                  <Avatar alt="profile image" src={props.image}/>
+                  {props.image ? <Avatar src={props.image}/> : <Avatar>이름</Avatar>}
                 </Grid>
                 <Grid item>
                   <Typography>{writer.name}</Typography>

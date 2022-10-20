@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {store} from "../../store/store";
 import {Avatar, Divider, IconButton, InputBase, Stack, Tooltip, Typography, Box} from "@mui/material";
@@ -67,7 +67,7 @@ export default function Profile(props) {
   return (
     <>
       <Stack p={1} alignItems='center' spacing={1}>
-        <Avatar src={state.user.image ? state.user.image.source : 'https://placeimg.com/100/100/people/00'} sx={{width: 56, height: 56}}/>
+        {state.user.image ? <Avatar src={state.user.image.source} sx={{width: 56, height: 56}}/> : <Avatar sx={{width: 56, height: 56}}>이름</Avatar>}
         <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>{state.user.name}</Typography>
         <Typography variant='subtitle2'>재직분야 : {state.user.occupation}</Typography>
         <Typography variant='subtitle2'>이메일 : {state.user.email}</Typography>
