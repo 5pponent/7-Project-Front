@@ -15,7 +15,7 @@ export default function FeedLine(props) {
                 <Feed
                   key={f.id}
                   feed={f}
-                  image={f.writer.image ? f.writer.image.source : 'https://placeimg.com/100/100/people/00'}
+                  image={f.writer.image && f.writer.image.source}
                   getUser={props.getUser}
                   feedList={feeds}
                   getFeedList={props.getFeedList}

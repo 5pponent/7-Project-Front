@@ -7,7 +7,7 @@ export default function SmallProfile(props) {
 
   return (
     <Stack alignItems='center' direction={props.direction} spacing={props.spacing}>
-      <Avatar src={props.image ? props.image : 'https://placeimg.com/100/100/people/00'}/>
+      {props.image ? <Avatar src={props.image}/> : <Avatar>이름</Avatar>}
       <Typography sx={{fontSize: '14px'}}>{props.name}</Typography>
     </Stack>
   );

@@ -16,32 +16,25 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import SmallProfile from "../SmallProfile";
 import MoreMenu from './MoreMenu';
 import Comment from './Comment';
-import {Image} from "@mui/icons-material";
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
   const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail
 
-  useEffect(() => {
-    console.log(props)
-  }, []);
-
   return (
     <>
       <Grid container paddingBottom={3} spacing={2}>
         <Grid item xs={1}>
-          <SmallProfile image={writer.image ? writer.image.source : 'https://placeimg.com/100/100/people/00'} name={writer.name}/>
+          <SmallProfile image={writer.image && writer.image.source} name={writer.name}/>
         </Grid>
 
         <Grid item xs={10}>
           <Typography color="textSecondary" fontSize="12px">
             {createTime}
           </Typography>
-            {content.split('\n').map((value, index) => (
-              <Typography key={index}>
-                {value === '\r' ? <br/> : value}
-              </Typography>
-              ))}
+          <Typography sx={{whiteSpace:'pre-wrap'}}>
+            {content}
+          </Typography>
           <ImageList cols={1}>
             {
               props.feedDetail.files.map(f => {
