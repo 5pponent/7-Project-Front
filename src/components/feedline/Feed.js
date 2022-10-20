@@ -20,6 +20,8 @@ import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
 import axios from "axios";
+import customAxios from "../../AxiosProvider";
+import {useNavigate} from "react-router-dom";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -31,6 +33,7 @@ const Content = styled(Typography)`
 `
 
 export default function Feed(props) {
+  const navigate = useNavigate();
   const [state, dispatch] = useContext(store);
   const {commentCount, id, isLiked, likeCount, writer, content, createTime} = props.feed;
   const [feedDetail, setFeedDetail] = useState(null);
@@ -53,21 +56,21 @@ export default function Feed(props) {
   const [anchor, setAnchor] = useState(null);
 
   const openContent = async () => {
-    await axios.get(`/feed/${id}`, {
-      headers: {authorization: localStorage.getItem('token')}
-    })
+    await customAxios.get(`/feed/${id}`)
       .then(res => {
         setFeedDetail(res.data);
         setOpen(true);
       })
-      .catch(error => console.error(error))
+      .catch(error => {
+        console.error(error);
+        navigate(`/login`);
+      })
   };
   const closeContent = () => {setOpen(false)};
   const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
   const handleCloseProfile = () => {setAnchor(null)};
   const handleClickProfileView = () => {
-    props.getUser([writer.name, props.image]);
-    dispatch({type: 'ChangeMode', payload: 'PROFILE'})
+    navigate(`/profile?user=${writer.id}`);
   };
 
   return (
@@ -113,7 +116,7 @@ export default function Feed(props) {
             <Box>
               <Grid container spacing={1} sx={{cursor: 'pointer'}} onClick={handleClickProfile}>
                 <Grid item>
-                  {props.image ? <Avatar src={props.image}/> : <Avatar>이름</Avatar>}
+                  <Avatar src={props.image}/>
                 </Grid>
                 <Grid item>
                   <Typography>{writer.name}</Typography>

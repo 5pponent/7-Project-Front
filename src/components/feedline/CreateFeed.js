@@ -23,10 +23,16 @@ import CollectionsIcon from '@mui/icons-material/Collections';
 import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import SmallProfile from '../SmallProfile';
 import FeedImageModifyDialog from "./FeedImageModifyDialog";
+import customAxios from "../../AxiosProvider";
+import {useNavigate} from "react-router-dom";
+import LoadingProcess from "../LoadingProcess";
 
 export default function CreateFeed(props) {
   const [state, dispatch] = useContext(store);
 
+  const navigate = useNavigate()
+
+  const [loading, setLoading] = useState(false);
   const [scope, setScope] = useState('all');
   const [open, setOpen] = useState(false);
   const imageRef = useRef();
@@ -57,25 +63,30 @@ export default function CreateFeed(props) {
   };
   const handleModifyImage = () => {setOpen(open => !open)};
   const handleCreateFeed = async () => {
+    setLoading(true);
     const feedForm = new FormData();
     feedForm.append('content', state.feedContent.content);
     state.feedContent.image.map(item => feedForm.append('descriptions', item.description));
     state.feedContent.image.map(item => feedForm.append('images', item.file));
     feedForm.append('showScope', scope);
 
-    await axios.post(`/feed`, feedForm, {
-      headers: {authorization: localStorage.getItem('token')}
-    })
+    await customAxios.post(`/feed`, feedForm)
       .then(res => {
         closeDrawer();
         dispatch({type: 'ResetFeedContent'});
+        dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
         console.log(res)
       })
-      .catch(error => console.error(error.response))
+      .catch(error => {
+        navigate('/login');
+        console.error(error.response)
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
     <>
+      <LoadingProcess open={loading} message={'피드를 작성중입니다..'}/>
       <Stack sx={{width: '500px'}}>
         <Grid container>
           <Grid item xs={10.5} p={2}>
@@ -91,7 +102,12 @@ export default function CreateFeed(props) {
 
         <Grid container spacing={2} p={2}>
           <Grid item xs={3}>
-            <SmallProfile name={state.user.name} direction='row' spacing={1}/>
+            <SmallProfile
+              image={state.user.image && state.user.image.source}
+              name={state.user.name}
+              direction='row'
+              spacing={1}
+            />
           </Grid>
 
           <Grid item xs={5.7}/>

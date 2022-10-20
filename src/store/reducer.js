@@ -29,6 +29,10 @@ export default function reducer(state, action) {
       return {};
     case 'ResetFeedContent':
       return {...state, feedContent: initialState.feedContent}
+    case 'OpenSnackbar':
+      return {...state, snackbar: {open: true, message: action.payload}}
+    case 'CloseSnackbar':
+      return {...state, snackbar: {open: false, message: ''}}
     default:
       return state;
   }

@@ -66,8 +66,7 @@ export default function Header(props) {
     navigate('/');
   };
   const handleClickMyProfile = () => {
-    navigate('/profile');
-    props.getUser([state.user.name, state.user.image ? state.user.image.source : 'https://placeimg.com/100/100/people/00']);
+    navigate(`/profile?user=${state.user.id}`);
   };
 
   return (
@@ -110,7 +109,7 @@ export default function Header(props) {
           </Drawer>
           <Tooltip title="프로필" placement="bottom" arrow>
             <ButtonBase onClick={handleClickMyProfile} sx={{margin: '0 5px'}}>
-              <SmallProfile/>
+              <SmallProfile image={state.user.image ? state.user.image.source : ''}/>
             </ButtonBase>
           </Tooltip>
           <HeaderMenu toggleLoading={props.toggleLoading}/>

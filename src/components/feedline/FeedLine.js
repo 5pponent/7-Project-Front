@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {CircularProgress, Box} from '@mui/material';
 import Feed from './Feed';
 
@@ -16,7 +16,6 @@ export default function FeedLine(props) {
                   key={f.id}
                   feed={f}
                   image={f.writer.image && f.writer.image.source}
-                  getUser={props.getUser}
                   feedList={feeds}
                   getFeedList={props.getFeedList}
                 />
