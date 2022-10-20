@@ -78,7 +78,7 @@ export default function FeedDetail(props) {
 
       <Grid container marginTop='15px'>
         <Grid item xs={1}>
-          <SmallProfile image={writer.image ? writer.image.source : 'https://placeimg.com/100/100/people/00'} name={state.user.name}/>
+          <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
         </Grid>
         {/* 댓글 작성 */}
         <Grid item xs={11}>

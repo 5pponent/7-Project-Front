@@ -13,7 +13,6 @@ export default function Template(props) {
   let navigate = useNavigate();
 
   useEffect(() => {
-    console.log(localStorage.getItem('token'));
     axios.get("/user", {
       headers: {authorization: localStorage.getItem('token')}
     })

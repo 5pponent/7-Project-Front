@@ -11,6 +11,8 @@ import LoadingProcess from "../LoadingProcess";
 export default function Login(props) {
   let navigate = useNavigate();
 
+  const [state, dispatch] = useContext(store);
+
   const [open, setOpen] = useState(false);
   const [auth, setAuth] = useState(false);
   const [loginInfo, setLoginInfo] = useState({password: null, email: null});
@@ -63,6 +65,7 @@ export default function Login(props) {
         if (res.status === 200) {
           localStorage.setItem('token', res.data.token);
           navigate('/');
+          dispatch({type: 'OpenSnackbar', payload: `로그인되었습니다.`});
         }
         else setAuth(true);
       })
@@ -83,6 +86,7 @@ export default function Login(props) {
       .then(res => {
         localStorage.setItem('token', res.data.token);
         navigate('/');
+        dispatch({type: 'OpenSnackbar', payload: `로그인되었습니다.`});
       })
       .catch(error => {
         setCodeErrorMessage(error.response.data.message);

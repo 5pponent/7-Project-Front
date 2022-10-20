@@ -6,6 +6,8 @@ import {styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import FeedLine from "../feedline/FeedLine";
+import {useLocation} from "react-router-dom";
+import customAxios from "../../AxiosProvider";
 
 
 const Search = styled('div')(({theme}) => ({
@@ -47,6 +49,18 @@ function FeedCreateButton() {
 export default function Profile(props) {
   const [state, dispatch] = useContext(store);
 
+  let location = useLocation();
+
+  const [user, setUser] = useState({
+    email: '',
+    followerCount: 0,
+    followingCount: 0,
+    id: 0,
+    image: null,
+    interests: [],
+    name: '',
+    occupation: null
+  });
   const [feed, setFeed] = useState({
     currentPage: 0,
     feeds: [],
@@ -57,22 +71,35 @@ export default function Profile(props) {
   const getFeedList = (data) => {setFeed({...feed, feeds: data})};
 
   useEffect(() => {
-    axios.get(`/feed?userid=${state.user.id}`, {
-      headers: {authorization: localStorage.getItem('token')}
-    })
-      .then(res => setFeed(res.data))
-      .catch(error => console.log(error.response))
+    let searchParams = new URLSearchParams(location.search).get('user');
+    customAxios.get(`/user/${searchParams}`)
+      .then(res => {
+        console.log(res.data);
+        setUser(res.data);
+      })
+      .catch(error => console.log(error.response));
+    customAxios.get(`/feed?userid=${searchParams}`)
+      .then(res => {
+        console.log(res.data);
+        setFeed(res.data);
+      })
+      .catch(error => console.log(error.response));
   }, []);
 
   return (
     <>
       <Stack p={1} alignItems='center' spacing={1}>
-        {state.user.image ? <Avatar src={state.user.image.source} sx={{width: 56, height: 56}}/> : <Avatar sx={{width: 56, height: 56}}>이름</Avatar>}
-        <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>{state.user.name}</Typography>
-        <Typography variant='subtitle2'>재직분야 : {state.user.occupation}</Typography>
-        <Typography variant='subtitle2'>이메일 : {state.user.email}</Typography>
-        <Typography variant='subtitle2'>follower : {state.user.followerCount} / follow
-          : {state.user.followingCount}</Typography>
+        <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
+        <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>
+          {user.name}
+        </Typography>
+        <Typography variant='subtitle2'>
+          재직분야 : {user.occupation ? user.occupation : '직종을 선택해주세요.'}
+        </Typography>
+        <Typography variant='subtitle2'>이메일 : {user.email}</Typography>
+        <Typography variant='subtitle2'>
+          follower : {user.followerCount} / follow : {user.followingCount}
+        </Typography>
       </Stack>
       <Divider/>
       <Stack direction='row' sx={{marginBottom: '10px', width: '800px', margin: '0 auto', padding: '10px'}}>
@@ -83,7 +110,7 @@ export default function Profile(props) {
       </Stack>
 
       <Box sx={{overflow: 'overlay'}}>
-        <FeedLine getUser={props.getUser} feed={feed} getFeedList={getFeedList}/>
+        <FeedLine feed={feed} getFeedList={getFeedList}/>
       </Box>
     </>
   );

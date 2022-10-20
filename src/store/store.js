@@ -19,6 +19,10 @@ const initialState = {
   feedContent: {
     content: '',
     image: []
+  },
+  snackbar: {
+    open: false,
+    message: ''
   }
 };
 

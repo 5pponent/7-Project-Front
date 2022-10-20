@@ -6,8 +6,13 @@ import ChatApp from './components/chatting/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
 import Template from "./Template";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {Snackbar} from "@mui/material";
+import {useContext} from "react";
+import {store} from "./store/store";
 
 export default function App() {
+
+  const [state, dispatch] = useContext(store);
 
   return (
     <BrowserRouter>
@@ -42,6 +47,12 @@ export default function App() {
         }></Route>
 
       </Routes>
+      <Snackbar
+        open={state.snackbar.open}
+        autoHideDuration={5000}
+        onClose={() => {dispatch({type: 'CloseSnackbar'});}}
+        message={state.snackbar.message}
+      />
     </BrowserRouter>
   );
 }
