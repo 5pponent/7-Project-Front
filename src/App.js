@@ -6,8 +6,8 @@ import ChatApp from './components/chatting/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
 import Template from "./Template";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Snackbar} from "@mui/material";
-import {useContext} from "react";
+import {Dialog, DialogContent, Slide, Snackbar} from "@mui/material";
+import {forwardRef, useContext} from "react";
 import {store} from "./store/store";
 
 export default function App() {
@@ -47,6 +47,17 @@ export default function App() {
         }></Route>
 
       </Routes>
+
+      <Dialog
+        open={state.imageView.open}
+        onClose={() => {dispatch({type: 'CloseImageView'})}}
+        onClick={() => {dispatch({type: 'CloseImageView'})}}
+        maxWidth={'lg'}
+      >
+        <DialogContent>
+          <img style={{maxWidth: '800px'}} src={state.imageView.source}/>
+        </DialogContent>
+      </Dialog>
       <Snackbar
         open={state.snackbar.open}
         autoHideDuration={5000}
@@ -57,3 +68,6 @@ export default function App() {
   );
 }
 
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});

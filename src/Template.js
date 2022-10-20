@@ -4,8 +4,8 @@ import ScrollTop from "./components/ScrollTop";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {useNavigate} from "react-router-dom";
 import {useContext, useEffect} from "react";
-import axios from "axios";
 import {store} from "./store/store";
+import customAxios from "./AxiosProvider";
 
 export default function Template(props) {
   const [state, dispatch] = useContext(store);
@@ -13,9 +13,7 @@ export default function Template(props) {
   let navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("/user", {
-      headers: {authorization: localStorage.getItem('token')}
-    })
+    customAxios.get("/user")
       .then(res => {
         dispatch({type: 'User', payload: res.data});
       })
