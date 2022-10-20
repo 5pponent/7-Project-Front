@@ -4,7 +4,7 @@ import Profile from './components/profile/Profile';
 import Setting from './components/settingpage/Setting';
 import ChatApp from './components/chatting/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
-import Template from "./Template";
+import Template from "./components/Template";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Dialog, DialogContent, Slide, Snackbar} from "@mui/material";
 import {forwardRef, useContext} from "react";
@@ -48,16 +48,17 @@ export default function App() {
 
       </Routes>
 
+      {/*이미지 자세히 보기 다이얼로그*/}
       <Dialog
         open={state.imageView.open}
         onClose={() => {dispatch({type: 'CloseImageView'})}}
         onClick={() => {dispatch({type: 'CloseImageView'})}}
         maxWidth={'lg'}
       >
-        <DialogContent>
-          <img style={{maxWidth: '800px'}} src={state.imageView.source}/>
-        </DialogContent>
+        <img style={{maxWidth: '800px'}} src={state.imageView.source}/>
       </Dialog>
+
+      {/*알림용 스낵바*/}
       <Snackbar
         open={state.snackbar.open}
         autoHideDuration={5000}
