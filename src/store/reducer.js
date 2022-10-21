@@ -1,5 +1,4 @@
 import React from 'react';
-import {initialState} from "./store";
 
 export default function reducer(state, action) {
   switch (action.type) {
@@ -10,33 +9,37 @@ export default function reducer(state, action) {
     case 'DarkMode':
       return {...state, darkMode: !state.darkMode};
     case 'CreateFeed':
-      return {...state, feedContent: {...state.feedContent, content: action.payload}};
+      return {...state, feedContent: action.payload};
     case 'AddImage':
       return {
-        ...state, feedContent: {
-          ...state.feedContent,
-          image: [
-            ...state.feedContent.image,
-            {
-              file: action.payload.file,
-              originalName: action.payload.originalName,
-              description: ' '
-            }
-          ]
-        }
+        ...state,
+        feedImage: state.feedImage.concat({
+          file: action.payload.file,
+          originalName: action.payload.originalName,
+          description: ' '
+        })
       };
     case 'AddDescription':
-      return {};
-    case 'ResetFeedContent':
-      return {...state, feedContent: initialState.feedContent}
+      return {
+        ...state,
+        feedImage: state.feedImage.map((item, index) =>
+          index === action.payload.index ? {...item, description: action.payload.description} : item)
+      };
+    case 'DeleteImage':
+      return {
+        ...state,
+        feedImage: state.feedImage.filter((item, index) => index !== action.payload)
+      };
+    case 'ResetFeed':
+      return {...state, feedContent: '', feedImage: []};
     case 'OpenImageView':
-      return {...state, imageView: {open: true, source: action.payload}}
+      return {...state, imageView: {open: true, source: action.payload}};
     case 'CloseImageView':
-      return {...state, imageView: {open: false, source: ''}}
+      return {...state, imageView: {open: false, source: ''}};
     case 'OpenSnackbar':
-      return {...state, snackbar: {open: true, message: action.payload}}
+      return {...state, snackbar: {open: true, message: action.payload}};
     case 'CloseSnackbar':
-      return {...state, snackbar: {open: false, message: ''}}
+      return {...state, snackbar: {open: false, message: ''}};
     default:
       return state;
   }

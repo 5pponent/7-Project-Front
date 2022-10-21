@@ -1,19 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {store} from "../../store/store";
-import {
-  Avatar,
-  Divider,
-  IconButton,
-  InputBase,
-  Stack,
-  Tooltip,
-  Typography,
-  Box,
-  Button,
-  Card,
-  ButtonBase, Skeleton
-} from "@mui/material";
+import {Avatar, Divider, IconButton, InputBase, Stack, Tooltip, Typography, Box, Button, Card} from "@mui/material";
 import {styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
@@ -39,7 +27,6 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(3)})`,
     width: '100%'
   },
@@ -71,7 +58,22 @@ export default function Profile(props) {
   const [updateProfile, setUpdateProfile] = useState(false);
 
   const getFeedList = (data) => {setFeed({...feed, feeds: data})};
-
+  const loadFeedList = (data) => {setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})};
+  const updateFeedDetail = (data) => {
+    setFeed({
+      ...feed,
+      feeds: feed.feeds.map(item => {
+        if (item.id === data.id) return data
+        return item
+      })})
+  };
+  const handleScroll = () => {
+    const scroll = window.scrollY + document.documentElement.clientHeight;
+    if (scroll === document.documentElement.scrollHeight) {
+      customAxios.get(`/feed?userid=${searchParams}&pageNumber=${feed.currentPage + 1}`)
+        .then(res => loadFeedList(res.data))
+    }
+  };
   const onImageChange = (e) => {
     console.log(e.target.files[0]);
   }
@@ -79,14 +81,12 @@ export default function Profile(props) {
   useEffect(() => {
     customAxios.get(`/user/${searchParams}`)
       .then(res => {
-        console.log(res.data);
         if (res.data.id === state.user.id) setIsMe(true);
         setUser(res.data);
       })
       .catch(error => {console.log(error.response);});
     customAxios.get(`/feed?userid=${searchParams}`)
       .then(res => {
-        console.log(res.data);
         setFeed(res.data);
       })
       .catch(error => console.log(error.response));
@@ -169,7 +169,12 @@ export default function Profile(props) {
       </Stack>
 
       <Box sx={{overflow: 'overlay'}}>
-        <FeedLine feed={feed} getFeedList={getFeedList}/>
+        <FeedLine
+          feed={feed}
+          handleScroll={handleScroll}
+          getFeedList={getFeedList}
+          loadFeedList={loadFeedList}
+          updateFeedDetail={updateFeedDetail}/>
       </Box>
     </>
   );

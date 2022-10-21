@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
-import axios from 'axios';
 import { Divider, Stack } from '@mui/material';
 import FeedLine from './FeedLine';
+import customAxios from "../../AxiosProvider";
 
 export default function FeedLineSelect(props) {
   const [feed, setFeed] = useState({
@@ -12,11 +12,25 @@ export default function FeedLineSelect(props) {
   });
 
   const getFeedList = (data) => {setFeed({...feed, feeds: data})}
+  const loadFeedList = (data) => {setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})};
+  const updateFeedDetail = (data) => {
+    setFeed({
+      ...feed,
+      feeds: feed.feeds.map(item => {
+        if (item.id === data.id) return data
+        return item
+      })})
+  };
+  const handleScroll = () => {
+    const scroll = window.scrollY + document.documentElement.clientHeight;
+    if (scroll === document.documentElement.scrollHeight) {
+      customAxios.get(`/feed?pageNumber=${feed.currentPage + 1}`)
+        .then(res => loadFeedList(res.data))
+    }
+  };
 
   useEffect(() => {
-    axios.get(`/feed`, {
-      headers: {authorization: localStorage.getItem('token')}
-    })
+    customAxios.get(`/feed`)
       .then(res => setFeed(res.data))
       .catch(error => console.error(error.response))
   }, []);
@@ -29,7 +43,10 @@ export default function FeedLineSelect(props) {
 
       <FeedLine
         feed={feed}
+        handleScroll={handleScroll}
         getFeedList={getFeedList}
+        loadFeedList={loadFeedList}
+        updateFeedDetail={updateFeedDetail}
       />
     </Stack>
   );

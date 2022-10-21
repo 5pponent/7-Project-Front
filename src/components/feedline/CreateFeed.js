@@ -1,6 +1,6 @@
 import {useContext, useRef, useState} from 'react';
+import customAxios from "../../AxiosProvider";
 import {store} from '../../store/store';
-import axios from 'axios';
 import {
   Button,
   ButtonBase,
@@ -19,18 +19,13 @@ import {
   styled, Tooltip, Dialog, DialogContent, DialogTitle, DialogActions
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import CollectionsIcon from '@mui/icons-material/Collections';
-import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
+import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import SmallProfile from '../SmallProfile';
 import FeedImageModifyDialog from "./FeedImageModifyDialog";
-import customAxios from "../../AxiosProvider";
-import {useNavigate} from "react-router-dom";
 import LoadingProcess from "../LoadingProcess";
 
 export default function CreateFeed(props) {
   const [state, dispatch] = useContext(store);
-
-  const navigate = useNavigate()
 
   const [loading, setLoading] = useState(false);
   const [scope, setScope] = useState('all');
@@ -65,15 +60,15 @@ export default function CreateFeed(props) {
   const handleCreateFeed = async () => {
     setLoading(true);
     const feedForm = new FormData();
-    feedForm.append('content', state.feedContent.content);
-    state.feedContent.image.map(item => feedForm.append('descriptions', item.description));
-    state.feedContent.image.map(item => feedForm.append('images', item.file));
+    feedForm.append('content', state.feedContent);
+    state.feedImage.map(item => feedForm.append('descriptions', item.description));
+    state.feedImage.map(item => feedForm.append('images', item.file));
     feedForm.append('showScope', scope);
 
     await customAxios.post(`/feed`, feedForm)
       .then(res => {
         closeDrawer();
-        dispatch({type: 'ResetFeedContent'});
+        dispatch({type: 'ResetFeed'});
         dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
         console.log(res)
       })
@@ -121,15 +116,15 @@ export default function CreateFeed(props) {
           </Grid>
 
           <Grid item xs={12}>
-            <TextField fullWidth maxRows={10} multiline placeholder={'내용을 입력해 주세요.'} value={state.feedContent.content}
+            <TextField fullWidth maxRows={10} multiline placeholder={'내용을 입력해 주세요.'} value={state.feedContent}
                        onChange={handleContentChange}/>
           </Grid>
 
-          <Grid item xs={12} sx={{display: state.feedContent.image.length === 0 ? 'none' : 'block'}}>
+          <Grid item xs={12} sx={{display: state.feedImage.length === 0 ? 'none' : 'block'}}>
             <ImageButton onClick={handleModifyImage}>
               <ImageCover className="MuiImageBackdrop-root">
                 <ImageList cols={2} sx={{maxHeight: 400}}>
-                  {state.feedContent.image.map(item => (
+                  {state.feedImage.map(item => (
                     <ImageListItem key={item.file} cols={1} rows={1}>
                       <img src={URL.createObjectURL(item.file)} alt={item.originalName} style={{objectFit: 'cover'}}/>
                     </ImageListItem>
@@ -143,7 +138,7 @@ export default function CreateFeed(props) {
             <Tooltip title={'사진 추가하기'} arrow>
               <label htmlFor="feedImage" ref={imageRef} onChange={handleAddImage}>
                 <input type="file" id={"feedImage"} multiple style={{display: 'none'}}/>
-                <CollectionsIcon sx={{fontSize: 30, cursor: 'pointer'}}/>
+                <AddPhotoAlternateRoundedIcon color="action" sx={{fontSize: 35, cursor: 'pointer'}}/>
               </label>
             </Tooltip>
           </Grid>
