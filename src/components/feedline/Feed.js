@@ -52,6 +52,7 @@ export default function Feed(props) {
   const [open, setOpen] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
+  const getFeedDetail = (data) => {setFeedDetail(data)}
   const openContent = async () => {
     await customAxios.get(`/feed/${id}`)
       .then(res => {
@@ -67,8 +68,10 @@ export default function Feed(props) {
   const handleClickLike = (feedId) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
+        .then(res => props.updateFeedDetail(res.data))
     } else {
       customAxios.post(`/feed/${feedId}/like`)
+        .then(res => props.updateFeedDetail(res.data))
     }
   };
 
@@ -146,7 +149,7 @@ export default function Feed(props) {
             feedDetail={feedDetail}
             comments={comments}
             feedList={props.feedList}
-            getFeedList={props.getFeedList}
+            getFeedDetail={getFeedDetail}
             closeContent={closeContent}
           />
         </DialogContent>

@@ -25,8 +25,10 @@ export default function FeedDetail(props) {
   const handleClickLike = (feedId) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
+        .then(res => props.getFeedDetail(res.data))
     } else {
       customAxios.post(`/feed/${feedId}/like`)
+        .then(res => props.getFeedDetail(res.data))
     }
   };
 

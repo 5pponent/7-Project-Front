@@ -12,6 +12,14 @@ export default function FeedLineSelect(props) {
   });
 
   const getFeedList = (data) => {setFeed({...feed, feeds: data})}
+  const updateFeedDetail = (data) => {
+    setFeed({
+      ...feed,
+      feeds: feed.feeds.map(item => {
+        if (item.id === data.id) return data
+        return item
+      })})
+  };
 
   useEffect(() => {
     axios.get(`/feed`, {
@@ -30,6 +38,7 @@ export default function FeedLineSelect(props) {
       <FeedLine
         feed={feed}
         getFeedList={getFeedList}
+        updateFeedDetail={updateFeedDetail}
       />
     </Stack>
   );

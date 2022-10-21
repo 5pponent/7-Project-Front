@@ -36,7 +36,6 @@ export default function Profile(props) {
   const [state, dispatch] = useContext(store);
 
   let location = useLocation();
-  let navigate = useNavigate();
   let searchParams = new URLSearchParams(location.search).get('user');
 
   const [isMe, setIsMe] = useState(false);
@@ -58,6 +57,14 @@ export default function Profile(props) {
   });
 
   const getFeedList = (data) => {setFeed({...feed, feeds: data})};
+  const updateFeedDetail = (data) => {
+    setFeed({
+      ...feed,
+      feeds: feed.feeds.map(item => {
+        if (item.id === data.id) return data
+        return item
+      })})
+  };
 
   const onImageChange = (e) => {
     console.log("이미지 변경");
@@ -66,14 +73,12 @@ export default function Profile(props) {
   useEffect(() => {
     customAxios.get(`/user/${searchParams}`)
       .then(res => {
-        console.log(res.data);
         if (res.data.id === state.user.id) setIsMe(true);
         setUser(res.data);
       })
       .catch(error => {console.log(error.response);});
     customAxios.get(`/feed?userid=${searchParams}`)
       .then(res => {
-        console.log(res.data);
         setFeed(res.data);
       })
       .catch(error => console.log(error.response));
@@ -136,7 +141,7 @@ export default function Profile(props) {
       </Stack>
 
       <Box sx={{overflow: 'overlay'}}>
-        <FeedLine feed={feed} getFeedList={getFeedList}/>
+        <FeedLine feed={feed} getFeedList={getFeedList} updateFeedDetail={updateFeedDetail}/>
       </Box>
     </>
   );
