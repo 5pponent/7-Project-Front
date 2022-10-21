@@ -16,10 +16,8 @@ const initialState = {
     name: '사용자명',
     occupation: '직업'
   },
-  feedContent: {
-    content: '',
-    image: []
-  },
+  feedContent: '',
+  feedImage: [],
   imageView: {
     open: false,
     source: ''

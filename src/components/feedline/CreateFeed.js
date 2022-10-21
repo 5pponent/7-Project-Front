@@ -65,15 +65,15 @@ export default function CreateFeed(props) {
   const handleCreateFeed = async () => {
     setLoading(true);
     const feedForm = new FormData();
-    feedForm.append('content', state.feedContent.content);
-    state.feedContent.image.map(item => feedForm.append('descriptions', item.description));
-    state.feedContent.image.map(item => feedForm.append('images', item.file));
+    feedForm.append('content', state.feedContent);
+    state.feedImage.map(item => feedForm.append('descriptions', item.description));
+    state.feedImage.map(item => feedForm.append('images', item.file));
     feedForm.append('showScope', scope);
 
     await customAxios.post(`/feed`, feedForm)
       .then(res => {
         closeDrawer();
-        dispatch({type: 'ResetFeedContent'});
+        dispatch({type: 'ResetFeed'});
         dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
         console.log(res)
       })
@@ -121,15 +121,15 @@ export default function CreateFeed(props) {
           </Grid>
 
           <Grid item xs={12}>
-            <TextField fullWidth maxRows={10} multiline placeholder={'내용을 입력해 주세요.'} value={state.feedContent.content}
+            <TextField fullWidth maxRows={10} multiline placeholder={'내용을 입력해 주세요.'} value={state.feedContent}
                        onChange={handleContentChange}/>
           </Grid>
 
-          <Grid item xs={12} sx={{display: state.feedContent.image.length === 0 ? 'none' : 'block'}}>
+          <Grid item xs={12} sx={{display: state.feedImage.length === 0 ? 'none' : 'block'}}>
             <ImageButton onClick={handleModifyImage}>
               <ImageCover className="MuiImageBackdrop-root">
                 <ImageList cols={2} sx={{maxHeight: 400}}>
-                  {state.feedContent.image.map(item => (
+                  {state.feedImage.map(item => (
                     <ImageListItem key={item.file} cols={1} rows={1}>
                       <img src={URL.createObjectURL(item.file)} alt={item.originalName} style={{objectFit: 'cover'}}/>
                     </ImageListItem>
