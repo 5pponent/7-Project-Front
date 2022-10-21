@@ -1,6 +1,6 @@
-import {useContext} from "react";
-import customAxios from "../../AxiosProvider";
-import {store} from "../../store/store";
+import {useContext, useEffect, useState} from "react";
+import customAxios from '../../AxiosProvider';
+import {store} from '../../store/store';
 import {
   Box,
   Button,
@@ -10,18 +10,32 @@ import {
   Stack,
   TextField,
   Typography
-} from "@mui/material";
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
-import SmallProfile from "../SmallProfile";
+import SmallProfile from '../SmallProfile';
 import MoreMenu from './MoreMenu';
 import Comment from './Comment';
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
+  const [comment, setComment] = useState({
+    comments: [],
+    currentPage: undefined,
+    totalElements: undefined,
+    totalPages: undefined
+  });
+  const [commentContent, setCommentContent] = useState({content: ''});
+  const {comments} = comment;
   const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail
 
+  useEffect(() => {
+    customAxios.get(`/feed/${id}/comment`)
+      .then(res => setComment(res.data))
+  }, []);
+
+  const handleChangeComment = (e) => {setCommentContent({content: e.target.value})};
   const handleClickLike = (feedId) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
@@ -30,6 +44,13 @@ export default function FeedDetail(props) {
       customAxios.post(`/feed/${feedId}/like`)
         .then(res => props.getFeedDetail(res.data))
     }
+  };
+  const handleCreateComment = (feedId, content) => {
+    customAxios(`/feed/${feedId}/comment`, content)
+      .then(res => {
+        setCommentContent({content: ''});
+        dispatch({type: 'OpenSnackbar', payload: `댓글이 입력되었습니다.`});
+      })
   };
 
   return (
@@ -94,20 +115,23 @@ export default function FeedDetail(props) {
         {/* 댓글 작성 */}
         <Grid item xs={11}>
           <Stack direction='row' margin='10px' spacing={1}>
-            <TextField multiline size='small' fullWidth/>
-            <Button type='submit' variant='contained'>입력</Button>
+            <TextField multiline size='small' fullWidth value={commentContent.content}
+                       placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
+            <Button type='submit' variant='contained' onClick={() => handleCreateComment(id, commentContent)}>
+              입력
+            </Button>
           </Stack>
         </Grid>
       </Grid>
 
       <Stack p={1}>
         {
-          props.comments ? props.comments.map((c) => {
+          comments ? comments.map((c) => {
             return (
               <Comment
-                key={c.comment_idx}
+                key={c.id}
                 name={c.name}
-                image={c.image}
+                image={c.writer.image}
                 content={c.content}
               />
             );
