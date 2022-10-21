@@ -25,6 +25,11 @@ export default function reducer(state, action) {
         feedImage: state.feedImage.map((item, index) =>
           index === action.payload.index ? {...item, description: action.payload.description} : item)
       };
+    case 'DeleteImage':
+      return {
+        ...state,
+        feedImage: state.feedImage.filter((item, index) => index !== action.payload)
+      };
     case 'ResetFeed':
       return {...state, feedContent: '', feedImage: []};
     case 'OpenImageView':

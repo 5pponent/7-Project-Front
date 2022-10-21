@@ -17,6 +17,7 @@ export default function FeedLine(props) {
                   feed={f}
                   image={f.writer.image && f.writer.image.source}
                   feedList={feeds}
+                  updateFeedDetail={props.updateFeedDetail}
                   getFeedList={props.getFeedList}
                 />
               );
