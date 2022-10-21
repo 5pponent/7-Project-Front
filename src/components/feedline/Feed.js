@@ -1,4 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
+import customAxios from "../../AxiosProvider";
+import {useNavigate} from "react-router-dom";
 import {store} from "../../store/store";
 import {
   Divider,
@@ -17,9 +19,6 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
-import axios from "axios";
-import customAxios from "../../AxiosProvider";
-import {useNavigate} from "react-router-dom";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -64,8 +63,13 @@ export default function Feed(props) {
   const closeContent = () => {setOpen(false)};
   const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
   const handleCloseProfile = () => {setAnchor(null)};
-  const handleClickProfileView = () => {
-    navigate(`/profile?user=${writer.id}`);
+  const handleClickProfileView = () => {navigate(`/profile?user=${writer.id}`)};
+  const handleClickLike = (feedId) => {
+    if (isLiked) {
+      customAxios.delete(`/feed/${feedId}/like`)
+    } else {
+      customAxios.post(`/feed/${feedId}/like`)
+    }
   };
 
   return (
@@ -94,7 +98,7 @@ export default function Feed(props) {
         <Grid container p={2}>
           <Grid item xs={10}> {/* 좋아요, 댓글 */}
             <Stack direction={'row'} spacing={3}>
-              <IconButton>
+              <IconButton onClick={() => handleClickLike(id)}>
                 <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
                   <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
                 </StyledBadge>

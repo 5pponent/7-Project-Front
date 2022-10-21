@@ -1,4 +1,5 @@
-import {useContext, useEffect} from "react";
+import {useContext} from "react";
+import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
 import {
   Box,
@@ -20,6 +21,14 @@ import Comment from './Comment';
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
   const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail
+
+  const handleClickLike = (feedId) => {
+    if (isLiked) {
+      customAxios.delete(`/feed/${feedId}/like`)
+    } else {
+      customAxios.post(`/feed/${feedId}/like`)
+    }
+  };
 
   return (
     <>
@@ -66,7 +75,7 @@ export default function FeedDetail(props) {
       </Grid>
 
       <Box>
-        <IconButton>
+        <IconButton onClick={() => handleClickLike(id)}>
           <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
         </IconButton>{likeCount}
         <IconButton sx={{marginLeft: "20px"}}>
