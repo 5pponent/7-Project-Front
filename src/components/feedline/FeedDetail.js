@@ -17,6 +17,7 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import SmallProfile from '../SmallProfile';
 import MoreMenu from './MoreMenu';
 import Comment from './Comment';
+import LoadingProcess from "../LoadingProcess";
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
@@ -46,11 +47,15 @@ export default function FeedDetail(props) {
     }
   };
   const handleCreateComment = (feedId, content) => {
-    customAxios(`/feed/${feedId}/comment`, content)
+    dispatch({type: 'OpenLoading', message: '댓글을 작성중입니다..'});
+    console.log(content)
+    customAxios.post(`/feed/${feedId}/comment`, content)
       .then(res => {
         setCommentContent({content: ''});
         dispatch({type: 'OpenSnackbar', payload: `댓글이 입력되었습니다.`});
       })
+      .catch(err => console.log(err.response))
+      .finally(() => {dispatch({type: 'CloseLoading'})})
   };
 
   return (
@@ -130,9 +135,10 @@ export default function FeedDetail(props) {
             return (
               <Comment
                 key={c.id}
-                name={c.name}
-                image={c.writer.image}
+                name={c.writer.name}
+                image={c.writer.image ? c.writer.image.source : ''}
                 content={c.content}
+                createTime={c.createTime}
               />
             );
           }) : "댓글이 없습니다."

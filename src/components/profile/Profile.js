@@ -1,7 +1,19 @@
 import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {store} from "../../store/store";
-import {Avatar, Divider, IconButton, InputBase, Stack, Tooltip, Typography, Box, Button, Card} from "@mui/material";
+import {
+  Avatar,
+  Divider,
+  IconButton,
+  InputBase,
+  Stack,
+  Tooltip,
+  Typography,
+  Box,
+  Button,
+  Card,
+  Skeleton
+} from "@mui/material";
 import {styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
@@ -55,6 +67,7 @@ export default function Profile(props) {
     totalElements: 0,
     totalPages: 0
   });
+  const [updateProfile, setUpdateProfile] = useState(false);
 
   const getFeedList = (data) => {setFeed({...feed, feeds: data})};
   const loadFeedList = (data) => {setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})};
@@ -74,8 +87,8 @@ export default function Profile(props) {
     }
   };
   const onImageChange = (e) => {
-    console.log("이미지 변경");
-  };
+    console.log(e.target.files[0]);
+  }
 
   useEffect(() => {
     customAxios.get(`/user/${searchParams}`)
@@ -93,50 +106,70 @@ export default function Profile(props) {
 
   return (
     <>
-      <Stack py={5} alignItems='center' bgcolor={'#e7ebf0'}>
-        <Card>
-          <Stack alignItems={"center"}>
-            {
-              isMe ?
-                <IconButton aria-label="update profile image" component="label">
-                  <input hidden accept="image/*" type="file" onChange={onImageChange} />
-                  <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
-                </IconButton>
-                :
-                <IconButton aria-label="update profile image" component="label"
-                  onClick={() => {
-                    if (user.image !== null)
-                      dispatch({type: 'OpenImageView', payload: user.image.source})
-                    else return
-                  }}
-                >
-                  <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
-                </IconButton>
-            }
-            <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>
-              {user.name}
-            </Typography>
-          </Stack>
-          <Divider/>
-          <Stack sx={{userSelect: 'none'}} p={2} spacing={1}>
-            <Typography variant='subtitle2'>
-              이메일 : {user.email}
-            </Typography>
-            <Typography variant='subtitle2'>
-              재직분야 : {user.occupation && user.occupation}
-            </Typography>
-            <Typography variant={'subtitle2'}>
-              follower : {user.followerCount}
-            </Typography>
-            <Typography variant='subtitle2'>
-              follow : {user.followingCount}
-            </Typography>
-            {
-              !isMe && <Button size={"small"} variant={"contained"}>팔로우</Button>
-            }
-          </Stack>
-        </Card>
+      <Stack py={3} alignItems='center' bgcolor={'#e7ebf0'}>
+
+        <Stack direction={"row"}>
+          <Card>
+            <Stack alignItems={"center"}>
+              <IconButton aria-label="update profile image" component="label"
+                onClick={() => {
+                  if (user.image !== null)
+                    dispatch({type: 'OpenImageView', payload: user.image.source})
+                }}
+              >
+                <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
+              </IconButton>
+              {
+                user.id === 0 ?
+                  <Skeleton width={100} height={40}/> :
+                  <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>
+                    {user.name}
+                  </Typography>
+              }
+            </Stack>
+            <Divider/>
+            <Stack sx={{userSelect: 'none'}} p={2} spacing={1}>
+              {
+                user.id === 0 ?
+                  <>
+                    <Skeleton/>
+                    <Skeleton/>
+                    <Skeleton variant="rectangular" width={210} height={50}/>
+                  </>
+                  :
+                  <>
+                    <Typography variant='subtitle2'>
+                      이메일 : {user.email}
+                    </Typography>
+                    <Typography variant='subtitle2'>
+                      재직분야 : {user.occupation && user.occupation}
+                    </Typography>
+                    <Stack direction={"row"} display={"flex"} justifyContent={"space-evenly"}>
+                      <Typography variant={'subtitle2'}>
+                        follower : {user.followerCount}
+                      </Typography>
+                      <Typography variant='subtitle2'>
+                        follow : {user.followingCount}
+                      </Typography>
+                    </Stack>
+                    {
+                      isMe ?
+                        <Button size={"small"} variant={"contained"}
+                        onClick={() => {setUpdateProfile(!updateProfile)}}>프로필 변경</Button> :
+                        <Button size={"small"} variant={"contained"}>팔로우</Button>
+                    }
+                  </>
+              }
+            </Stack>
+          </Card>
+
+        </Stack>
+
       </Stack>
+      <IconButton aria-label="update profile image" component="label">
+        <input hidden accept="image/*" type="file" onChange={onImageChange} />
+        <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
+      </IconButton>
 
       <Divider/>
 

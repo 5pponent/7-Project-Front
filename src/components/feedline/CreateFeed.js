@@ -26,8 +26,6 @@ import LoadingProcess from "../LoadingProcess";
 
 export default function CreateFeed(props) {
   const [state, dispatch] = useContext(store);
-
-  const [loading, setLoading] = useState(false);
   const [scope, setScope] = useState('all');
   const [open, setOpen] = useState(false);
   const imageRef = useRef();
@@ -58,7 +56,7 @@ export default function CreateFeed(props) {
   };
   const handleModifyImage = () => {setOpen(open => !open)};
   const handleCreateFeed = async () => {
-    setLoading(true);
+    dispatch({type: 'OpenLoading', message: '피드를 작성중입니다..'});
     const feedForm = new FormData();
     feedForm.append('content', state.feedContent);
     state.feedImage.map(item => feedForm.append('descriptions', item.description));
@@ -73,12 +71,11 @@ export default function CreateFeed(props) {
         console.log(res)
       })
       .catch(error => {console.error(error.response)})
-      .finally(() => setLoading(false));
+      .finally(() => dispatch({type: 'CloseLoading'}));
   };
 
   return (
     <>
-      <LoadingProcess open={loading} message={'피드를 작성중입니다..'}/>
       <Stack sx={{width: '500px'}}>
         <Grid container>
           <Grid item xs={10.5} p={2}>

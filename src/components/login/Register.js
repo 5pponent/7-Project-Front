@@ -1,16 +1,14 @@
 import React, {useContext, useState} from 'react';
-import {store} from "../../store/store";
 import axios from "axios";
 import {Box, Button, Grid, Stack, TextField, Typography} from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-import LoadingProcess from "../LoadingProcess";
 import {useNavigate} from "react-router-dom";
+import {store} from "../../store/store";
 
 export default function Register(props) {
+  const [state, dispatch] = useContext(store);
   let navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState('');
   const [mode, setMode] = useState('AUTH');
   const [auth, setAuth] = useState(false);
   const [authInfo, setAuthInfo] = useState({code: '', email: ''})
@@ -78,7 +76,7 @@ export default function Register(props) {
 
   const handleClickCodeCheck = async (e) => {
     e.preventDefault();
-    setLoading(true); setLoadingMessage('인증 코드를 확인합니다..');
+    dispatch({type: 'OpenLoading', payload: '인증 코드를 확인중입니다..'});
     (mailValidate() & codeValidate()) &&
     await axios.post(`/auth/mail-auth-check`, authInfo)
       .then(res => {
@@ -89,35 +87,34 @@ export default function Register(props) {
         setCodeErrorMessage(error.response.data.message);
         console.log(error.response);
       })
-      .finally(() => setLoading(false));
-    setLoading(false);
+      .finally(() => dispatch({type: 'CloseLoading'}));
+    dispatch({type: 'CloseLoading'});
   };
   const handleClickSendMail = async (e) => {
     e.preventDefault();
-    setLoading(true); setLoadingMessage('인증 메일을 보내는 중입니다..');
+    dispatch({type: 'OpenLoading', payload: '인증 메일을 보내는 중입니다..'});
     mailValidate() &&
     await axios.post(`/auth/mail-auth`, {email: authInfo.email})
       .then(res => setAuth(true))
       .catch(error => setMailErrorMessage(error.response.data.message))
-      .finally(() => {setLoading(false)});
-    setLoading(false);
+      .finally(() => dispatch({type: 'CloseLoading'}));
+    dispatch({type: 'CloseLoading'});
   };
   const handleClickRegist = async (e) => {
     e.preventDefault();
-    setLoading(true); setLoadingMessage('회원가입을 진행중입니다..');
+    dispatch({type: 'OpenLoading', payload: '회원가입을 진행 중입니다..'});
     registValidate() && await axios.post(`/auth/join`, {email: authInfo.email, ...registInfo})
       .then(res => {
         localStorage.setItem('token', res.data.token);
         navigate('/');
       })
       .catch(error => {console.log(error.response);})
-      .finally(() => {setLoading(false);})
-    setLoading(false);
+      .finally(() => dispatch({type: 'CloseLoading'}))
+    dispatch({type: 'CloseLoading'});
   };
 
   return (
     <Stack spacing={2}>
-      <LoadingProcess open={loading} message={loadingMessage}/>
       <Grid align='center'>
         <MenuBookIcon color='primary' sx={{fontSize: 100}}/>
         <Typography variant='h4' color='primary' fontWeight='bold'>모두의 일기장</Typography>

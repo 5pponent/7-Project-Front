@@ -12,11 +12,12 @@ export default function Comment(props) {
 			</Grid>
 
 			<Grid item xs={10}>
-				<Box sx={{bgcolor: '#e7ebf0', borderRadius: '20px', padding: '15px'}}>
-					<Typography sx={{fontSize: '14px'}}>{props.content}</Typography>
+				<Box sx={{bgcolor: '#e7ebf0', borderRadius: '10px', padding: '12px'}}>
+					<Typography sx={{fontSize: '14px', whiteSpace: 'pre-wrap'}}>{props.content}</Typography>
 				</Box>
+        <Typography color="textSecondary" fontSize="12px">{props.createTime}</Typography>
 			</Grid>
 
-		</Grid>
+    </Grid>
 	);
 }
