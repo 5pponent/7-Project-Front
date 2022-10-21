@@ -64,7 +64,7 @@ export default function Login(props) {
       .then(res => {
         if (res.status === 200) {
           localStorage.setItem('token', res.data.token);
-          navigate('/');
+          navigate(-1);
           dispatch({type: 'OpenSnackbar', payload: `로그인되었습니다.`});
         }
         else setAuth(true);
