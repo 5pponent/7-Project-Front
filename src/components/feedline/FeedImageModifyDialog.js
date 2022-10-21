@@ -23,7 +23,7 @@ export default function FeedImageModifyDialog(props) {
             <img src={URL.createObjectURL(value.file)} alt={value.originalName} width='100%'
                  style={{objectFit: 'cover'}}/>
             <TextField placeholder='설명' multiline minRows={2} size={'small'} value={state.feedImage[index].description}
-                       onChange={(e) => handleChangeValue(e, index)}/>
+                       onChange={(e) => handleChangeValue(e, index)} sx={{mt: 1}}/>
           </Stack>
         </Grid>
       ))}

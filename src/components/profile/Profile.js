@@ -57,6 +57,7 @@ export default function Profile(props) {
   });
 
   const getFeedList = (data) => {setFeed({...feed, feeds: data})};
+  const loadFeedList = (data) => {setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})};
   const updateFeedDetail = (data) => {
     setFeed({
       ...feed,
@@ -65,10 +66,16 @@ export default function Profile(props) {
         return item
       })})
   };
-
+  const handleScroll = () => {
+    const scroll = window.scrollY + document.documentElement.clientHeight;
+    if (scroll === document.documentElement.scrollHeight) {
+      customAxios.get(`/feed?userid=${searchParams}&pageNumber=${feed.currentPage + 1}`)
+        .then(res => loadFeedList(res.data))
+    }
+  };
   const onImageChange = (e) => {
     console.log("이미지 변경");
-  }
+  };
 
   useEffect(() => {
     customAxios.get(`/user/${searchParams}`)
@@ -141,7 +148,12 @@ export default function Profile(props) {
       </Stack>
 
       <Box sx={{overflow: 'overlay'}}>
-        <FeedLine feed={feed} getFeedList={getFeedList} updateFeedDetail={updateFeedDetail}/>
+        <FeedLine
+          feed={feed}
+          handleScroll={handleScroll}
+          getFeedList={getFeedList}
+          loadFeedList={loadFeedList}
+          updateFeedDetail={updateFeedDetail}/>
       </Box>
     </>
   );
