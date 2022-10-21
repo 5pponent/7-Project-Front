@@ -12,12 +12,12 @@ export default function ScrollUpButton() {
     setScroll(window.pageYOffset);
     if (scroll > 600) setShow(true);
     else setShow(false);
-  }
+  };
 
   const handleClickButton = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setScroll(205);
-  }
+  };
 
   useEffect(() => {
     if (scroll > 600) setShow(true);
