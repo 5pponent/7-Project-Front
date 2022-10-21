@@ -1,7 +1,19 @@
 import React, {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import {store} from "../../store/store";
-import {Avatar, Divider, IconButton, InputBase, Stack, Tooltip, Typography, Box, Button, Card} from "@mui/material";
+import {
+  Avatar,
+  Divider,
+  IconButton,
+  InputBase,
+  Stack,
+  Tooltip,
+  Typography,
+  Box,
+  Button,
+  Card,
+  Skeleton
+} from "@mui/material";
 import {styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import BorderColorIcon from '@mui/icons-material/BorderColor';

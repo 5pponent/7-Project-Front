@@ -9,6 +9,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Dialog, DialogContent, Slide, Snackbar} from "@mui/material";
 import {forwardRef, useContext} from "react";
 import {store} from "./store/store";
+import LoadingProcess from "./components/LoadingProcess";
 
 export default function App() {
 
@@ -47,6 +48,9 @@ export default function App() {
         }></Route>
 
       </Routes>
+
+      {/*로딩 화면*/}
+      <LoadingProcess open={state.loading.open} message={state.loading.message}/>
 
       {/*이미지 자세히 보기 다이얼로그*/}
       <Dialog

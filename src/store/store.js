@@ -18,6 +18,10 @@ const initialState = {
   },
   feedContent: '',
   feedImage: [],
+  loading: {
+    open: false,
+    message: ''
+  },
   imageView: {
     open: false,
     source: ''

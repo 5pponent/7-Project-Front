@@ -32,6 +32,10 @@ export default function reducer(state, action) {
       };
     case 'ResetFeed':
       return {...state, feedContent: '', feedImage: []};
+    case 'OpenLoading':
+      return {...state, loading: {open: true, message: action.payload}};
+    case 'CloseLoading':
+      return {...state, loading: {open: false, message: ''}};
     case 'OpenImageView':
       return {...state, imageView: {open: true, source: action.payload}};
     case 'CloseImageView':
