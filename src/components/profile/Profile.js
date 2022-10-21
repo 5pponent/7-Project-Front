@@ -82,7 +82,7 @@ export default function Profile(props) {
   const handleScroll = () => {
     const scroll = window.scrollY + document.documentElement.clientHeight;
     if (scroll === document.documentElement.scrollHeight) {
-      customAxios.get(`/feed?userid=${searchParams}&pageNumber=${feed.currentPage + 1}`)
+      customAxios.get(`/feed?userid=${searchParams}&page=${feed.currentPage + 1}`)
         .then(res => loadFeedList(res.data))
     }
   };
@@ -121,7 +121,7 @@ export default function Profile(props) {
               </IconButton>
               {
                 user.id === 0 ?
-                  <Skeleton width={100} height={40}/> :
+                  <Skeleton animation="wave" width={100} height={40}/> :
                   <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>
                     {user.name}
                   </Typography>
@@ -132,8 +132,8 @@ export default function Profile(props) {
               {
                 user.id === 0 ?
                   <>
-                    <Skeleton/>
-                    <Skeleton/>
+                    <Skeleton animation="wave"/>
+                    <Skeleton animation="wave"/>
                     <Skeleton variant="rectangular" width={210} height={50}/>
                   </>
                   :

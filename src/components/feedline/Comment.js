@@ -11,11 +11,11 @@ export default function Comment(props) {
 				<SmallProfile image={props.image} name={props.name}/>
 			</Grid>
 
-			<Grid item xs={10}>
+			<Grid item xs={11}>
 				<Box sx={{bgcolor: '#e7ebf0', borderRadius: '10px', padding: '12px'}}>
 					<Typography sx={{fontSize: '14px', whiteSpace: 'pre-wrap'}}>{props.content}</Typography>
 				</Box>
-        <Typography color="textSecondary" fontSize="12px">{props.createTime}</Typography>
+        <Typography textAlign={"right"} color="textSecondary" fontSize="12px">{props.createTime}</Typography>
 			</Grid>
 
     </Grid>
