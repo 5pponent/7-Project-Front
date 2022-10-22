@@ -86,7 +86,6 @@ export default function Profile(props) {
   }
 
   useEffect(() => {
-    console.log(searchParams)
     customAxios.get(`/user/${searchParams}`)
       .then(res => setUser(res.data))
       .catch(error => {console.log(error.response);});

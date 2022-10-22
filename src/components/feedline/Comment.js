@@ -1,12 +1,39 @@
-import {Box, Button, Grid, Stack, Typography} from "@mui/material";
+import {useContext} from "react";
+import customAxios from "../../AxiosProvider";
+import {store} from "../../store/store";
+import {Button, Stack, Typography, styled} from "@mui/material";
 import SmallProfile from "../SmallProfile";
 
-
 export default function Comment(props) {
+  const [state, dispatch] = useContext(store);
+  const show = props.writer.id === state.user.id ? 'block' : 'none';
 
-	return (
-		<Stack direction={"row"} spacing={2}>
-      <SmallProfile image={props.image} name={props.name}/>
+  const CommentBtn = styled(Button)(() => ({
+    padding: 0,
+    fontSize: "12px",
+    minWidth: 'max-content'
+  }));
+
+  const handleClickReplyButton = (name, commentId) => {
+    props.getMentionName(name, commentId);
+  };
+  const handleShowReply = () => {
+    console.log('답글보기')
+  };
+  const handleClickModifyButton = (content, commentId, name) => {
+    props.getCommentContent(content, commentId, name)
+  };
+  const handleDeleteComment = (feedId, commentId) => {
+    dispatch({type: 'OpenLoading', message: '댓글을 삭제중입니다..'});
+    customAxios.delete(`/feed/${feedId}/comment/${commentId}`)
+      .then(res => dispatch({type: 'OpenSnackbar', payload: `댓글이 삭제되었습니다.`}))
+      .catch(error => console.error(error))
+      .finally(() => dispatch({type: 'CloseLoading'}))
+  };
+
+  return (
+    <Stack direction={"row"} spacing={2}>
+      <SmallProfile image={props.image} name={props.writer.name}/>
 
       <Stack>
         <Typography sx={{
@@ -18,15 +45,17 @@ export default function Comment(props) {
             {props.createTime}
           </Typography>
         </Typography>
-        <Stack direction='row' justifyContent={"space-between"}>
-          <Stack direction='row' spacing={1}>
-            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>답글보기</Button>
-            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>답글달기</Button>
-            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>수정</Button>
-            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>삭제</Button>
-          </Stack>
+
+        <Stack direction='row' spacing={1}>
+          <CommentBtn onClick={() => handleShowReply()} sx={{display: props.childCount === 0 ? 'none' : 'block'}}>답글보기
+            ({props.childCount})</CommentBtn>
+          <CommentBtn onClick={() => handleClickReplyButton(props.writer.name, props.commentId)}>답글달기</CommentBtn>
+          <CommentBtn onClick={() => handleClickModifyButton(props.content, props.commentId, props.writer.name)}
+                      sx={{display: show}}>수정</CommentBtn>
+          <CommentBtn onClick={() => handleDeleteComment(props.feedId, props.commentId)}
+                      sx={{display: show}}>삭제</CommentBtn>
         </Stack>
       </Stack>
     </Stack>
-	);
+  );
 }
