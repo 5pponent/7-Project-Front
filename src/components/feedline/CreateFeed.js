@@ -28,6 +28,7 @@ export default function CreateFeed(props) {
   const [state, dispatch] = useContext(store);
   const [scope, setScope] = useState('all');
   const [open, setOpen] = useState(false);
+  const [errorMessage, setErrormessage] = useState('');
   const imageRef = useRef();
 
   const ImageButton = styled(ButtonBase)(() => ({
@@ -40,38 +41,60 @@ export default function CreateFeed(props) {
       }
     }
   }));
-  const ImageCover  = styled('span')(({theme}) => ({
+  const ImageCover = styled('span')(({theme}) => ({
     width: '100%',
     transition: theme.transitions.create('opacity')
   }));
 
-  const handleChangeScope = (e) => {setScope(e.target.value)};
-  const handleContentChange = (e) => {dispatch({type: 'CreateFeed', payload: e.target.value})};
-  const closeDrawer = () => {props.getOpen(false)};
-  const closeImageModify = () => {setOpen(false)};
+  const validate = () => {
+    let valid = true;
+    if (!state.feedContent && state.feedImage.length === 0) {
+      setErrormessage('내용 또는 사진을 입력해 주세요!');
+      dispatch({type: 'CloseLoading'});
+      valid = false;
+    } else setErrormessage('')
+    return valid;
+  };
+
+  const handleChangeScope = (e) => {
+    setScope(e.target.value)
+  };
+  const handleContentChange = (e) => {
+    dispatch({type: 'CreateFeed', payload: e.target.value})
+  };
+  const closeDrawer = () => {
+    props.getOpen(false)
+  };
+  const closeImageModify = () => {
+    setOpen(false)
+  };
   const handleAddImage = (e) => {
     for (let i = 0; i < e.target.files.length; i++) {
       dispatch({type: 'AddImage', payload: {file: e.target.files[i], originalName: e.target.files[i].name}})
     }
   };
-  const handleModifyImage = () => {setOpen(open => !open)};
+  const handleModifyImage = () => {
+    setOpen(open => !open)
+  };
   const handleCreateFeed = async () => {
-    dispatch({type: 'OpenLoading', message: '피드를 작성중입니다..'});
-    const feedForm = new FormData();
-    feedForm.append('content', state.feedContent);
-    state.feedImage.map(item => feedForm.append('descriptions', item.description));
-    state.feedImage.map(item => feedForm.append('images', item.file));
-    feedForm.append('showScope', scope);
-
-    await customAxios.post(`/feed`, feedForm)
-      .then(res => {
-        closeDrawer();
-        dispatch({type: 'ResetFeed'});
-        dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
-        console.log(res)
-      })
-      .catch(error => {console.error(error.response)})
-      .finally(() => dispatch({type: 'CloseLoading'}));
+    if (validate()) {
+      dispatch({type: 'OpenLoading', message: '피드를 작성중입니다..'});
+      const feedForm = new FormData();
+      feedForm.append('content', state.feedContent);
+      state.feedImage.map(item => feedForm.append('descriptions', item.description));
+      state.feedImage.map(item => feedForm.append('images', item.file));
+      feedForm.append('showScope', scope);
+      await customAxios.post(`/feed`, feedForm)
+        .then(res => {
+          closeDrawer();
+          dispatch({type: 'ResetFeed'});
+          dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
+        })
+        .catch(error => {
+          console.error(error.response)
+        })
+        .finally(() => dispatch({type: 'CloseLoading'}));
+    }
   };
 
   return (
@@ -113,8 +136,8 @@ export default function CreateFeed(props) {
           </Grid>
 
           <Grid item xs={12}>
-            <TextField fullWidth maxRows={10} multiline placeholder={'내용을 입력해 주세요.'} value={state.feedContent}
-                       onChange={handleContentChange}/>
+            <TextField fullWidth maxRows={10} multiline autoFocus error={!!errorMessage} helperText={errorMessage}
+                       placeholder={'내용을 입력해 주세요.'} value={state.feedContent} onChange={handleContentChange}/>
           </Grid>
 
           <Grid item xs={12} sx={{display: state.feedImage.length === 0 ? 'none' : 'block'}}>
@@ -151,11 +174,11 @@ export default function CreateFeed(props) {
         <DialogTitle>
           <Typography sx={{fontSize: 25, fontWeight: 'bold'}}>사진</Typography>
         </DialogTitle>
-        
-        <DialogContent sx={{backgroundColor: 'lightgrey', p:1}}>
+
+        <DialogContent sx={{backgroundColor: 'lightgrey', p: 1}}>
           <FeedImageModifyDialog/>
         </DialogContent>
-        
+
         <DialogActions>
           <Button variant='contained' onClick={() => imageRef.current?.click()}>사진 추가</Button>
           <Button variant='contained' onClick={closeImageModify}>완료</Button>
