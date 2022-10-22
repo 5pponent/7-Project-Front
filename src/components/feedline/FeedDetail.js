@@ -60,47 +60,46 @@ export default function FeedDetail(props) {
 
   return (
     <>
-      <Grid container paddingBottom={3} spacing={2}>
-        <Grid item xs={1}>
-          <SmallProfile image={writer.image && writer.image.source} name={writer.name}/>
-        </Grid>
-
-        <Grid item xs={10}>
-          <Typography color="textSecondary" fontSize="12px">
+      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+        <Stack spacing={1}>
+          <SmallProfile direction={"row"} spacing={2}
+                        image={writer.image && writer.image.source} name={writer.name}/>
+          <Typography color="textSecondary" fontSize="14px">
             {createTime}
           </Typography>
-          <Typography sx={{whiteSpace:'pre-wrap'}}>
-            {content}
-          </Typography>
-          <ImageList cols={1}>
-            {
-              props.feedDetail.files.map(f => {
-                return (
-                  <ImageListItem key={f.id}>
-                    <img src={f.source}/>
-                    <Typography>{f.description}</Typography>
-                  </ImageListItem>
-                );
-              })
-            }
-          </ImageList>
-        </Grid>
+        </Stack>
 
-        <Grid item xs={1}>
-          <Stack paddingLeft={2}>
-            <IconButton onClick={props.closeContent}>
-              <CloseIcon color='text.secondary'/>
-            </IconButton>
-            <MoreMenu
-              feedId={id}
-              writer={writer.id}
-              closeContent={props.closeContent}
-              feedList={props.feedList}
-              getFeedList={props.getFeedList}
-            />
-          </Stack>
-        </Grid>
-      </Grid>
+        <Stack>
+          <IconButton onClick={props.closeContent}>
+            <CloseIcon color='text.secondary'/>
+          </IconButton>
+          <MoreMenu
+            feedId={id}
+            writer={writer.id}
+            closeContent={props.closeContent}
+            feedList={props.feedList}
+            getFeedList={props.getFeedList}
+          />
+        </Stack>
+      </Stack>
+
+      <Box mt={1}>
+        <Typography sx={{whiteSpace:'pre-wrap'}}>
+          {content}
+        </Typography>
+        <ImageList cols={1}>
+          {
+            props.feedDetail.files.map(f => {
+              return (
+                <ImageListItem key={f.id}>
+                  <img src={f.source}/>
+                  <Typography>{f.description}</Typography>
+                </ImageListItem>
+              );
+            })
+          }
+        </ImageList>
+      </Box>
 
       <Box>
         <IconButton onClick={() => handleClickLike(id)}>
@@ -113,36 +112,32 @@ export default function FeedDetail(props) {
 
       <Divider/>
 
-      <Grid container marginTop='15px'>
-        <Grid item xs={1}>
-          <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
-        </Grid>
-        {/* 댓글 작성 */}
-        <Grid item xs={11}>
-          <Stack direction='row' margin='10px' spacing={1}>
-            <TextField multiline size='small' fullWidth value={commentContent.content}
-                       placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
-            <Button type='submit' variant='contained' onClick={() => handleCreateComment(id, commentContent)}>
-              입력
-            </Button>
-          </Stack>
-        </Grid>
-      </Grid>
-
+      {/* 댓글 작성 */}
       <Stack p={1}>
-        {
-          comments ? comments.map((c) => {
-            return (
-              <Comment
-                key={c.id}
-                name={c.writer.name}
-                image={c.writer.image ? c.writer.image.source : ''}
-                content={c.content}
-                createTime={c.createTime}
-              />
-            );
-          }) : "댓글이 없습니다."
-        }
+        <Stack direction={"row"} alignItems={"center"} justifyContent={"flex-start"} spacing={2}>
+          <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
+          <TextField multiline size='small' fullWidth value={commentContent.content}
+                     placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
+          <Button type='submit' variant='contained' onClick={() => handleCreateComment(id, commentContent)}>
+            입력
+          </Button>
+        </Stack>
+      </Stack>
+
+      {/*댓글 목록*/}
+      <Stack p={1} spacing={3}>
+      { comments ? comments.map((c) => {
+          return (
+            <Comment
+              key={c.id}
+              name={c.writer.name}
+              image={c.writer.image ? c.writer.image.source : ''}
+              content={c.content}
+              createTime={c.createTime}
+            />
+          );
+        }) : "댓글이 없습니다."
+      }
       </Stack>
     </>
   );

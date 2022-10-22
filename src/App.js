@@ -6,10 +6,11 @@ import ChatApp from './components/chatting/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
 import Template from "./components/Template";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Dialog, DialogContent, Slide, Snackbar} from "@mui/material";
+import {Dialog, Slide, Snackbar} from "@mui/material";
 import {forwardRef, useContext} from "react";
 import {store} from "./store/store";
 import LoadingProcess from "./components/LoadingProcess";
+import ScrollTop from "./components/ScrollTop";
 
 export default function App() {
 
@@ -59,7 +60,7 @@ export default function App() {
         onClick={() => {dispatch({type: 'CloseImageView'})}}
         maxWidth={'lg'}
       >
-        <img style={{maxWidth: '800px'}} src={state.imageView.source}/>
+        <img style={{maxWidth: '800px'}} src={state.imageView.source} alt={'상세보기 이미지'}/>
       </Dialog>
 
       {/*알림용 스낵바*/}
@@ -68,11 +69,12 @@ export default function App() {
         autoHideDuration={5000}
         onClose={() => {dispatch({type: 'CloseSnackbar'});}}
         message={state.snackbar.message}
+        TransitionComponent={Transition}
       />
     </BrowserRouter>
   );
 }
 
-const Transition = forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
+const Transition = forwardRef(function Transition(props) {
+  return <Slide direction="up" {...props} />;
 });

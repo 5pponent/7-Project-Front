@@ -1,20 +1,19 @@
 import {useContext, useState} from 'react';
 import {store} from "../../store/store";
 import {
-  Box,
   Drawer,
   IconButton,
-  Stack,
   Tooltip,
   Toolbar,
   Typography,
   AppBar,
   ButtonBase,
-  InputBase, Avatar
+  InputBase, Avatar, Stack, Box
 } from '@mui/material';
 import {styled, alpha} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import EditIcon from '@mui/icons-material/Edit';
 import HeaderMenu from './HeaderMenu';
 import CreateFeed from '../feedline/CreateFeed';
@@ -58,8 +57,9 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
   },
 }));
 const Title = styled(Typography)(() => ({
-  fontSize: '24px',
+  fontSize: '22px',
   fontWeight: 'bold',
+  wordBreak: 'keep-all'
 }));
 
 export default function Header(props) {
@@ -81,32 +81,33 @@ export default function Header(props) {
     <AppBar style={{userSelect: 'none', position: 'sticky'}}>
       <Toolbar
         sx={{bgcolor: '#2c92ff', color: 'white'}}
-        style={{display: 'flex', justifyContent: 'space-between'}}
-        disableGutters
+        style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}
       >
 
         {/* 검색 */}
-        <FlexItem>
+        <Box width={"200px"}>
           <Search>
             <SearchIconWrapper><SearchIcon/></SearchIconWrapper>
             <StyledInputBase placeholder="프로필 검색"/>
           </Search>
-        </FlexItem>
+        </Box>
 
         {/* 타이틀 */}
-        <FlexItem>
+        <Box width={"200px"}>
           <ButtonBase onClick={handleClickLogo}>
-            <MenuBookIcon sx={{fontSize: 50}}/>
-            &nbsp;&nbsp;&nbsp;
+            <MenuBookIcon sx={{fontSize: 44}}/>&nbsp;
             <Title>모두의 일기장</Title>
           </ButtonBase>
-        </FlexItem>
+        </Box>
 
-        {/* 우측 메뉴 */}
-        <FlexItem> {/* 우측 사용자 프로필, 더보기 메뉴 */}
+        {/* 사용자 프로필, 더보기 메뉴 */}
+        <Stack width={'200px'} direction={"row"} spacing={1}
+               justifyContent={"flex-end"} alignItems={"center"}
+        >
+
           <Tooltip title="피드 작성" placement="bottom" arrow>
-            <IconButton onClick={handleClickDrawer} sx={{marginRight: '5px'}}>
-              <EditIcon sx={{color: 'white'}}></EditIcon>
+            <IconButton onClick={handleClickDrawer}>
+              <BorderColorIcon sx={{fontSize: 26, color: "white"}}/>
             </IconButton>
           </Tooltip>
 
@@ -114,21 +115,17 @@ export default function Header(props) {
             <CreateFeed getOpen={getOpen}/>
           </Drawer>
 
-          <Tooltip title="프로필" placement="bottom" arrow>
-            <ButtonBase onClick={handleClickMyProfile} sx={{margin: '0 5px'}}>
+          <Tooltip title="내 프로필" placement="bottom" arrow>
+            <ButtonBase onClick={handleClickMyProfile}>
               <Avatar src={state.user.image ? state.user.image.source : ''}/>
             </ButtonBase>
           </Tooltip>
 
           <HeaderMenu/>
-        </FlexItem>
+
+        </Stack>
 
       </Toolbar>
     </AppBar>
   );
 }
-
-const FlexItem = styled("div")(() => ({
-  width: '250px',
-  textAlign: 'center'
-}));

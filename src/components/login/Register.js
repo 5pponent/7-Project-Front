@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import axios from "axios";
 import {Box, Button, Grid, Stack, TextField, Typography} from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -75,7 +75,6 @@ export default function Register(props) {
   };
 
   const handleClickCodeCheck = async (e) => {
-    e.preventDefault();
     dispatch({type: 'OpenLoading', payload: '인증 코드를 확인중입니다..'});
     (mailValidate() & codeValidate()) &&
     await axios.post(`/auth/mail-auth-check`, authInfo)
@@ -113,6 +112,10 @@ export default function Register(props) {
     dispatch({type: 'CloseLoading'});
   };
 
+  useEffect(() => {
+    if (authInfo.code.length === 6) handleClickCodeCheck()
+  }, [authInfo.code]);
+
   return (
     <Stack spacing={2}>
       <Grid align='center'>
@@ -131,6 +134,7 @@ export default function Register(props) {
 
             <TextField fullWidth label='인증코드' name="code" onChange={handleAuthInfoChange}
                        error={!!codeErrorMessage} helperText={codeErrorMessage}
+                       inputProps={{maxLength: 6, autocomplete: 'off'}}
                        sx={{display: auth ? 'block' : 'none'}}
             />
 
