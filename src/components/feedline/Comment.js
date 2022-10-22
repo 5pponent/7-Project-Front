@@ -17,15 +17,20 @@ export default function Comment(props) {
   const handleClickReplyButton = (name, commentId) => {
     props.getMentionName(name, commentId);
   };
-  const handleModifyComment = () => {
-    console.log('수정')
+  const handleShowReply = () => {
+    console.log('답글보기')
+  };
+  const handleClickModifyButton = (content, commentId, name) => {
+    props.getCommentContent(content, commentId, name)
   };
   const handleDeleteComment = (feedId, commentId) => {
+    dispatch({type: 'OpenLoading', message: '댓글을 삭제중입니다..'});
     customAxios.delete(`/feed/${feedId}/comment/${commentId}`)
       .then(res => dispatch({type: 'OpenSnackbar', payload: `댓글이 삭제되었습니다.`}))
       .catch(error => console.error(error))
+      .finally(() => dispatch({type: 'CloseLoading'}))
   };
-  
+
   return (
     <Stack direction={"row"} spacing={2}>
       <SmallProfile image={props.image} name={props.writer.name}/>
@@ -42,10 +47,13 @@ export default function Comment(props) {
         </Typography>
 
         <Stack direction='row' spacing={1}>
-          <CommentBtn sx={{display: props.childCount === 0 ? 'none' : 'block'}}>답글보기 ({props.childCount})</CommentBtn>
+          <CommentBtn onClick={() => handleShowReply()} sx={{display: props.childCount === 0 ? 'none' : 'block'}}>답글보기
+            ({props.childCount})</CommentBtn>
           <CommentBtn onClick={() => handleClickReplyButton(props.writer.name, props.commentId)}>답글달기</CommentBtn>
-          <CommentBtn onClick={handleModifyComment} sx={{display: show}}>수정</CommentBtn>
-          <CommentBtn onClick={() => handleDeleteComment(props.feedId, props.commentId)} sx={{display: show}}>삭제</CommentBtn>
+          <CommentBtn onClick={() => handleClickModifyButton(props.content, props.commentId, props.writer.name)}
+                      sx={{display: show}}>수정</CommentBtn>
+          <CommentBtn onClick={() => handleDeleteComment(props.feedId, props.commentId)}
+                      sx={{display: show}}>삭제</CommentBtn>
         </Stack>
       </Stack>
     </Stack>

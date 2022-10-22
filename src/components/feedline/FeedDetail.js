@@ -24,6 +24,7 @@ import Comment from './Comment';
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
   const [reply, setReply] = useState(false);
+  const [modifyComment, setModifyComment] = useState(false);
   const [myComment, setMyComment] = useState({
     comments: [],
     currentPage: 1,
@@ -37,7 +38,7 @@ export default function FeedDetail(props) {
     totalPages: undefined
   });
   const [commentContent, setCommentContent] = useState({content: ''});
-  const [replyComment, setReplyComment] = useState({id: 0, name: ''});
+  const [currentComment, setCurrentComment] = useState({id: 0, name: ''});
   const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail;
   const commentRef = useRef();
 
@@ -53,8 +54,14 @@ export default function FeedDetail(props) {
 
   const getMentionName = (name, commentId) => {
     setCommentContent({content: `@${name} `});
-    setReplyComment({id: commentId, name: name});
+    setCurrentComment({id: commentId, name: name});
     setReply(true);
+    commentRef.current.focus();
+  };
+  const getCommentContent = (comment, commentId, name) => {
+    setModifyComment(true);
+    setCommentContent({content: comment});
+    setCurrentComment({id: commentId, name: name});
     commentRef.current.focus();
   };
   const handleChangeComment = (e) => {
@@ -87,17 +94,39 @@ export default function FeedDetail(props) {
       .finally(() => dispatch({type: 'CloseLoading'}))
   };
   const handleClickReplay = (feedId, commentId) => {
+    dispatch({type: 'OpenLoading', message: '답글을 전송중입니다..'});
     customAxios.post(`/feed/${feedId}/comment/${commentId}`, commentContent)
       .then(res => {
         setCommentContent({content: ''});
         setReply(false);
-        dispatch({type: 'OpenSnackbar', payload: `${replyComment.name}님께 답글이 전송되었습니다.`});
+        dispatch({type: 'OpenSnackbar', payload: `${currentComment.name}님께 답글이 전송되었습니다.`});
       })
       .catch(error => console.error(error))
+      .finally(() => dispatch({type: 'CloseLoading'}))
+  };
+  const handleClickModifyComment = (feedId, commentId, content) => {
+    dispatch({type: 'OpenLoading', message: '댓글을 수정중입니다..'});
+    customAxios.put(`/feed/${feedId}/comment/${commentId}`, content)
+      .then(res => {
+        setCommentContent({content: ''});
+        setModifyComment(false);
+        dispatch({type: 'OpenSnackbar', payload: `댓글이 수정되었습니다.`});
+      })
+      .catch(error => console.error(error))
+      .finally(() => dispatch({type: 'CloseLoading'}))
   };
   const handleClickCancelReplay = () => {
     setCommentContent({content: ``});
     setReply(false);
+  };
+  const handleClickCancelModify = () => {
+    setCommentContent({content: ``});
+    setModifyComment(false);
+  };
+  const handleClickButton = () => {
+    if (reply) return handleClickReplay(id, currentComment.id)
+    else if (modifyComment) return handleClickModifyComment(id, currentComment.id, commentContent)
+    else return handleCreateComment(id, commentContent)
   };
 
   return (
@@ -160,12 +189,17 @@ export default function FeedDetail(props) {
           <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
           <TextField inputRef={commentRef} multiline size='small' fullWidth value={commentContent.content}
                      placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
-          <Button type='submit' variant='contained' onClick={reply ? () => handleClickReplay(id, replyComment.id) : () => handleCreateComment(id, commentContent)}>
-            입력
+          <Button type='submit' variant='contained' onClick={handleClickButton}>
+            {modifyComment ? '수정' : '입력'}
           </Button>
         </Stack>
+
         <Button onClick={handleClickCancelReplay} sx={{width: 'max-content', display: reply ? 'block' : 'none'}}>
           답글취소
+        </Button>
+        <Button onClick={handleClickCancelModify}
+                sx={{width: 'max-content', display: modifyComment ? 'block' : 'none'}}>
+          수정취소
         </Button>
       </Stack>
 
@@ -187,6 +221,7 @@ export default function FeedDetail(props) {
                   content={c.content}
                   createTime={c.createTime}
                   getMentionName={getMentionName}
+                  getCommentContent={getCommentContent}
                 />
               );
             })}
@@ -219,6 +254,7 @@ export default function FeedDetail(props) {
                 content={c.content}
                 createTime={c.createTime}
                 getMentionName={getMentionName}
+                getCommentContent={getCommentContent}
               />
             );
           }) : "댓글이 없습니다."
