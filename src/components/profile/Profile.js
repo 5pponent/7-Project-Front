@@ -1,31 +1,26 @@
 import React, {useContext, useEffect, useState} from "react";
-import axios from "axios";
 import {store} from "../../store/store";
 import {
   Avatar,
-  Divider,
   IconButton,
   InputBase,
   Stack,
-  Tooltip,
   Typography,
-  Box,
   Button,
   Card,
-  Skeleton
+  Skeleton, Grid, Box, Dialog, DialogContent, DialogTitle, Table, TableBody, TableCell, TableRow
 } from "@mui/material";
 import {styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
 import FeedLine from "../feedline/FeedLine";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import customAxios from "../../AxiosProvider";
 
 const Search = styled('div')(({theme}) => ({
   position: 'relative',
   border: '1px solid lightgray',
   borderRadius: theme.shape.borderRadius,
-  width: '200px',
+  width: '100%',
 }));
 const SearchIconWrapper = styled('div')(({theme}) => ({
   padding: theme.spacing(0, 1),
@@ -50,7 +45,6 @@ export default function Profile(props) {
   let location = useLocation();
   let searchParams = new URLSearchParams(location.search).get('user');
 
-  const [isMe, setIsMe] = useState(false);
   const [user, setUser] = useState({
     email: '',
     followerCount: 0,
@@ -59,6 +53,7 @@ export default function Profile(props) {
     image: null,
     interests: [],
     name: '',
+    message: '',
     occupation: null
   });
   const [feed, setFeed] = useState({
@@ -91,46 +86,47 @@ export default function Profile(props) {
   }
 
   useEffect(() => {
+    console.log(searchParams)
     customAxios.get(`/user/${searchParams}`)
-      .then(res => {
-        if (res.data.id === state.user.id) setIsMe(true);
-        setUser(res.data);
-      })
+      .then(res => setUser(res.data))
       .catch(error => {console.log(error.response);});
     customAxios.get(`/feed?userid=${searchParams}`)
-      .then(res => {
-        setFeed(res.data);
-      })
+      .then(res => setFeed(res.data))
       .catch(error => console.log(error.response));
   }, [searchParams]);
 
   return (
-    <>
-      <Stack py={3} alignItems='center' bgcolor={'#e7ebf0'}>
+    <Stack alignItems={"center"}>
 
-        <Stack direction={"row"}>
-          <Card>
-            <Stack alignItems={"center"}>
-              <IconButton aria-label="update profile image" component="label"
-                onClick={() => {
+{/*      <IconButton aria-label="update profile image" component="label">
+        <input hidden accept="image/*" type="file" onChange={onImageChange} />
+        <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
+      </IconButton>*/}
+
+      <Grid container direction={"row"} sx={{width: "1100px"}}>
+
+        <Grid item xs={3} py={3}>
+
+          <Stack spacing={2} style={{position: "fixed"}}>
+            <Card>
+              <Stack alignItems={"center"}>
+                <IconButton onClick={() => {
                   if (user.image !== null)
                     dispatch({type: 'OpenImageView', payload: user.image.source})
-                }}
-              >
-                <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
-              </IconButton>
-              {
-                user.id === 0 ?
-                  <Skeleton animation="wave" width={100} height={40}/> :
+                }}>
+                  <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
+                </IconButton>
+                { user.id === 0 ?
+                  <Skeleton animation="wave" width={100} height={40}/>
+                  :
                   <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>
                     {user.name}
                   </Typography>
-              }
-            </Stack>
-            <Divider/>
-            <Stack sx={{userSelect: 'none'}} p={2} spacing={1}>
-              {
-                user.id === 0 ?
+                }
+              </Stack>
+
+              <Stack sx={{userSelect: 'none'}} p={2} spacing={1}>
+                { user.id === 0 ?
                   <>
                     <Skeleton animation="wave"/>
                     <Skeleton animation="wave"/>
@@ -152,42 +148,83 @@ export default function Profile(props) {
                         follow : {user.followingCount}
                       </Typography>
                     </Stack>
-                    {
-                      isMe ?
-                        <Button size={"small"} variant={"contained"}
-                        onClick={() => {setUpdateProfile(!updateProfile)}}>프로필 변경</Button> :
-                        <Button size={"small"} variant={"contained"}>팔로우</Button>
+                    { state.user.id === user.id ?
+                      <Button
+                        size={"small"}
+                        variant={"contained"}
+                        onClick={() => setUpdateProfile(true)}
+                      >
+                        프로필 변경
+                      </Button>
+                      :
+                      <Button size={"small"} variant={"contained"}>팔로우</Button>
                     }
                   </>
-              }
-            </Stack>
-          </Card>
+                }
+              </Stack>
+            </Card>
+            <Search>
+              <SearchIconWrapper><SearchIcon/></SearchIconWrapper>
+              <StyledInputBase placeholder="피드 검색"/>
+            </Search>
+          </Stack>
 
-        </Stack>
+        </Grid>
 
-      </Stack>
-      <IconButton aria-label="update profile image" component="label">
-        <input hidden accept="image/*" type="file" onChange={onImageChange} />
-        <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
-      </IconButton>
+        <Grid item xs={9}>
+          <FeedLine
+            feed={feed}
+            handleScroll={handleScroll}
+            getFeedList={getFeedList}
+            loadFeedList={loadFeedList}
+            updateFeedDetail={updateFeedDetail}
+          />
+        </Grid>
 
-      <Divider/>
+      </Grid>
 
-      <Stack direction='row' sx={{width: '800px', margin: '0 auto', padding: '10px'}}>
-        <Search>
-          <SearchIconWrapper><SearchIcon/></SearchIconWrapper>
-          <StyledInputBase placeholder="피드 검색"/>
-        </Search>
-      </Stack>
+      <Dialog
+        maxWidth={"sm"} fullWidth
+        open={updateProfile}
+        onClose={() => {setUpdateProfile(false)}}
+      >
+        <ProfileUpdateDialog user={user}/>
+      </Dialog>
+    </Stack>
+  );
+}
 
-      <Box sx={{overflow: 'overlay'}}>
-        <FeedLine
-          feed={feed}
-          handleScroll={handleScroll}
-          getFeedList={getFeedList}
-          loadFeedList={loadFeedList}
-          updateFeedDetail={updateFeedDetail}/>
-      </Box>
+function ProfileUpdateDialog(props) {
+
+  const [state, dispatch] = useContext(store);
+  const [user, setUser] = useState({
+    email: '',
+    followerCount: 0,
+    followingCount: 0,
+    id: 0,
+    image: null,
+    interests: [],
+    name: '',
+    message: '',
+    occupation: null
+  });
+
+  useEffect(() => {
+    customAxios.get(`/user`)
+      .then(res => {setUser(res.data); console.log(res.data)})
+      .catch(err => console.log(err.response));
+  }, []);
+
+  return (
+    <>
+      <DialogTitle>내 프로필 변경하기</DialogTitle>
+      <DialogContent>
+        <Table><TableBody>
+          <TableRow>
+            <TableCell></TableCell><TableCell></TableCell>
+          </TableRow>
+        </TableBody></Table>
+      </DialogContent>
     </>
   );
 }

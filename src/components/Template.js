@@ -15,12 +15,15 @@ export default function Template(props) {
   }, [])
 
   return (
-    <Box sx={{flexGrow: 1}}>
+    <>
       <HeaderAppBar/>
 
-      {props.element}
+      <Box width={"100%"}>
+        {props.element}
+      </Box>
 
+      {/*맨 위 스크롤*/}
       <ScrollTop/>
-    </Box>
+    </>
   );
 }

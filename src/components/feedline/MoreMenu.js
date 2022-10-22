@@ -1,7 +1,7 @@
 import {useContext, useState} from "react";
 import axios from 'axios';
 import {store} from "../../store/store";
-import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
+import {Divider, IconButton, Menu, MenuItem, Typography} from "@mui/material";
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 
 export default function MoreMenu(props) {
@@ -42,13 +42,17 @@ export default function MoreMenu(props) {
 							horizontal: 'left',
 						}}
 			>
-				<MenuItem onClick={handleClickModify} sx={{display: show}}>수정하기</MenuItem>
-				<Divider sx={{display: show}}/>
-				<MenuItem onClick={handleClickDelete} sx={{display: show}}>삭제하기</MenuItem>
-				<Divider sx={{display: show}}/>
 				<MenuItem onClick={handleMenuClose}>저장하기</MenuItem>
 				<Divider/>
 				<MenuItem onClick={handleMenuClose}>신고하기</MenuItem>
+        <Divider sx={{display: show}}/>
+        <MenuItem onClick={handleClickModify} sx={{display: show}}>
+          <Typography>수정하기</Typography>
+        </MenuItem>
+        <Divider sx={{display: show}}/>
+        <MenuItem onClick={handleClickDelete} sx={{display: show}}>
+          <Typography color={"darkred"}>삭제하기</Typography>
+        </MenuItem>
 			</Menu>
 		</>	
 	);

@@ -62,70 +62,71 @@ export default function Feed(props) {
 
   return (
     <>
-      <Paper sx={{marginY: '30px'}} elevation={8}>
-        <Grid container>
-          <Grid item xs={11} sx={{cursor: 'pointer'}} onClick={openContent}> {/* 컨텐츠 */}
-            <Box p={4}>
-              <Content>
-                {content}
-              </Content>
-            </Box>
-          </Grid>
+      <Box sx={{boxShadow: 5, borderRadius: 1.5}} elevation={5}>
 
-          <Grid item xs={1} p={2}> {/* 더보기 버튼 */}
+        {/*컨텐츠 + 더보기 버튼*/}
+        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"flex-start"}>
+          <Box p={3} sx={{cursor: 'pointer'}} width={"100%"} onClick={openContent}>
+            <Content>{content}</Content>
+          </Box>
+
+          <Box p={1}>
             <MoreMenu
               feedId={id}
               writer={writer.id}
               feedList={props.feedList}
-              getFeedList={props.getFeedList}/>
-          </Grid>
-        </Grid>
+              getFeedList={props.getFeedList}
+            />
+          </Box>
+        </Stack>
 
         <Divider/>
 
-        <Grid container p={2}>
-          <Grid item xs={10}> {/* 좋아요, 댓글 */}
-            <Stack direction={'row'} spacing={3}>
-              <IconButton onClick={() => handleClickLike(id)}>
-                <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
-                  <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
-                </StyledBadge>
-              </IconButton>
-              <IconButton>
-                <StyledBadge badgeContent={commentCount} bgcolor={''} showZero>
-                  <AddCommentRoundedIcon sx={{fontSize: 30}}/>
-                </StyledBadge>
-              </IconButton>
-            </Stack>
-          </Grid>
+        {/*좋아요, 댓글, 프로필*/}
+        <Stack
+          direction={"row"} justifyContent={"space-between"}
+          alignItems={"center"} m={1.5}
+        >
+          <Stack direction={'row'} spacing={3}>
+            <IconButton onClick={() => handleClickLike(id)}>
+              <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
+                <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
+              </StyledBadge>
+            </IconButton>
+            <IconButton>
+              <StyledBadge badgeContent={commentCount} bgcolor={''} showZero>
+                <AddCommentRoundedIcon sx={{fontSize: 30}}/>
+              </StyledBadge>
+            </IconButton>
+          </Stack>
 
-          <Grid item xs={2}> {/* 프로필 */}
-            <Box>
-              <Grid container spacing={1} sx={{cursor: 'pointer'}} onClick={handleClickProfile}>
-                <Grid item>
-                  <Avatar src={props.image}/>
-                </Grid>
-                <Grid item>
-                  <Typography>{writer.name}</Typography>
-                  <Typography variant="body2" color="textSecondary">{createTime.substring(0, 10)}</Typography>
-                </Grid>
+          <Box>
+            <Grid container spacing={1} sx={{cursor: 'pointer'}} onClick={handleClickProfile}>
+              <Grid item>
+                <Avatar src={props.image}/>
               </Grid>
+              <Grid item>
+                <Typography>{writer.name}</Typography>
+                <Typography variant="body2" color="textSecondary">{createTime.substring(0, 10)}</Typography>
+              </Grid>
+            </Grid>
 
-              <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={handleCloseProfile}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'center',
-                    }}
-              >
-                <MenuItem onClick={handleClickProfileView}>프로필</MenuItem>
-                <MenuItem>팔로우</MenuItem>
-                <MenuItem>차단</MenuItem>
-              </Menu>
-            </Box>
-          </Grid>
-
-        </Grid>
-      </Paper>
+            <Menu
+              anchorEl={anchor}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              open={Boolean(anchor)}
+              onClose={handleCloseProfile}
+            >
+              <MenuItem onClick={handleClickProfileView}>프로필</MenuItem>
+              <MenuItem>팔로우</MenuItem>
+              <MenuItem>차단</MenuItem>
+            </Menu>
+          </Box>
+        </Stack>
+      </Box>
 
       {/* 컨텐츠 상세보기 다이얼로그 */}
       <Dialog open={open} onClose={closeContent} fullWidth maxWidth='md'>
@@ -145,6 +146,6 @@ export default function Feed(props) {
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
     right: 15,
-    top: 40
+    top: 35
   },
 }));

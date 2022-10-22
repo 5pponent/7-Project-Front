@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import { Divider, Stack } from '@mui/material';
+import {Stack} from '@mui/material';
 import FeedLine from './FeedLine';
 import customAxios from "../../AxiosProvider";
 
@@ -36,10 +36,7 @@ export default function FeedLineSelect(props) {
   }, []);
 
   return (
-    <Stack>
-      <Stack spacing={1} width='900px' margin='0 auto' minWidth='800px'
-        direction='row' divider={<Divider orientation='vertical' flexItem />}>
-      </Stack>
+    <Stack width={"95%"} maxWidth={"800px"} mx={"auto"}>
 
       <FeedLine
         feed={feed}
@@ -48,6 +45,7 @@ export default function FeedLineSelect(props) {
         loadFeedList={loadFeedList}
         updateFeedDetail={updateFeedDetail}
       />
+
     </Stack>
   );
 }
