@@ -1,23 +1,32 @@
-import { Box, Grid, Typography } from "@mui/material";
+import {Box, Button, Grid, Stack, Typography} from "@mui/material";
 import SmallProfile from "../SmallProfile";
 
 
 export default function Comment(props) {
 
 	return (
-		<Grid container marginTop="20px" spacing={2}>
+		<Stack direction={"row"} spacing={2}>
+      <SmallProfile image={props.image} name={props.name}/>
 
-			<Grid item xs={1}>
-				<SmallProfile image={props.image} name={props.name}/>
-			</Grid>
-
-			<Grid item xs={11}>
-				<Box sx={{bgcolor: '#e7ebf0', borderRadius: '10px', padding: '12px'}}>
-					<Typography sx={{fontSize: '14px', whiteSpace: 'pre-wrap'}}>{props.content}</Typography>
-				</Box>
-        <Typography textAlign={"right"} color="textSecondary" fontSize="12px">{props.createTime}</Typography>
-			</Grid>
-
-    </Grid>
+      <Stack>
+        <Typography sx={{
+          fontSize: '14px', whiteSpace: 'pre-wrap', bgcolor: '#e7ebf0', padding: '10px',
+          borderRadius: "10px"
+        }}>
+          {props.content}
+          <Typography textAlign="right" color="textSecondary" fontSize="12px" style={{wordBreak: 'keep-all'}} mt={1}>
+            {props.createTime}
+          </Typography>
+        </Typography>
+        <Stack direction='row' justifyContent={"space-between"}>
+          <Stack direction='row' spacing={1}>
+            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>답글보기</Button>
+            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>답글달기</Button>
+            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>수정</Button>
+            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>삭제</Button>
+          </Stack>
+        </Stack>
+      </Stack>
+    </Stack>
 	);
 }
