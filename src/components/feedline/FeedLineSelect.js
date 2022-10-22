@@ -26,6 +26,7 @@ export default function FeedLineSelect(props) {
     if (scroll === document.documentElement.scrollHeight) {
       customAxios.get(`/feed?page=${feed.currentPage + 1}`)
         .then(res => loadFeedList(res.data))
+        .catch(error => console.error(error.response))
     }
   };
 
