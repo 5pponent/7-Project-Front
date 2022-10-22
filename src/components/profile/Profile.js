@@ -1,14 +1,17 @@
 import React, {useContext, useEffect, useState} from "react";
 import {store} from "../../store/store";
 import {
-  Avatar, Box,
+  Avatar,
+  Box,
   Button,
   ButtonBase,
   Card,
-  Dialog, Fade,
+  Dialog,
+  Fade,
   Grid,
   IconButton,
-  InputBase, Paper, Popper,
+  InputBase,
+  Popper,
   Skeleton,
   Stack,
   Typography
@@ -72,16 +75,22 @@ export default function Profile(props) {
   const [updateProfile, setUpdateProfile] = useState(false);
   const [anchorEl, setAnchorEl] = useState(true);
   const [open, setOpen] = useState(false);
+  const [todayComment, setTodayComment] = useState(true);
 
-  const getFeedList = (data) => {setFeed({...feed, feeds: data})};
-  const loadFeedList = (data) => {setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})};
+  const getFeedList = (data) => {
+    setFeed({...feed, feeds: data})
+  };
+  const loadFeedList = (data) => {
+    setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})
+  };
   const updateFeedDetail = (data) => {
     setFeed({
       ...feed,
       feeds: feed.feeds.map(item => {
         if (item.id === data.id) return data
         return item
-      })})
+      })
+    })
   };
   const handleScroll = () => {
     const scroll = window.scrollY + document.documentElement.clientHeight;
@@ -90,21 +99,31 @@ export default function Profile(props) {
         .then(res => loadFeedList(res.data))
     }
   };
-  const handleCloseDialog = (stat) => {setUpdateProfile(stat)}
+  const handleCloseDialog = (stat) => {
+    setUpdateProfile(stat)
+  }
   const reloadUser = () => {
     customAxios.get(`/user/${searchParams}`)
       .then(res => setUser(res.data))
-      .catch(error => {console.log(error.response);});
+      .catch(error => {
+        console.log(error.response);
+      });
   }
   const openPopper = () => {
     setAnchorEl(document.getElementById("avatar"));
     setOpen(true);
   };
+  const hidePopper = () => {
+    setTodayComment(false);
+    dispatch({type: 'OpenSnackbar', payload: `조용히할게요..`});
+  };
 
   useEffect(() => {
     customAxios.get(`/user/${searchParams}`)
       .then(res => setUser(res.data))
-      .catch(error => {console.log(error.response);});
+      .catch(error => {
+        console.log(error.response);
+      });
     customAxios.get(`/feed?userid=${searchParams}`)
       .then(res => setFeed(res.data))
       .catch(error => console.log(error.response));
@@ -114,22 +133,25 @@ export default function Profile(props) {
   return (
     <Stack alignItems={"center"}>
 
-      { user.message.length !== 0 &&
+      {user.message.length !== 0 &&
         <Popper
           open={open}
           anchorEl={anchorEl}
           placement={"top"}
           transition
         >
-          {({ TransitionProps }) => (
+          {({TransitionProps}) => (
             <Fade {...TransitionProps} timeout={2000}>
               <Box className={"message"} minWidth={"100px"} minHeight={"50px"} maxWidth={"300px"}
                    boxShadow={2}>
-                <Typography p={2} fontSize={14} color={"darkgray"} fontFamily={"HSYuji-Regular"}
+                <Typography p={2} fontSize={14} color={'#14325e'} fontFamily={"HSYuji-Regular"}
                             style={{wordBreak: 'break-all', wordWrap: 'pre-wrap'}}
                 >
-                  {user.message}
+                  {todayComment ? user.message : '...'}
                 </Typography>
+                <Box sx={{textAlign: 'end'}}>
+                  <Button onClick={hidePopper} sx={{width: 'max-content', pt: 0, display: todayComment ? 'inline' : 'none'}}>쉿!</Button>
+                </Box>
               </Box>
             </Fade>
           )}
@@ -144,14 +166,14 @@ export default function Profile(props) {
             <Card>
               <Stack alignItems={"center"} mt={20}>
                 <IconButton id="avatar" itemID="avatar" onMouseOver={openPopper}
-                  onClick={() => {
-                  if (user.image !== null)
-                    dispatch({type: 'OpenImageView', payload: user.image.source})
-                  }}
+                            onClick={() => {
+                              if (user.image !== null)
+                                dispatch({type: 'OpenImageView', payload: user.image.source})
+                            }}
                 >
                   <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
                 </IconButton>
-                { user.id === 0 ?
+                {user.id === 0 ?
                   <Skeleton animation="wave" width={100} height={40}/>
                   :
                   <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>
@@ -161,7 +183,7 @@ export default function Profile(props) {
               </Stack>
 
               <Stack sx={{userSelect: 'none'}} p={2} spacing={1}>
-                { user.id === 0 ?
+                {user.id === 0 ?
                   <>
                     <Skeleton animation="wave"/>
                     <Skeleton animation="wave"/>
@@ -183,12 +205,12 @@ export default function Profile(props) {
                         follow : {user.followingCount}
                       </Typography>
                     </Stack>
-                    { state.user.id === user.id ?
+                    {state.user.id === user.id ?
                       <Stack direction={"row"} justifyContent={"center"}>
                         <ButtonBase onClick={() => setUpdateProfile(true)}
-                          style={{
-                            backgroundColor: 'lightgray', borderRadius: 4, padding: 4
-                        }}>
+                                    style={{
+                                      backgroundColor: 'lightgray', borderRadius: 4, padding: 4
+                                    }}>
                           <CreateRoundedIcon sx={{fontSize: 14}}/>&nbsp;
                           <Typography fontSize={12}>프로필 수정</Typography>
                         </ButtonBase>
@@ -222,7 +244,9 @@ export default function Profile(props) {
 
       <Dialog
         open={updateProfile}
-        onClose={() => {setUpdateProfile(false)}}
+        onClose={() => {
+          setUpdateProfile(false)
+        }}
       >
         <ProfileUpdateDialog
           user={user}

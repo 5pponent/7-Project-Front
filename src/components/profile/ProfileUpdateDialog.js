@@ -162,7 +162,7 @@ export default function ProfileUpdateDialog(props) {
                     <Typography fontSize={14}>이렇게 프로필 사진을 변경하실래요?</Typography>
                     <Stack direction={"row"} justifyContent={"center"}>
                       <Button onClick={handleClickUploadProfileImage}>네!</Button>
-                      <Button color={"error"} onClick={handleClickCancelImageUpload}>취소</Button>
+                      <Button color={"error"} onClick={handleClickCancelImageUpload}>아니요?</Button>
                     </Stack>
                   </Stack>
                 }
