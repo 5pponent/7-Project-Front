@@ -5,7 +5,10 @@ import {
   Box,
   Button,
   Divider,
-  IconButton, ImageList, ImageListItem, Pagination,
+  IconButton,
+  ImageList,
+  ImageListItem,
+  Pagination,
   Stack,
   TextField,
   Typography
@@ -49,9 +52,7 @@ export default function FeedDetail(props) {
   };
   const handleChangeMyCommentPage = (index) => {
     customAxios.get(`/feed/${id}/comment?user=me&size=3&page=${index}`)
-      .then(res => {
-        setMyComment(res.data)
-      })
+      .then(res => setMyComment(res.data))
       .catch(error => console.error(error.response))
   };
   const handleClickLike = (feedId) => {
@@ -73,9 +74,7 @@ export default function FeedDetail(props) {
         dispatch({type: 'OpenSnackbar', payload: `댓글이 입력되었습니다.`});
       })
       .catch(err => console.log(err.response))
-      .finally(() => {
-        dispatch({type: 'CloseLoading'})
-      })
+      .finally(() => dispatch({type: 'CloseLoading'}))
   };
 
   return (
@@ -144,46 +143,56 @@ export default function FeedDetail(props) {
         </Stack>
       </Stack>
 
-      {/*내 댓글 목록*/}
-      <Stack p={1} spacing={3}>
-        {myComment.comments && myComment.comments.map((c) => {
-          return (
-            <Comment
-              key={c.id}
-              writer={c.writer}
-              image={c.writer.image ? c.writer.image.source : ''}
-              content={c.content}
-              createTime={c.createTime}
-            />
-          );
-        })}
-        <Box sx={{display: 'flex', justifyContent: 'center'}} style={{margin: 0}}>
-          <Pagination
-            onChange={(e, value) => handleChangeMyCommentPage(value)}
-            count={myComment.totalPages}
-            page={myComment.currentPage}
-            size="small"
-            variant="outlined"
-            color="primary"
-            showFirstButton
-            showLastButton/>
-        </Box>
-      </Stack>
+      <Stack spacing={1}>
+        <Stack spacing={1} sx={{display: myComment.comments.length !== 0 ? 'block' : 'none'}}>
+          <Divider>내 댓글</Divider>
 
-      {/*댓글 목록*/}
-      <Stack p={1} spacing={3}>
-        {comment.comments ? comment.comments.map((c) => {
-          return (
-            <Comment
-              key={c.id}
-              writer={c.writer}
-              image={c.writer.image ? c.writer.image.source : ''}
-              content={c.content}
-              createTime={c.createTime}
-            />
-          );
-        }) : "댓글이 없습니다."
-        }
+          {/*내 댓글 목록*/}
+          <Stack p={1} spacing={3}>
+            {myComment.comments.map((c) => {
+              return (
+                <Comment
+                  key={c.id}
+                  feedId={id}
+                  commentId={c.id}
+                  writer={c.writer}
+                  image={c.writer.image ? c.writer.image.source : ''}
+                  content={c.content}
+                  createTime={c.createTime}
+                />
+              );
+            })}
+            <Box sx={{display: 'flex', justifyContent: 'center'}} style={{margin: 0}}>
+              <Pagination
+                onChange={(e, value) => handleChangeMyCommentPage(value)}
+                count={myComment.totalPages}
+                page={myComment.currentPage}
+                size="small"
+                variant="outlined"
+                color="primary"
+                showFirstButton
+                showLastButton/>
+            </Box>
+          </Stack>
+        </Stack>
+
+        <Divider>전체 댓글</Divider>
+
+        {/*댓글 목록*/}
+        <Stack p={1} spacing={3}>
+          {comment.comments.length !== 0 ? comment.comments.map((c) => {
+            return (
+              <Comment
+                key={c.id}
+                writer={c.writer}
+                image={c.writer.image ? c.writer.image.source : ''}
+                content={c.content}
+                createTime={c.createTime}
+              />
+            );
+          }) : "댓글이 없습니다."
+          }
+        </Stack>
       </Stack>
     </>
   );

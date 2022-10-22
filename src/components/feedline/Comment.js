@@ -1,7 +1,8 @@
-import {Button, Stack, Typography, styled} from "@mui/material";
-import SmallProfile from "../SmallProfile";
 import {useContext} from "react";
 import {store} from "../../store/store";
+import customAxios from "../../AxiosProvider";
+import {Button, Stack, Typography, styled} from "@mui/material";
+import SmallProfile from "../SmallProfile";
 
 export default function Comment(props) {
   const [state, dispatch] = useContext(store);
@@ -12,6 +13,16 @@ export default function Comment(props) {
     fontSize: "12px",
     minWidth: 'max-content'
   }));
+  
+  const handleModifyComment = () => {
+    console.log('수정')
+  };
+  const handleDeleteComment = (feedId, commentId) => {
+    customAxios.delete(`/feed/${feedId}/comment/${commentId}`)
+      .then(res => dispatch({type: 'OpenSnackbar', payload: `댓글이 삭제되었습니다.`}))
+      .catch(error => console.error(error))
+  };
+  
   return (
     <Stack direction={"row"} spacing={2}>
       <SmallProfile image={props.image} name={props.writer.name}/>
@@ -30,8 +41,8 @@ export default function Comment(props) {
         <Stack direction='row' spacing={1}>
           <CommentBtn>답글보기</CommentBtn>
           <CommentBtn>답글달기</CommentBtn>
-          <CommentBtn sx={{display: show}}>수정</CommentBtn>
-          <CommentBtn sx={{display: show}}>삭제</CommentBtn>
+          <CommentBtn onClick={handleModifyComment} sx={{display: show}}>수정</CommentBtn>
+          <CommentBtn onClick={() => handleDeleteComment(props.feedId, props.commentId)} sx={{display: show}}>삭제</CommentBtn>
         </Stack>
       </Stack>
     </Stack>
