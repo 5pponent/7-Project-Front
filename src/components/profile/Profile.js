@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {store} from "../../store/store";
 import {
-  Avatar,
+  Avatar, Box,
   Button,
   ButtonBase,
   Card,
@@ -20,6 +20,8 @@ import FeedLine from "../feedline/FeedLine";
 import {useLocation} from "react-router-dom";
 import customAxios from "../../AxiosProvider";
 import ProfileUpdateDialog from "./ProfileUpdateDialog";
+import "./message.css";
+import "../../css/fonts.css";
 
 const Search = styled('div')(({theme}) => ({
   position: 'relative',
@@ -68,9 +70,8 @@ export default function Profile(props) {
     totalPages: 0
   });
   const [updateProfile, setUpdateProfile] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(document.getElementById("avatar"));
-  const [open, setOpen] = useState(true);
-  const [arrowRef, setArrowRef] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const getFeedList = (data) => {setFeed({...feed, feeds: data})};
   const loadFeedList = (data) => {setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})};
@@ -107,45 +108,34 @@ export default function Profile(props) {
     customAxios.get(`/feed?userid=${searchParams}`)
       .then(res => setFeed(res.data))
       .catch(error => console.log(error.response));
+    openPopper();
   }, [searchParams]);
 
   return (
     <Stack alignItems={"center"}>
-      <Popper
-        open={open}
-        anchorEl={anchorEl}
-        placement={"top"}
-        transition
-        modifiers={[
-          {
-            name: 'preventOverflow',
-            enabled: true,
-            options: {
-              altAxis: true,
-              altBoundary: true,
-              tether: true,
-              rootBoundary: 'document',
-              padding: 8,
-            },
-          },
-          {
-            name: 'arrow',
-            enabled: true,
-            options: {
-              element: arrowRef,
-            },
-          },
-        ]}
-      >
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <Paper>
-              <Typography sx={{ p: 2 }}>{user.message}</Typography>
-            </Paper>
-          </Fade>
-        )}
-      </Popper>
 
+      { user.message.length !== 0 &&
+        <Popper
+          open={open}
+          anchorEl={anchorEl}
+          placement={"top"}
+          transition
+        >
+          {({ TransitionProps }) => (
+            <Fade {...TransitionProps} timeout={2000}>
+              <Box className={"message"} minWidth={"100px"} minHeight={"50px"} maxWidth={"300px"}
+                   boxShadow={2}>
+                <Typography p={2} fontSize={14} color={"darkgray"} fontFamily={"HSYuji-Regular"}
+                            style={{wordBreak: 'break-all', wordWrap: 'pre-wrap'}}
+                >
+                  {user.message}
+                </Typography>
+              </Box>
+            </Fade>
+          )}
+        </Popper>
+
+      }
       <Grid container direction={"row"} sx={{width: "1100px"}}>
 
         <Grid item xs={3} py={3}>
@@ -153,8 +143,7 @@ export default function Profile(props) {
           <Stack spacing={2} style={{position: "fixed"}} height={"100%"}>
             <Card>
               <Stack alignItems={"center"} mt={20}>
-                <IconButton id={"avatar"}
-                  onMouseEnter={openPopper}
+                <IconButton id="avatar" itemID="avatar" onMouseOver={openPopper}
                   onClick={() => {
                   if (user.image !== null)
                     dispatch({type: 'OpenImageView', payload: user.image.source})

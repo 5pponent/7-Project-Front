@@ -1,0 +1,19 @@
+.message {
+    position: relative;
+    background: #bbdefb;
+    border-radius: .4em;
+}
+
+.message:after {
+    content: '';
+    position: absolute;
+    bottom: 7px;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 20px solid transparent;
+    border-top-color: #bbdefb;
+    border-bottom: 0;
+    margin-left: -20px;
+    margin-bottom: -20px;
+}
