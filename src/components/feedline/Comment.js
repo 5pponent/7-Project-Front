@@ -1,6 +1,6 @@
 import {useContext} from "react";
-import {store} from "../../store/store";
 import customAxios from "../../AxiosProvider";
+import {store} from "../../store/store";
 import {Button, Stack, Typography, styled} from "@mui/material";
 import SmallProfile from "../SmallProfile";
 
@@ -13,7 +13,10 @@ export default function Comment(props) {
     fontSize: "12px",
     minWidth: 'max-content'
   }));
-  
+
+  const handleClickReplyButton = (name, commentId) => {
+    props.getMentionName(name, commentId);
+  };
   const handleModifyComment = () => {
     console.log('수정')
   };
@@ -39,8 +42,8 @@ export default function Comment(props) {
         </Typography>
 
         <Stack direction='row' spacing={1}>
-          <CommentBtn>답글보기</CommentBtn>
-          <CommentBtn>답글달기</CommentBtn>
+          <CommentBtn sx={{display: props.childCount === 0 ? 'none' : 'block'}}>답글보기 ({props.childCount})</CommentBtn>
+          <CommentBtn onClick={() => handleClickReplyButton(props.writer.name, props.commentId)}>답글달기</CommentBtn>
           <CommentBtn onClick={handleModifyComment} sx={{display: show}}>수정</CommentBtn>
           <CommentBtn onClick={() => handleDeleteComment(props.feedId, props.commentId)} sx={{display: show}}>삭제</CommentBtn>
         </Stack>

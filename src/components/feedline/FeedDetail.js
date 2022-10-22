@@ -1,9 +1,10 @@
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import customAxios from '../../AxiosProvider';
 import {store} from '../../store/store';
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   IconButton,
   ImageList,
@@ -22,6 +23,7 @@ import Comment from './Comment';
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
+  const [reply, setReply] = useState(false);
   const [myComment, setMyComment] = useState({
     comments: [],
     currentPage: 1,
@@ -35,7 +37,9 @@ export default function FeedDetail(props) {
     totalPages: undefined
   });
   const [commentContent, setCommentContent] = useState({content: ''});
-  const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail
+  const [replyComment, setReplyComment] = useState({id: 0, name: ''});
+  const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail;
+  const commentRef = useRef();
 
   useEffect(() => {
     customAxios.get(`/feed/${id}/comment?user=me&size=3`)
@@ -47,8 +51,14 @@ export default function FeedDetail(props) {
       .catch(error => console.error(error.response))
   }, []);
 
+  const getMentionName = (name, commentId) => {
+    setCommentContent({content: `@${name} `});
+    setReplyComment({id: commentId, name: name});
+    setReply(true);
+    commentRef.current.focus();
+  };
   const handleChangeComment = (e) => {
-    setCommentContent({content: e.target.value})
+    setCommentContent({content: e.target.value});
   };
   const handleChangeMyCommentPage = (index) => {
     customAxios.get(`/feed/${id}/comment?user=me&size=3&page=${index}`)
@@ -75,6 +85,19 @@ export default function FeedDetail(props) {
       })
       .catch(err => console.log(err.response))
       .finally(() => dispatch({type: 'CloseLoading'}))
+  };
+  const handleClickReplay = (feedId, commentId) => {
+    customAxios.post(`/feed/${feedId}/comment/${commentId}`, commentContent)
+      .then(res => {
+        setCommentContent({content: ''});
+        setReply(false);
+        dispatch({type: 'OpenSnackbar', payload: `${replyComment.name}님께 답글이 전송되었습니다.`});
+      })
+      .catch(error => console.error(error))
+  };
+  const handleClickCancelReplay = () => {
+    setCommentContent({content: ``});
+    setReply(false);
   };
 
   return (
@@ -135,12 +158,15 @@ export default function FeedDetail(props) {
       <Stack p={1}>
         <Stack direction={"row"} alignItems={"center"} justifyContent={"flex-start"} spacing={2}>
           <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
-          <TextField multiline size='small' fullWidth value={commentContent.content}
+          <TextField inputRef={commentRef} multiline size='small' fullWidth value={commentContent.content}
                      placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
-          <Button type='submit' variant='contained' onClick={() => handleCreateComment(id, commentContent)}>
+          <Button type='submit' variant='contained' onClick={reply ? () => handleClickReplay(id, replyComment.id) : () => handleCreateComment(id, commentContent)}>
             입력
           </Button>
         </Stack>
+        <Button onClick={handleClickCancelReplay} sx={{width: 'max-content', display: reply ? 'block' : 'none'}}>
+          답글취소
+        </Button>
       </Stack>
 
       <Stack spacing={1}>
@@ -155,10 +181,12 @@ export default function FeedDetail(props) {
                   key={c.id}
                   feedId={id}
                   commentId={c.id}
+                  childCount={c.childCount}
                   writer={c.writer}
                   image={c.writer.image ? c.writer.image.source : ''}
                   content={c.content}
                   createTime={c.createTime}
+                  getMentionName={getMentionName}
                 />
               );
             })}
@@ -184,13 +212,22 @@ export default function FeedDetail(props) {
             return (
               <Comment
                 key={c.id}
+                commentId={c.id}
+                childCount={c.childCount}
                 writer={c.writer}
                 image={c.writer.image ? c.writer.image.source : ''}
                 content={c.content}
                 createTime={c.createTime}
+                getMentionName={getMentionName}
               />
             );
           }) : "댓글이 없습니다."
+          }
+
+          {comment.currentPage < comment.totalPages &&
+            <Box display="flex" justifyContent="center" style={{padding: 20}}>
+              <CircularProgress size={30}></CircularProgress>
+            </Box>
           }
         </Stack>
       </Stack>
