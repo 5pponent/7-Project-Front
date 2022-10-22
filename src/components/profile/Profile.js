@@ -2,19 +2,24 @@ import React, {useContext, useEffect, useState} from "react";
 import {store} from "../../store/store";
 import {
   Avatar,
-  IconButton,
-  InputBase,
-  Stack,
-  Typography,
   Button,
+  ButtonBase,
   Card,
-  Skeleton, Grid, Box, Dialog, DialogContent, DialogTitle, Table, TableBody, TableCell, TableRow
+  Dialog, Fade,
+  Grid,
+  IconButton,
+  InputBase, Paper, Popper,
+  Skeleton,
+  Stack,
+  Typography
 } from "@mui/material";
 import {styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import FeedLine from "../feedline/FeedLine";
 import {useLocation} from "react-router-dom";
 import customAxios from "../../AxiosProvider";
+import ProfileUpdateDialog from "./ProfileUpdateDialog";
 
 const Search = styled('div')(({theme}) => ({
   position: 'relative',
@@ -63,6 +68,9 @@ export default function Profile(props) {
     totalPages: 0
   });
   const [updateProfile, setUpdateProfile] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(document.getElementById("avatar"));
+  const [open, setOpen] = useState(true);
+  const [arrowRef, setArrowRef] = useState(null);
 
   const getFeedList = (data) => {setFeed({...feed, feeds: data})};
   const loadFeedList = (data) => {setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})};
@@ -81,12 +89,18 @@ export default function Profile(props) {
         .then(res => loadFeedList(res.data))
     }
   };
-  const onImageChange = (e) => {
-    console.log(e.target.files[0]);
+  const handleCloseDialog = (stat) => {setUpdateProfile(stat)}
+  const reloadUser = () => {
+    customAxios.get(`/user/${searchParams}`)
+      .then(res => setUser(res.data))
+      .catch(error => {console.log(error.response);});
   }
+  const openPopper = () => {
+    setAnchorEl(document.getElementById("avatar"));
+    setOpen(true);
+  };
 
   useEffect(() => {
-    console.log(searchParams)
     customAxios.get(`/user/${searchParams}`)
       .then(res => setUser(res.data))
       .catch(error => {console.log(error.response);});
@@ -97,23 +111,55 @@ export default function Profile(props) {
 
   return (
     <Stack alignItems={"center"}>
-
-{/*      <IconButton aria-label="update profile image" component="label">
-        <input hidden accept="image/*" type="file" onChange={onImageChange} />
-        <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
-      </IconButton>*/}
+      <Popper
+        open={open}
+        anchorEl={anchorEl}
+        placement={"top"}
+        transition
+        modifiers={[
+          {
+            name: 'preventOverflow',
+            enabled: true,
+            options: {
+              altAxis: true,
+              altBoundary: true,
+              tether: true,
+              rootBoundary: 'document',
+              padding: 8,
+            },
+          },
+          {
+            name: 'arrow',
+            enabled: true,
+            options: {
+              element: arrowRef,
+            },
+          },
+        ]}
+      >
+        {({ TransitionProps }) => (
+          <Fade {...TransitionProps} timeout={350}>
+            <Paper>
+              <Typography sx={{ p: 2 }}>{user.message}</Typography>
+            </Paper>
+          </Fade>
+        )}
+      </Popper>
 
       <Grid container direction={"row"} sx={{width: "1100px"}}>
 
         <Grid item xs={3} py={3}>
 
-          <Stack spacing={2} style={{position: "fixed"}}>
+          <Stack spacing={2} style={{position: "fixed"}} height={"100%"}>
             <Card>
-              <Stack alignItems={"center"}>
-                <IconButton onClick={() => {
+              <Stack alignItems={"center"} mt={20}>
+                <IconButton id={"avatar"}
+                  onMouseEnter={openPopper}
+                  onClick={() => {
                   if (user.image !== null)
                     dispatch({type: 'OpenImageView', payload: user.image.source})
-                }}>
+                  }}
+                >
                   <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
                 </IconButton>
                 { user.id === 0 ?
@@ -138,7 +184,7 @@ export default function Profile(props) {
                       이메일 : {user.email}
                     </Typography>
                     <Typography variant='subtitle2'>
-                      재직분야 : {user.occupation && user.occupation}
+                      직종 : {user.occupation && user.occupation}
                     </Typography>
                     <Stack direction={"row"} display={"flex"} justifyContent={"space-evenly"}>
                       <Typography variant={'subtitle2'}>
@@ -149,13 +195,15 @@ export default function Profile(props) {
                       </Typography>
                     </Stack>
                     { state.user.id === user.id ?
-                      <Button
-                        size={"small"}
-                        variant={"contained"}
-                        onClick={() => setUpdateProfile(true)}
-                      >
-                        프로필 변경
-                      </Button>
+                      <Stack direction={"row"} justifyContent={"center"}>
+                        <ButtonBase onClick={() => setUpdateProfile(true)}
+                          style={{
+                            backgroundColor: 'lightgray', borderRadius: 4, padding: 4
+                        }}>
+                          <CreateRoundedIcon sx={{fontSize: 14}}/>&nbsp;
+                          <Typography fontSize={12}>프로필 수정</Typography>
+                        </ButtonBase>
+                      </Stack>
                       :
                       <Button size={"small"} variant={"contained"}>팔로우</Button>
                     }
@@ -184,47 +232,15 @@ export default function Profile(props) {
       </Grid>
 
       <Dialog
-        maxWidth={"sm"} fullWidth
         open={updateProfile}
         onClose={() => {setUpdateProfile(false)}}
       >
-        <ProfileUpdateDialog user={user}/>
+        <ProfileUpdateDialog
+          user={user}
+          handleCloseDialog={handleCloseDialog}
+          reloadUser={reloadUser}
+        />
       </Dialog>
     </Stack>
-  );
-}
-
-function ProfileUpdateDialog(props) {
-
-  const [state, dispatch] = useContext(store);
-  const [user, setUser] = useState({
-    email: '',
-    followerCount: 0,
-    followingCount: 0,
-    id: 0,
-    image: null,
-    interests: [],
-    name: '',
-    message: '',
-    occupation: null
-  });
-
-  useEffect(() => {
-    customAxios.get(`/user`)
-      .then(res => {setUser(res.data); console.log(res.data)})
-      .catch(err => console.log(err.response));
-  }, []);
-
-  return (
-    <>
-      <DialogTitle>내 프로필 변경하기</DialogTitle>
-      <DialogContent>
-        <Table><TableBody>
-          <TableRow>
-            <TableCell></TableCell><TableCell></TableCell>
-          </TableRow>
-        </TableBody></Table>
-      </DialogContent>
-    </>
   );
 }

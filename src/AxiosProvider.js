@@ -23,11 +23,12 @@ customAxios.interceptors.response.use(
   },
   async function (error) {
     // 응답 오류 발생 시 작업 수행
-    const { response: errorResponse } = error;
+    const {response: errorResponse} = error;
     const originalRequest = error.config;
 
     // 인증 에러 발생시
     if (errorResponse.status === 401) {
+      localStorage.removeItem('token');
       window.location.href = '/login';
     }
 
