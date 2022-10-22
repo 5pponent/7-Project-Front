@@ -5,8 +5,7 @@ import {
   Box,
   Button,
   Divider,
-  Grid,
-  IconButton, ImageList, ImageListItem,
+  IconButton, ImageList, ImageListItem, Pagination,
   Stack,
   TextField,
   Typography
@@ -17,10 +16,15 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import SmallProfile from '../SmallProfile';
 import MoreMenu from './MoreMenu';
 import Comment from './Comment';
-import LoadingProcess from "../LoadingProcess";
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
+  const [myComment, setMyComment] = useState({
+    comments: [],
+    currentPage: 1,
+    totalElements: undefined,
+    totalPages: undefined
+  });
   const [comment, setComment] = useState({
     comments: [],
     currentPage: undefined,
@@ -28,34 +32,50 @@ export default function FeedDetail(props) {
     totalPages: undefined
   });
   const [commentContent, setCommentContent] = useState({content: ''});
-  const {comments} = comment;
   const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail
 
   useEffect(() => {
+    customAxios.get(`/feed/${id}/comment?user=me&size=3`)
+      .then(res => setMyComment(res.data))
+      .catch(error => console.error(error.response))
+
     customAxios.get(`/feed/${id}/comment`)
       .then(res => setComment(res.data))
+      .catch(error => console.error(error.response))
   }, []);
 
-  const handleChangeComment = (e) => {setCommentContent({content: e.target.value})};
+  const handleChangeComment = (e) => {
+    setCommentContent({content: e.target.value})
+  };
+  const handleChangeMyCommentPage = (index) => {
+    customAxios.get(`/feed/${id}/comment?user=me&size=3&page=${index}`)
+      .then(res => {
+        setMyComment(res.data)
+      })
+      .catch(error => console.error(error.response))
+  };
   const handleClickLike = (feedId) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
         .then(res => props.getFeedDetail(res.data))
+        .catch(error => console.error(error.response))
     } else {
       customAxios.post(`/feed/${feedId}/like`)
         .then(res => props.getFeedDetail(res.data))
+        .catch(error => console.error(error.response))
     }
   };
   const handleCreateComment = (feedId, content) => {
     dispatch({type: 'OpenLoading', message: '댓글을 작성중입니다..'});
-    console.log(content)
     customAxios.post(`/feed/${feedId}/comment`, content)
       .then(res => {
         setCommentContent({content: ''});
         dispatch({type: 'OpenSnackbar', payload: `댓글이 입력되었습니다.`});
       })
       .catch(err => console.log(err.response))
-      .finally(() => {dispatch({type: 'CloseLoading'})})
+      .finally(() => {
+        dispatch({type: 'CloseLoading'})
+      })
   };
 
   return (
@@ -84,7 +104,7 @@ export default function FeedDetail(props) {
       </Stack>
 
       <Box mt={1}>
-        <Typography sx={{whiteSpace:'pre-wrap'}}>
+        <Typography sx={{whiteSpace: 'pre-wrap'}}>
           {content}
         </Typography>
         <ImageList cols={1}>
@@ -124,20 +144,46 @@ export default function FeedDetail(props) {
         </Stack>
       </Stack>
 
-      {/*댓글 목록*/}
+      {/*내 댓글 목록*/}
       <Stack p={1} spacing={3}>
-      { comments ? comments.map((c) => {
+        {myComment.comments && myComment.comments.map((c) => {
           return (
             <Comment
               key={c.id}
-              name={c.writer.name}
+              writer={c.writer}
+              image={c.writer.image ? c.writer.image.source : ''}
+              content={c.content}
+              createTime={c.createTime}
+            />
+          );
+        })}
+        <Box sx={{display: 'flex', justifyContent: 'center'}} style={{margin: 0}}>
+          <Pagination
+            onChange={(e, value) => handleChangeMyCommentPage(value)}
+            count={myComment.totalPages}
+            page={myComment.currentPage}
+            size="small"
+            variant="outlined"
+            color="primary"
+            showFirstButton
+            showLastButton/>
+        </Box>
+      </Stack>
+
+      {/*댓글 목록*/}
+      <Stack p={1} spacing={3}>
+        {comment.comments ? comment.comments.map((c) => {
+          return (
+            <Comment
+              key={c.id}
+              writer={c.writer}
               image={c.writer.image ? c.writer.image.source : ''}
               content={c.content}
               createTime={c.createTime}
             />
           );
         }) : "댓글이 없습니다."
-      }
+        }
       </Stack>
     </>
   );

@@ -1,12 +1,20 @@
-import {Box, Button, Grid, Stack, Typography} from "@mui/material";
+import {Button, Stack, Typography, styled} from "@mui/material";
 import SmallProfile from "../SmallProfile";
-
+import {useContext} from "react";
+import {store} from "../../store/store";
 
 export default function Comment(props) {
+  const [state, dispatch] = useContext(store);
+  const show = props.writer.id === state.user.id ? 'block' : 'none';
 
-	return (
-		<Stack direction={"row"} spacing={2}>
-      <SmallProfile image={props.image} name={props.name}/>
+  const CommentBtn = styled(Button)(() => ({
+    padding: 0,
+    fontSize: "12px",
+    minWidth: 'max-content'
+  }));
+  return (
+    <Stack direction={"row"} spacing={2}>
+      <SmallProfile image={props.image} name={props.writer.name}/>
 
       <Stack>
         <Typography sx={{
@@ -18,15 +26,14 @@ export default function Comment(props) {
             {props.createTime}
           </Typography>
         </Typography>
-        <Stack direction='row' justifyContent={"space-between"}>
-          <Stack direction='row' spacing={1}>
-            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>답글보기</Button>
-            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>답글달기</Button>
-            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>수정</Button>
-            <Button sx={{p: 0, fontSize: "12px", minWidth: 'max-content'}}>삭제</Button>
-          </Stack>
+
+        <Stack direction='row' spacing={1}>
+          <CommentBtn>답글보기</CommentBtn>
+          <CommentBtn>답글달기</CommentBtn>
+          <CommentBtn sx={{display: show}}>수정</CommentBtn>
+          <CommentBtn sx={{display: show}}>삭제</CommentBtn>
         </Stack>
       </Stack>
     </Stack>
-	);
+  );
 }
