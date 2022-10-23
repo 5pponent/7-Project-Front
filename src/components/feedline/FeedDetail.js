@@ -73,14 +73,20 @@ export default function FeedDetail(props) {
       .then(res => setMyComment(res.data))
       .catch(error => console.error(error.response))
   };
-  const handleClickLike = (feedId) => {
+  const handleClickLike = (feedId, name) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
-        .then(res => props.getFeedDetail(res.data))
+        .then(res => {
+          props.getFeedDetail(res.data);
+          dispatch({type: 'OpenSnackbar', payload: `좋아요가 취소되었습니다.`});
+        })
         .catch(error => console.error(error.response))
     } else {
       customAxios.post(`/feed/${feedId}/like`)
-        .then(res => props.getFeedDetail(res.data))
+        .then(res => {
+          props.getFeedDetail(res.data);
+          dispatch({type: 'OpenSnackbar', payload: `${name}님의 피드를 좋아합니다.`});
+        })
         .catch(error => console.error(error.response))
     }
   };
@@ -187,7 +193,7 @@ export default function FeedDetail(props) {
       </Box>
 
       <Box>
-        <IconButton onClick={() => handleClickLike(id)}>
+        <IconButton onClick={() => handleClickLike(id, writer.name)}>
           <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
         </IconButton>{likeCount}
         <IconButton sx={{marginLeft: "20px"}}>
