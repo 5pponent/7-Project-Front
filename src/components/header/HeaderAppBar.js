@@ -14,7 +14,7 @@ import {styled, alpha} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import EditIcon from '@mui/icons-material/Edit';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import HeaderMenu from './HeaderMenu';
 import CreateFeed from '../feedline/CreateFeed';
 import {useNavigate} from "react-router-dom";
@@ -114,6 +114,12 @@ export default function Header(props) {
           <Drawer anchor='left' open={open} onClose={handleClickDrawer}>
             <CreateFeed getOpen={getOpen}/>
           </Drawer>
+
+          <Tooltip title={"알림"} placement={"bottom"} arrow>
+            <IconButton>
+              <NotificationsIcon sx={{fontSize: 26, color: "white"}} />
+            </IconButton>
+          </Tooltip>
 
           <Tooltip title="내 프로필" placement="bottom" arrow>
             <ButtonBase onClick={handleClickMyProfile}>

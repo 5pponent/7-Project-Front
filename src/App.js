@@ -10,11 +10,29 @@ import {Dialog, Slide, Snackbar} from "@mui/material";
 import {forwardRef, useContext} from "react";
 import {store} from "./store/store";
 import LoadingProcess from "./components/LoadingProcess";
-import ScrollTop from "./components/ScrollTop";
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from "@mui/material/IconButton";
 
 export default function App() {
 
   const [state, dispatch] = useContext(store);
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') return
+    dispatch({type: 'CloseSnackbar'});
+  }
+  const action = (
+    <>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleCloseSnackbar}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </>
+  );
 
   return (
     <BrowserRouter>
@@ -67,9 +85,10 @@ export default function App() {
       <Snackbar
         open={state.snackbar.open}
         autoHideDuration={5000}
-        onClose={() => {dispatch({type: 'CloseSnackbar'});}}
+        onClose={handleCloseSnackbar}
         message={state.snackbar.message}
         TransitionComponent={Transition}
+        action={action}
       />
     </BrowserRouter>
   );
