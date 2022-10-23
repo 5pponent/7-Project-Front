@@ -272,7 +272,7 @@ export default function FeedDetail(props) {
               <Box display="flex" justifyContent="center" style={{padding: 20}} sx={{display: load ? 'flex' : 'none'}}>
                 <CircularProgress size={30}/>
               </Box>
-              <Button onClick={() => loadCommentList(id, comment.currentPage)}>더보기</Button>
+              <Button onClick={() => loadCommentList(id, comment.currentPage)}>더보기({comment.totalElements - comment.comments.length})</Button>
             </>
           }
         </Stack>
