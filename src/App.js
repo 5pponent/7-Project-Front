@@ -6,8 +6,8 @@ import ChatApp from './components/chatting/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
 import Template from "./components/Template";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Dialog, Slide, Snackbar} from "@mui/material";
-import {forwardRef, useContext} from "react";
+import {Alert, AlertTitle, Box, Button, Dialog, Divider, Slide, Snackbar, Stack, Typography} from "@mui/material";
+import {forwardRef, useContext, useState} from "react";
 import {store} from "./store/store";
 import LoadingProcess from "./components/LoadingProcess";
 import CloseIcon from '@mui/icons-material/Close';
@@ -16,6 +16,9 @@ import IconButton from "@mui/material/IconButton";
 export default function App() {
 
   const [state, dispatch] = useContext(store);
+
+  const [notice, setNotice] = useState(true);
+  const handleCloseNotice = () => {setNotice(false)}
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') return
@@ -36,8 +39,34 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
 
+      {notice &&
+        <Box style={{
+          position: "fixed", top: 80, left: 20, backgroundColor: '#fff4e5'
+        }} sx={{p: 1, borderRadius: 3, boxShadow: 3, zIndex: 99999}}>
+          <Stack>
+            <Alert severity={"warning"}>
+              <AlertTitle>
+                <Typography variant={"subtitle1"} fontWeight={"bold"}>
+                  모두의 일기장은 현재 개발중입니다.
+                </Typography>
+              </AlertTitle>
+              <Divider/>
+              <Typography variant={"subtitle2"} my={1}>
+                문제 발생 시 피드, 댓글 또는<br/>
+                ahdwjdtprtm@gmail.com 로<br/>
+                피드백 부탁드립니다.
+              </Typography>
+            </Alert>
+            <Button fullWidth color={"error"} variant={"contained"}
+                    onClick={handleCloseNotice}>
+              닫기
+            </Button>
+          </Stack>
+        </Box>
+      }
+
+      <Routes>
         <Route path={"/"} element={
           <Template element={<FeedLineSelect/>}/>
         }></Route>
@@ -65,7 +94,6 @@ export default function App() {
         <Route path={"*"} element={
           <p>404 Not Found</p>
         }></Route>
-
       </Routes>
 
       {/*로딩 화면*/}
@@ -90,6 +118,7 @@ export default function App() {
         TransitionComponent={Transition}
         action={action}
       />
+
     </BrowserRouter>
   );
 }
