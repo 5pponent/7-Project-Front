@@ -1,7 +1,6 @@
 import React, {useContext, useState} from 'react';
 import customAxios from "../../AxiosProvider";
 import {useNavigate} from "react-router-dom";
-import {store} from "../../store/store";
 import {
   Divider,
   Typography,
@@ -20,6 +19,7 @@ import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
 import ProfileMenu from "../ProfileMenu";
+import {store} from "../../store/store";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -32,6 +32,7 @@ const Content = styled(Typography)`
 
 export default function Feed(props) {
   const navigate = useNavigate();
+  const [state, dispatch] = useContext(store);
   const {commentCount, id, isLiked, likeCount, writer, content, createTime} = props.feed;
   const [feedDetail, setFeedDetail] = useState(null);
   const [open, setOpen] = useState(false);
@@ -50,14 +51,20 @@ export default function Feed(props) {
   const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
   const handleCloseProfile = () => {setAnchor(null)};
   const handleClickProfileView = () => {navigate(`/profile?user=${writer.id}`)};
-  const handleClickLike = (feedId) => {
+  const handleClickLike = (feedId, name) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
-        .then(res => props.updateFeedDetail(res.data))
+        .then(res => {
+          props.updateFeedDetail(res.data);
+          dispatch({type: 'OpenSnackbar', payload: `좋아요가 취소되었습니다.`});
+        })
         .catch(error => console.error(error.response))
     } else {
       customAxios.post(`/feed/${feedId}/like`)
-        .then(res => props.updateFeedDetail(res.data))
+        .then(res => {
+          props.updateFeedDetail(res.data);
+          dispatch({type: 'OpenSnackbar', payload: `${name}님의 피드를 좋아합니다.`});
+        })
         .catch(error => console.error(error.response))
     }
   };
@@ -90,7 +97,7 @@ export default function Feed(props) {
           alignItems={"center"} m={1.5}
         >
           <Stack direction={'row'} spacing={3}>
-            <IconButton onClick={() => handleClickLike(id)}>
+            <IconButton onClick={() => handleClickLike(id, writer.name)}>
               <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
                 <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
               </StyledBadge>
