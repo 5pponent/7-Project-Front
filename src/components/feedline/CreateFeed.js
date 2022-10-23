@@ -78,7 +78,7 @@ export default function CreateFeed(props) {
   };
   const handleCreateFeed = async () => {
     if (validate()) {
-      dispatch({type: 'OpenLoading', message: '피드를 작성중입니다..'});
+      dispatch({type: 'OpenLoading', payload: '피드를 작성중입니다..'});
       const feedForm = new FormData();
       feedForm.append('content', state.feedContent);
       state.feedImage.map(item => feedForm.append('descriptions', item.description));
@@ -156,7 +156,7 @@ export default function CreateFeed(props) {
 
           <Grid item xs={12} sx={{textAlign: 'end'}}>
             <Tooltip title={'사진 추가하기'} arrow>
-              <label htmlFor="feedImage" ref={imageRef} onChange={handleAddImage}>
+              <label htmlFor="feedImage" ref={imageRef} onChange={handleAddImage} onClick={e => e.target.value = null}>
                 <input type="file" id={"feedImage"} multiple style={{display: 'none'}}/>
                 <AddPhotoAlternateRoundedIcon color="action" sx={{fontSize: 35, cursor: 'pointer'}}/>
               </label>
