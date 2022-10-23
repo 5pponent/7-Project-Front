@@ -232,9 +232,6 @@ export default function Profile(props) {
                         })}
                       </Box>
                     </Stack>
-                    <Button fullWidth onClick={() => {setMode('FEED')}}>
-                      피드({feed.feeds.length})
-                    </Button>
                     <Stack direction={"row"} justifyContent={"space-around"}>
                       <Button size={"small"} onClick={() => {setMode('FOLLOWERS')}}>
                         followers<br/>{user.followerCount}
@@ -243,6 +240,9 @@ export default function Profile(props) {
                         following<br/>{user.followingCount}
                       </Button>
                     </Stack>
+                    <Button fullWidth onClick={() => {setMode('FEED')}}>
+                      피드({feed.feeds.length})
+                    </Button>
                     {state.user.id === user.id ?
                       <Stack direction={"row"} justifyContent={"center"}>
                         <ButtonBase onClick={() => setUpdateProfile(true)}
