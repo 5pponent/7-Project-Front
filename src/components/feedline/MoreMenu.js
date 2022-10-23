@@ -1,5 +1,5 @@
 import {useContext, useState} from "react";
-import axios from 'axios';
+import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
 import {Divider, IconButton, Menu, MenuItem, Typography} from "@mui/material";
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
@@ -16,15 +16,16 @@ export default function MoreMenu(props) {
 		handleMenuClose();
 	};
 	const handleClickDelete = () => {
-		axios.delete(`/feed/${props.feedId}`, {
-			headers: {authorization: localStorage.getItem('token')}
-		})
+		dispatch({type: 'OpenLoading', payload: '피드를 삭제중입니다..'});
+		customAxios.delete(`/feed/${props.feedId}`)
 			.then(res => {
-				props.closeContent && props.closeContent();
 				handleMenuClose();
+				props.closeContent && props.closeContent();
 				props.getFeedList(props.feedList.filter(item => item.id !== props.feedId));
+				dispatch({type: 'OpenSnackbar', payload: `피드가 삭제되었습니다.`});
 			})
 			.catch(error => console.error(error))
+			.finally(() => dispatch({type: 'CloseLoading'}))
 	};
 
 	return(
