@@ -5,20 +5,21 @@ import {store} from "../../store/store";
 import {
   Divider,
   Typography,
-  Box, Paper,
+  Box,
   Avatar,
-  Menu,
-  MenuItem,
   IconButton,
   Grid,
   Stack,
-  Badge, Dialog, DialogContent
+  Badge,
+  Dialog,
+  DialogContent,
+  styled
 } from '@mui/material';
-import {styled} from '@mui/material/styles';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
+import ProfileMenu from "../ProfileMenu";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -31,7 +32,6 @@ const Content = styled(Typography)`
 
 export default function Feed(props) {
   const navigate = useNavigate();
-  const [state, dispatch] = useContext(store);
   const {commentCount, id, isLiked, likeCount, writer, content, createTime} = props.feed;
   const [feedDetail, setFeedDetail] = useState(null);
   const [open, setOpen] = useState(false);
@@ -54,9 +54,11 @@ export default function Feed(props) {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
         .then(res => props.updateFeedDetail(res.data))
+        .catch(error => console.error(error.response))
     } else {
       customAxios.post(`/feed/${feedId}/like`)
         .then(res => props.updateFeedDetail(res.data))
+        .catch(error => console.error(error.response))
     }
   };
 
@@ -111,19 +113,11 @@ export default function Feed(props) {
               </Grid>
             </Grid>
 
-            <Menu
-              anchorEl={anchor}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'center',
-              }}
+            <ProfileMenu
+              anchor={anchor}
               open={Boolean(anchor)}
               onClose={handleCloseProfile}
-            >
-              <MenuItem onClick={handleClickProfileView}>프로필</MenuItem>
-              <MenuItem>팔로우</MenuItem>
-              <MenuItem>차단</MenuItem>
-            </Menu>
+              onClick={handleClickProfileView}/>
           </Box>
         </Stack>
       </Box>
@@ -134,6 +128,7 @@ export default function Feed(props) {
           <FeedDetail
             feedDetail={feedDetail}
             feedList={props.feedList}
+            getFeedList={props.getFeedList}
             getFeedDetail={getFeedDetail}
             closeContent={closeContent}
           />

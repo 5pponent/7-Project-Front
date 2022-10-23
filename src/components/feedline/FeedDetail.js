@@ -24,16 +24,17 @@ import Comment from './Comment';
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
   const [reply, setReply] = useState(false);
+  const [load, setLoad] = useState(false);
   const [modifyComment, setModifyComment] = useState(false);
   const [myComment, setMyComment] = useState({
     comments: [],
-    currentPage: 1,
+    currentPage: 0,
     totalElements: undefined,
     totalPages: undefined
   });
   const [comment, setComment] = useState({
     comments: [],
-    currentPage: undefined,
+    currentPage: 0,
     totalElements: undefined,
     totalPages: undefined
   });
@@ -84,19 +85,19 @@ export default function FeedDetail(props) {
     }
   };
   const handleCreateComment = (feedId, content) => {
-    dispatch({type: 'OpenLoading', message: '댓글을 작성중입니다..'});
+    dispatch({type: 'OpenLoading', payload: '댓글을 작성중입니다..'});
     customAxios.post(`/feed/${feedId}/comment`, content)
-      .then(res => {
+      .then(() => {
         setCommentContent({content: ''});
         dispatch({type: 'OpenSnackbar', payload: `댓글이 입력되었습니다.`});
       })
       .catch(err => console.log(err.response))
       .finally(() => dispatch({type: 'CloseLoading'}))
   };
-  const handleClickReplay = (feedId, commentId) => {
-    dispatch({type: 'OpenLoading', message: '답글을 전송중입니다..'});
+  const handleClickReply = (feedId, commentId) => {
+    dispatch({type: 'OpenLoading', payload: '답글을 전송중입니다..'});
     customAxios.post(`/feed/${feedId}/comment/${commentId}`, commentContent)
-      .then(res => {
+      .then(() => {
         setCommentContent({content: ''});
         setReply(false);
         dispatch({type: 'OpenSnackbar', payload: `${currentComment.name}님께 답글이 전송되었습니다.`});
@@ -105,9 +106,9 @@ export default function FeedDetail(props) {
       .finally(() => dispatch({type: 'CloseLoading'}))
   };
   const handleClickModifyComment = (feedId, commentId, content) => {
-    dispatch({type: 'OpenLoading', message: '댓글을 수정중입니다..'});
+    dispatch({type: 'OpenLoading', payload: '댓글을 수정중입니다..'});
     customAxios.put(`/feed/${feedId}/comment/${commentId}`, content)
-      .then(res => {
+      .then(() => {
         setCommentContent({content: ''});
         setModifyComment(false);
         dispatch({type: 'OpenSnackbar', payload: `댓글이 수정되었습니다.`});
@@ -124,9 +125,22 @@ export default function FeedDetail(props) {
     setModifyComment(false);
   };
   const handleClickButton = () => {
-    if (reply) return handleClickReplay(id, currentComment.id)
+    if (reply) return handleClickReply(id, currentComment.id)
     else if (modifyComment) return handleClickModifyComment(id, currentComment.id, commentContent)
     else return handleCreateComment(id, commentContent)
+  };
+  const loadCommentList = (feedId, page) => {
+    setLoad(true)
+    customAxios.get(`/feed/${feedId}/comment?page=${page + 1}`)
+      .then(res => {
+        setComment({
+          ...comment,
+          comments: comment.comments.concat(res.data.comments),
+          currentPage: res.data.currentPage
+        });
+      })
+      .catch(error => console.error(error.response))
+      .finally(() => setLoad(false))
   };
 
   return (
@@ -163,7 +177,7 @@ export default function FeedDetail(props) {
             props.feedDetail.files.map(f => {
               return (
                 <ImageListItem key={f.id}>
-                  <img src={f.source}/>
+                  <img src={f.source} alt={f.originalName}/>
                   <Typography>{f.description}</Typography>
                 </ImageListItem>
               );
@@ -213,13 +227,9 @@ export default function FeedDetail(props) {
               return (
                 <Comment
                   key={c.id}
+                  comment={c}
                   feedId={id}
-                  commentId={c.id}
-                  childCount={c.childCount}
-                  writer={c.writer}
                   image={c.writer.image ? c.writer.image.source : ''}
-                  content={c.content}
-                  createTime={c.createTime}
                   getMentionName={getMentionName}
                   getCommentContent={getCommentContent}
                 />
@@ -247,12 +257,9 @@ export default function FeedDetail(props) {
             return (
               <Comment
                 key={c.id}
-                commentId={c.id}
-                childCount={c.childCount}
-                writer={c.writer}
+                comment={c}
+                feedId={id}
                 image={c.writer.image ? c.writer.image.source : ''}
-                content={c.content}
-                createTime={c.createTime}
                 getMentionName={getMentionName}
                 getCommentContent={getCommentContent}
               />
@@ -261,9 +268,12 @@ export default function FeedDetail(props) {
           }
 
           {comment.currentPage < comment.totalPages &&
-            <Box display="flex" justifyContent="center" style={{padding: 20}}>
-              <CircularProgress size={30}></CircularProgress>
-            </Box>
+            <>
+              <Box display="flex" justifyContent="center" style={{padding: 20}} sx={{display: load ? 'flex' : 'none'}}>
+                <CircularProgress size={30}/>
+              </Box>
+              <Button onClick={() => loadCommentList(id, comment.currentPage)}>더보기</Button>
+            </>
           }
         </Stack>
       </Stack>

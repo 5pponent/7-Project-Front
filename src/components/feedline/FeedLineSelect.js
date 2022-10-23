@@ -11,7 +11,7 @@ export default function FeedLineSelect(props) {
     totalPages: 0
   });
 
-  const getFeedList = (data) => {setFeed({...feed, feeds: data})}
+  const getFeedList = (data) => {setFeed({...feed, feeds: data})};
   const loadFeedList = (data) => {setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})};
   const updateFeedDetail = (data) => {
     setFeed({
