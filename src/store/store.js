@@ -14,6 +14,7 @@ const initialState = {
     },
     interests: [],
     name: '사용자명',
+    message: '',
     occupation: '직업'
   },
   feedContent: '',

@@ -4,11 +4,11 @@ import {store} from "../../store/store";
 import {
   Accordion,
   AccordionDetails,
-  AccordionSummary,
-  Button,
+  AccordionSummary, Alert, AlertTitle,
+  Button, Checkbox,
   Dialog,
   DialogContent,
-  Divider,
+  Divider, FormControlLabel,
   Grid,
   Paper,
   Stack,
@@ -25,25 +25,16 @@ const Label = styled(Typography)(() => ({
   color: 'gray',
 }));
 
-const Item = styled(Grid)(() => ({
-  marginTop: '8px',
-  marginBottom: '8px',
-}));
-
 export default function Setting(props) {
   const [state, dispatch] = useContext(store);
 
   let navigate = useNavigate();
 
   const [lightMode, setLightMode] = useState(false);
-  const [panel, setPanel] = useState(false);
+  const [panel, setPanel] = useState('');
   const [changePwOpen, setChangePwOpen] = useState(false);
   const [checkPwOpen, setCheckPwOpen] = useState(false);
   const [password, setPassword] = useState({password: ''});
-  const [info, setInfo] = useState({
-    name: state.user.name,
-    email: state.user.email
-  });
   const [pwErrorMessage, setPwErrorMessage] = useState('');
 
   const handleChangeDisplay = (e) => {
@@ -95,41 +86,57 @@ export default function Setting(props) {
         <Accordion expanded={panel === 'panel1'} onChange={handleChangePanel('panel1')}>
           <AccordionSummary expandIcon={<ExpandMoreIcon/>}>개인 정보 설정</AccordionSummary>
           <AccordionDetails>
-            <Grid container>
-              <Item item xs={3}><Label>이름</Label></Item>
-              <Item item xs={9}>
-                {info.name}
-              </Item>
+            <Grid container alignItems={"center"} spacing={2}>
 
-              <Item item xs={3}><Label>Email</Label></Item>
-              <Item item xs={9}>
-                {info.email}
-              </Item>
+              <Grid item xs={3}>
+                <Label>이름</Label>
+              </Grid>
 
-              <Item item xs={3}><Label>PW</Label></Item>
-              <Item item xs={9}>
+              <Grid item xs={9}>
+                {state.user.name}
+              </Grid>
+
+              <Grid item xs={3}>
+                <Label>Email</Label>
+              </Grid>
+              <Grid item xs={9}>
+                {state.user.email}
+              </Grid>
+
+              <Grid item xs={3}>
+                <Label>PW</Label>
+              </Grid>
+              <Grid item xs={9}>
                 <Button size='small' onClick={handleClickChangePW}>변경</Button>
-              </Item>
+              </Grid>
 
-              <Item item xs={3}><Label>재직 분야</Label></Item>
-              <Item item xs={9}>
+              <Grid item xs={3}>
+                <Label>재직 분야</Label>
+              </Grid>
+              <Grid item xs={9}>
+                {state.user.occupation}
+              </Grid>
 
-              </Item>
+              <Grid item xs={3}>
+                <Label>관심 분야</Label>
+              </Grid>
+              <Grid item xs={9}>
+                {state.user.interests}
+              </Grid>
 
-              <Item item xs={3}><Label>관심 분야</Label></Item>
-              <Item item xs={9}>
+              <Grid item xs={3}>
+                <Label>프로필 공개</Label>
+              </Grid>
+              <Grid item xs={9}>
 
-              </Item>
+              </Grid>
 
-              <Item item xs={3}><Label>프로필 공개</Label></Item>
-              <Item item xs={9}>
-
-              </Item>
-
-              <Item item xs={3}><Label>회원 탈퇴</Label></Item>
-              <Item item xs={9}>
-                <Button size='small' onClick={handleClickSignOut}>탈퇴</Button>
-              </Item>
+              <Grid item xs={3}>
+                <Label>회원 탈퇴</Label>
+              </Grid>
+              <Grid item xs={9}>
+                <Button size='small' color={"error"} onClick={handleClickSignOut}>탈퇴</Button>
+              </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>
@@ -157,7 +164,7 @@ export default function Setting(props) {
       <Dialog open={checkPwOpen} onClose={handleCloseSignOut}>
         <DialogContent>
           <CheckPW handleChangePW={handleChangePW} signOut={signOut} pwErrorMessage={pwErrorMessage}/>
-          <Button color='error' onClick={handleCloseSignOut} fullWidth>취소</Button>
+          <Button variant={"outlined"} onClick={handleCloseSignOut} fullWidth>취소</Button>
         </DialogContent>
       </Dialog>
     </>
@@ -180,18 +187,40 @@ function ChangePW() {
 }
 
 function CheckPW(props) {
+  const [checked, setChecked] = useState(false);
+  const handleCheckbox = () => { setChecked(!checked); }
+
   return (
     <Stack spacing={2} sx={{marginBottom: '6px'}}>
-      <Typography variant='h5' fontWeight='bold'>비밀번호 확인</Typography>
-      <TextField
-        fullWidth
-        label='PW'
-        type='password'
-        onChange={props.handleChangePW}
-        error={props.pwErrorMessage}
-        helperText={props.pwErrorMessage}
-      />
-      <Button type='submit' variant='contained' color='success' onClick={props.signOut}>회원 탈퇴</Button>
+      <Alert severity={"error"}>
+        <AlertTitle>
+          <Typography fontSize={"larger"} fontWeight='bold'>회원 탈퇴</Typography>
+        </AlertTitle>
+        <Typography variant={"subtitle2"}>
+          탈퇴한 회원은 복구할 수 없습니다.
+        </Typography>
+        <Stack direction={"row"} alignItems={"center"} spacing={2}>
+          <Typography variant={"subtitle2"}>그래도 탈퇴하실래요?</Typography>
+          <FormControlLabel
+            control={<Checkbox size={"small"} checked={checked} onChange={handleCheckbox}/>}
+            label={<Typography variant={"subtitle2"}>네</Typography>}
+          />
+        </Stack>
+      </Alert>
+
+      { checked &&
+        <>
+          <TextField
+            fullWidth
+            label='PW'
+            type='password'
+            onChange={props.handleChangePW}
+            error={props.pwErrorMessage}
+            helperText={props.pwErrorMessage}
+          />
+          <Button type='submit' variant='outlined' color='error' onClick={props.signOut}>회원 탈퇴</Button>
+        </>
+      }
     </Stack>
   )
 }

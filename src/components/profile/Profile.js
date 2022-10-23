@@ -5,7 +5,7 @@ import {
   Box,
   Button,
   ButtonBase,
-  Card,
+  Card, Chip,
   Dialog,
   Fade,
   Grid,
@@ -117,6 +117,9 @@ export default function Profile(props) {
     setTodayComment(false);
     dispatch({type: 'OpenSnackbar', payload: `조용히할게요..`});
   };
+  const handleClickFollow = () => {
+    console.log(user)
+  }
 
   useEffect(() => {
     customAxios.get(`/user/${searchParams}`)
@@ -156,14 +159,13 @@ export default function Profile(props) {
             </Fade>
           )}
         </Popper>
-
       }
       <Grid container direction={"row"} sx={{width: "1100px"}}>
 
         <Grid item xs={3} py={3}>
 
           <Stack spacing={2} style={{position: "fixed"}} height={"100%"}>
-            <Card>
+            <Card sx={{width: 250}}>
               <Stack alignItems={"center"} mt={20}>
                 <IconButton id="avatar" itemID="avatar" onMouseOver={openPopper}
                             onClick={() => {
@@ -195,8 +197,21 @@ export default function Profile(props) {
                       이메일 : {user.email}
                     </Typography>
                     <Typography variant='subtitle2'>
-                      직종 : {user.occupation && user.occupation}
+                      직종 :
+                      { user.occupation &&
+                        <Chip size={"small"} style={{backgroundColor: '#e3f2fd'}} label={user.occupation && user.occupation}/>
+                      }
                     </Typography>
+                    <Stack direction={"row"}>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 60}}>
+                        <Typography variant='subtitle2'>관심분야</Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center'}}>
+                        {user.interests.length > 0 && user.interests.map((it) => {
+                          return(<Chip key={it} label={it} size={"small"}/>);
+                        })}
+                      </Box>
+                    </Stack>
                     <Stack direction={"row"} display={"flex"} justifyContent={"space-evenly"}>
                       <Typography variant={'subtitle2'}>
                         follower : {user.followerCount}
@@ -216,7 +231,11 @@ export default function Profile(props) {
                         </ButtonBase>
                       </Stack>
                       :
-                      <Button size={"small"} variant={"contained"}>팔로우</Button>
+                      <Button size={"small"} variant={"contained"}
+                              onClick={handleClickFollow}
+                      >
+                        팔로우
+                      </Button>
                     }
                   </>
                 }
@@ -244,12 +263,9 @@ export default function Profile(props) {
 
       <Dialog
         open={updateProfile}
-        onClose={() => {
-          setUpdateProfile(false)
-        }}
+        onClose={() => {setUpdateProfile(false)}}
       >
         <ProfileUpdateDialog
-          user={user}
           handleCloseDialog={handleCloseDialog}
           reloadUser={reloadUser}
         />
