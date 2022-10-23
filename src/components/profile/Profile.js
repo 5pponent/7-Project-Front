@@ -166,7 +166,7 @@ export default function Profile(props) {
               <Box className={"message"} minWidth={"100px"} minHeight={"50px"} maxWidth={"280px"}
                    boxShadow={2}>
                 <Typography p={2} fontSize={14} color={'#14325e'} fontFamily={"HSYuji-Regular"}
-                            style={{wordBreak: 'break-word', wordWrap: 'pre-wrap'}}
+                            style={{wordBreak: 'break-word', whiteSpace: 'pre-wrap'}}
                 >
                   {todayComment ? user.message : '...'}
                 </Typography>
@@ -296,10 +296,20 @@ export default function Profile(props) {
             />
           }
           {mode === 'FOLLOWERS' &&
-            <FollowList mode={mode} user={searchParams} reloadUser={reloadUser}/>
+            <FollowList
+              mode={mode}
+              isMe={state.user.id === user.id}
+              user={searchParams}
+              reloadUser={reloadUser}
+            />
           }
           {mode === 'FOLLOWING' &&
-            <FollowList mode={mode} user={searchParams} reloadUser={reloadUser}/>
+            <FollowList
+              mode={mode}
+              isMe={state.user.id === user.id}
+              user={searchParams}
+              reloadUser={reloadUser}
+            />
           }
         </Grid>
 

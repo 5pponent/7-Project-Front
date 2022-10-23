@@ -51,9 +51,6 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
   },
 }));
 const Title = styled(Typography)(() => ({
@@ -88,7 +85,7 @@ export default function Header(props) {
         <Box width={"200px"}>
           <Search>
             <SearchIconWrapper><SearchIcon/></SearchIconWrapper>
-            <StyledInputBase placeholder="프로필 검색"/>
+            <StyledInputBase placeholder="유저 검색"/>
           </Search>
         </Box>
 

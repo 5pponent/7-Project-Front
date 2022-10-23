@@ -42,9 +42,9 @@ export default function FollowList(props) {
   };
 
   useEffect(() => {
+    console.log(state.user.id);
     customAxios.get(`/user/${props.user}/${props.mode === 'FOLLOWERS' ? 'follower' : 'following'}`)
       .then(res => {
-        console.log(res.data)
         setUserList(res.data.users);
         setCurrentPage(res.data.currentPage);
         setTotalPages(res.data.totalPages);
@@ -82,7 +82,7 @@ export default function FollowList(props) {
                     image={it.image && it.image.source}
                     name={it.name}
                   />
-                  {props.mode === 'FOLLOWING' &&
+                  {(props.mode === 'FOLLOWING' && props.isMe) &&
                     <Button onClick={() => {handleClickUnfollow(it.id, it.name)}}>
                       팔로우 취소
                     </Button>
