@@ -25,6 +25,7 @@ import customAxios from "../../AxiosProvider";
 import ProfileUpdateDialog from "./ProfileUpdateDialog";
 import "./message.css";
 import "../../css/fonts.css";
+import FollowList from "./FollowList";
 
 const Search = styled('div')(({theme}) => ({
   position: 'relative',
@@ -64,7 +65,8 @@ export default function Profile(props) {
     interests: [],
     name: '',
     message: '',
-    occupation: null
+    occupation: null,
+    isFollowed: false
   });
   const [feed, setFeed] = useState({
     currentPage: 0,
@@ -76,6 +78,7 @@ export default function Profile(props) {
   const [anchorEl, setAnchorEl] = useState(true);
   const [open, setOpen] = useState(false);
   const [todayComment, setTodayComment] = useState(true);
+  const [mode, setMode] = useState('FEED');
 
   const getFeedList = (data) => {
     setFeed({...feed, feeds: data})
@@ -118,7 +121,22 @@ export default function Profile(props) {
     dispatch({type: 'OpenSnackbar', payload: `조용히할게요..`});
   };
   const handleClickFollow = () => {
-    console.log(user)
+    customAxios.post(`/user/${searchParams}/follow`)
+      .then(res => {
+        dispatch({type: 'OpenSnackbar', payload: `${user.name}님을 팔로우합니다.`});
+        reloadUser();
+      })
+      .catch(err => {console.log(err.response)})
+      .finally(() => {});
+  }
+  const handleClickUnfollow = () => {
+    customAxios.delete(`/user/${searchParams}/follow`)
+      .then(res => {
+        dispatch({type: 'OpenSnackbar', payload: `${user.name}님을 더 이상 팔로우하지 않습니다.`});
+        reloadUser();
+      })
+      .catch(err => {console.log(err.response)})
+      .finally(() => {});
   }
 
   useEffect(() => {
@@ -145,10 +163,10 @@ export default function Profile(props) {
         >
           {({TransitionProps}) => (
             <Fade {...TransitionProps} timeout={2000}>
-              <Box className={"message"} minWidth={"100px"} minHeight={"50px"} maxWidth={"300px"}
+              <Box className={"message"} minWidth={"100px"} minHeight={"50px"} maxWidth={"280px"}
                    boxShadow={2}>
                 <Typography p={2} fontSize={14} color={'#14325e'} fontFamily={"HSYuji-Regular"}
-                            style={{wordBreak: 'break-all', wordWrap: 'pre-wrap'}}
+                            style={{wordBreak: 'break-word', wordWrap: 'pre-wrap'}}
                 >
                   {todayComment ? user.message : '...'}
                 </Typography>
@@ -176,7 +194,7 @@ export default function Profile(props) {
                   <Avatar src={user.image ? user.image.source : ''} sx={{width: 56, height: 56}}/>
                 </IconButton>
                 {user.id === 0 ?
-                  <Skeleton animation="wave" width={100} height={40}/>
+                  <Skeleton animation="wave" width={100} height={50}/>
                   :
                   <Typography sx={{fontSize: '18px', fontWeight: 'bold'}}>
                     {user.name}
@@ -184,26 +202,28 @@ export default function Profile(props) {
                 }
               </Stack>
 
-              <Stack sx={{userSelect: 'none'}} p={2} spacing={1}>
+              <Stack sx={{userSelect: 'none'}} p={2} spacing={1.5}>
                 {user.id === 0 ?
                   <>
                     <Skeleton animation="wave"/>
                     <Skeleton animation="wave"/>
-                    <Skeleton variant="rectangular" width={210} height={50}/>
+                    <Skeleton animation="wave"/>
+                    <Skeleton animation="wave"/>
+                    <Skeleton variant="rectangular" width={220} height={30}/>
                   </>
                   :
                   <>
                     <Typography variant='subtitle2'>
                       이메일 : {user.email}
                     </Typography>
-                    <Typography variant='subtitle2'>
-                      직종 :
+                    <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                      <Typography variant='subtitle2'>직종</Typography>
                       { user.occupation &&
                         <Chip size={"small"} style={{backgroundColor: '#e3f2fd'}} label={user.occupation && user.occupation}/>
                       }
-                    </Typography>
-                    <Stack direction={"row"}>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 60}}>
+                    </Stack>
+                    <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 57}}>
                         <Typography variant='subtitle2'>관심분야</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center'}}>
@@ -212,51 +232,75 @@ export default function Profile(props) {
                         })}
                       </Box>
                     </Stack>
-                    <Stack direction={"row"} display={"flex"} justifyContent={"space-evenly"}>
-                      <Typography variant={'subtitle2'}>
-                        follower : {user.followerCount}
-                      </Typography>
-                      <Typography variant='subtitle2'>
-                        follow : {user.followingCount}
-                      </Typography>
+                    <Button fullWidth onClick={() => {setMode('FEED')}}>
+                      피드({feed.feeds.length})
+                    </Button>
+                    <Stack direction={"row"} justifyContent={"space-around"}>
+                      <Button size={"small"} onClick={() => {setMode('FOLLOWERS')}}>
+                        followers<br/>{user.followerCount}
+                      </Button>
+                      <Button size={"small"} onClick={() => {setMode('FOLLOWING')}}>
+                        following<br/>{user.followingCount}
+                      </Button>
                     </Stack>
                     {state.user.id === user.id ?
                       <Stack direction={"row"} justifyContent={"center"}>
                         <ButtonBase onClick={() => setUpdateProfile(true)}
                                     style={{
-                                      backgroundColor: 'lightgray', borderRadius: 4, padding: 4
+                                      backgroundColor: 'lightgray', borderRadius: 8,
+                                      padding: 6
                                     }}>
                           <CreateRoundedIcon sx={{fontSize: 14}}/>&nbsp;
-                          <Typography fontSize={12}>프로필 수정</Typography>
+                          <Typography fontSize={14}>프로필 수정</Typography>
                         </ButtonBase>
                       </Stack>
-                      :
-                      <Button size={"small"} variant={"contained"}
-                              onClick={handleClickFollow}
-                      >
-                        팔로우
-                      </Button>
+                      : user.isFollowed ?
+                        <Button
+                          size={"small"}
+                          variant={"outlined"}
+                          onClick={handleClickUnfollow}
+                        >
+                          팔로우 취소
+                        </Button>
+                        :
+                        <Button
+                          size={"small"}
+                          variant={"contained"}
+                          onClick={handleClickFollow}
+                        >
+                          팔로우
+                        </Button>
                     }
                   </>
                 }
               </Stack>
             </Card>
-            <Search>
-              <SearchIconWrapper><SearchIcon/></SearchIconWrapper>
-              <StyledInputBase placeholder="피드 검색"/>
-            </Search>
+            {mode === 'FEED' &&
+              <Search>
+                <SearchIconWrapper><SearchIcon/></SearchIconWrapper>
+                <StyledInputBase placeholder="피드 검색"/>
+              </Search>
+            }
           </Stack>
 
         </Grid>
 
         <Grid item xs={9}>
-          <FeedLine
-            feed={feed}
-            handleScroll={handleScroll}
-            getFeedList={getFeedList}
-            loadFeedList={loadFeedList}
-            updateFeedDetail={updateFeedDetail}
-          />
+          {mode === 'FEED' &&
+            <FeedLine
+              feed={feed}
+              handleScroll={handleScroll}
+              getFeedList={getFeedList}
+              loadFeedList={loadFeedList}
+              updateFeedDetail={updateFeedDetail}
+            />
+          }
+          {mode === 'FOLLOWERS' &&
+            <FollowList mode={mode} user={searchParams} reloadUser={reloadUser}/>
+          }
+          {mode === 'FOLLOWING' &&
+            <FollowList mode={mode} user={searchParams} reloadUser={reloadUser}/>
+          }
         </Grid>
 
       </Grid>

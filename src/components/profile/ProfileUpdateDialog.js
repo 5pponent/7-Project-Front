@@ -214,13 +214,13 @@ export default function ProfileUpdateDialog(props) {
             </TableRow>
 
             <TableRow>
-              <TableCell>메시지</TableCell>
+              <TableCell>한마디</TableCell>
               <TableCell>
                 <Stack direction={"row"} alignItems={"center"}>
                   <TextField variant={"standard"} size={"small"} disabled={!updateMessage}
                              inputProps={{autocomplete: "off", maxLength: 100}}
                              value={message} onChange={handleChangeMessage}
-                             maxRows={3} multiline fullWidth
+                             maxRows={5} multiline fullWidth
                              helperText={updateMessage ? '오늘의 한마디를 작성해보세요.' : ''}
                   />
                   <Stack>
