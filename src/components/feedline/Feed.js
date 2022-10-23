@@ -68,6 +68,18 @@ export default function Feed(props) {
         .catch(error => console.error(error.response))
     }
   };
+  const getDate = () => {
+    let today  = new Date();
+    const date = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+    const feedDate = createTime.split(' ');
+    const hours = (today.getHours()*60 + today.getMinutes()) - (parseInt(feedDate[1].split(':')[0]*60) + parseInt(feedDate[1].split(':')[1]));
+    if (feedDate[0] === date) {
+      if (hours < 60) return `${hours}분 전`
+      if (hours < 360) return `${Math.round(hours/60)}시간 전`
+      return feedDate[1];
+    }
+    else return feedDate[0]
+  };
 
   return (
     <>
@@ -116,7 +128,7 @@ export default function Feed(props) {
               </Grid>
               <Grid item>
                 <Typography>{writer.name}</Typography>
-                <Typography variant="body2" color="textSecondary">{createTime.substring(0, 10)}</Typography>
+                <Typography variant="body2" color="textSecondary">{getDate()}</Typography>
               </Grid>
             </Grid>
 

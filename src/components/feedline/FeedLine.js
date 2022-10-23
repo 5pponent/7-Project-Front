@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {CircularProgress, Box, Stack, Typography} from '@mui/material';
+import React, {useEffect} from 'react';
+import {CircularProgress, Box, Stack} from '@mui/material';
 import Feed from './Feed';
-import customAxios from "../../AxiosProvider";
 
 export default function FeedLine(props) {
   const {currentPage, feeds, totalElements, totalPages} = props.feed;
