@@ -59,7 +59,7 @@ export default function FollowList(props) {
     <Box mt={3} boxShadow={3} borderRadius={2}>
       <Stack p={3}>
         <Typography variant={"h6"}>
-          {props.mode === 'FOLLOWERS' ? "나를 팔로우한 사람들" : "내가 팔로우한 사람들"}
+          {props.mode === 'FOLLOWERS' ? "팔로워 목록" : "팔로우 중인 유저 목록"}
         </Typography>
       </Stack>
 
