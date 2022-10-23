@@ -1,7 +1,6 @@
 import React, {useContext, useState} from 'react';
 import customAxios from "../../AxiosProvider";
 import {useNavigate} from "react-router-dom";
-import {store} from "../../store/store";
 import {
   Divider,
   Typography,
@@ -20,6 +19,7 @@ import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
 import ProfileMenu from "../ProfileMenu";
+import {store} from "../../store/store";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -32,6 +32,7 @@ const Content = styled(Typography)`
 
 export default function Feed(props) {
   const navigate = useNavigate();
+  const [state, dispatch] = useContext(store);
   const {commentCount, id, isLiked, likeCount, writer, content, createTime} = props.feed;
   const [feedDetail, setFeedDetail] = useState(null);
   const [open, setOpen] = useState(false);
@@ -50,16 +51,34 @@ export default function Feed(props) {
   const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
   const handleCloseProfile = () => {setAnchor(null)};
   const handleClickProfileView = () => {navigate(`/profile?user=${writer.id}`)};
-  const handleClickLike = (feedId) => {
+  const handleClickLike = (feedId, name) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
-        .then(res => props.updateFeedDetail(res.data))
+        .then(res => {
+          props.updateFeedDetail(res.data);
+          dispatch({type: 'OpenSnackbar', payload: `좋아요가 취소되었습니다.`});
+        })
         .catch(error => console.error(error.response))
     } else {
       customAxios.post(`/feed/${feedId}/like`)
-        .then(res => props.updateFeedDetail(res.data))
+        .then(res => {
+          props.updateFeedDetail(res.data);
+          dispatch({type: 'OpenSnackbar', payload: `${name}님의 피드를 좋아합니다.`});
+        })
         .catch(error => console.error(error.response))
     }
+  };
+  const getDate = () => {
+    let today  = new Date();
+    const date = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+    const feedDate = createTime.split(' ');
+    const hours = (today.getHours()*60 + today.getMinutes()) - (parseInt(feedDate[1].split(':')[0]*60) + parseInt(feedDate[1].split(':')[1]));
+    if (feedDate[0] === date) {
+      if (hours < 60) return `${hours}분 전`
+      if (hours < 360) return `${Math.round(hours/60)}시간 전`
+      return feedDate[1];
+    }
+    else return feedDate[0]
   };
 
   return (
@@ -90,7 +109,7 @@ export default function Feed(props) {
           alignItems={"center"} m={1.5}
         >
           <Stack direction={'row'} spacing={3}>
-            <IconButton onClick={() => handleClickLike(id)}>
+            <IconButton onClick={() => handleClickLike(id, writer.name)}>
               <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
                 <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
               </StyledBadge>
@@ -109,7 +128,7 @@ export default function Feed(props) {
               </Grid>
               <Grid item>
                 <Typography>{writer.name}</Typography>
-                <Typography variant="body2" color="textSecondary">{createTime.substring(0, 10)}</Typography>
+                <Typography variant="body2" color="textSecondary">{getDate()}</Typography>
               </Grid>
             </Grid>
 
