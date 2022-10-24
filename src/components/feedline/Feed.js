@@ -33,24 +33,37 @@ const Content = styled(Typography)`
 export default function Feed(props) {
   const navigate = useNavigate();
   const [state, dispatch] = useContext(store);
-  const {commentCount, id, isLiked, likeCount, writer, content, createTime} = props.feed;
+  const {commentCount, files, id, isLiked, likeCount, writer, content, createTime} = props.feed;
   const [feedDetail, setFeedDetail] = useState(null);
   const [open, setOpen] = useState(false);
+  const [commentFocus, setCommentFocus] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
-  const getFeedDetail = (data) => {setFeedDetail(data)}
+  const getFeedDetail = (data) => {
+    setFeedDetail(data)
+  }
   const openContent = async () => {
     await customAxios.get(`/feed/${id}`)
       .then(res => {
         setFeedDetail(res.data);
         setOpen(true);
       })
-      .catch(error => {console.error(error);})
+      .catch(error => {
+        console.error(error);
+      })
   };
-  const closeContent = () => {setOpen(false)};
-  const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
-  const handleCloseProfile = () => {setAnchor(null)};
-  const handleClickProfileView = () => {navigate(`/profile?user=${writer.id}`)};
+  const closeContent = () => {
+    setOpen(false)
+  };
+  const handleClickProfile = (e) => {
+    setAnchor(e.currentTarget)
+  };
+  const handleCloseProfile = () => {
+    setAnchor(null)
+  };
+  const handleClickProfileView = () => {
+    navigate(`/profile?user=${writer.id}`)
+  };
   const handleClickLike = (feedId, name) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
@@ -69,16 +82,15 @@ export default function Feed(props) {
     }
   };
   const getDate = () => {
-    let today  = new Date();
-    const date = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+    let today = new Date();
+    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
     const feedDate = createTime.split(' ');
-    const hours = (today.getHours()*60 + today.getMinutes()) - (parseInt(feedDate[1].split(':')[0]*60) + parseInt(feedDate[1].split(':')[1]));
+    const hours = (today.getHours() * 60 + today.getMinutes()) - (parseInt(feedDate[1].split(':')[0] * 60) + parseInt(feedDate[1].split(':')[1]));
     if (feedDate[0] === date) {
       if (hours < 60) return `${hours}분 전`
-      if (hours < 360) return `${Math.round(hours/60)}시간 전`
+      if (hours <= 360) return `${Math.round(hours / 60)}시간 전`
       return feedDate[1];
-    }
-    else return feedDate[0]
+    } else return feedDate[0]
   };
 
   return (
@@ -86,29 +98,44 @@ export default function Feed(props) {
       <Box sx={{boxShadow: 5, borderRadius: 1.5}} elevation={5}>
 
         {/*컨텐츠 + 더보기 버튼*/}
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"flex-start"}>
-          <Box p={3} sx={{cursor: 'pointer'}} width={"100%"} onClick={openContent}>
-            <Content>{content}</Content>
-          </Box>
+        <Stack sx={{cursor: 'pointer'}} onClick={openContent}>
+          <Stack direction='row' justifyContent='space-between' alignItems={"flex-start"}>
+            <Box p={3} width="100%">
+              <Content>{content}</Content>
+            </Box>
 
-          <Box p={1}>
-            <MoreMenu
-              feedId={id}
-              writer={writer.id}
-              feedList={props.feedList}
-              getFeedList={props.getFeedList}
-            />
-          </Box>
+            <Box p={1}>
+              <MoreMenu
+                feedId={id}
+                writer={writer.id}
+                feedList={props.feedList}
+                getFeedList={props.getFeedList}
+              />
+            </Box>
+          </Stack>
+
+          <Stack direction='row' spacing={1} sx={{p: 3, pt: 0}}>
+            {files.slice(0, 3).map(item => (
+              <Box key={item.id} sx={{width: '25%', borderRadius: 3, overflow: 'hidden'}}>
+                <img src={item.source} alt={item.originalName} width={'100%'} height={'100%'}/>
+              </Box>
+            ))}
+
+            {files.length > 3 &&
+              <Box sx={{width: '25%', bgcolor: 'rgba(0,0,0,0.35)', borderRadius: 3, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#d8dbdc'}}>
+                  +{files.length - 3}
+                </Typography>
+              </Box>
+            }
+          </Stack>
         </Stack>
 
         <Divider/>
 
         {/*좋아요, 댓글, 프로필*/}
-        <Stack
-          direction={"row"} justifyContent={"space-between"}
-          alignItems={"center"} m={1.5}
-        >
-          <Stack direction={'row'} spacing={3}>
+        <Stack direction='row' justifyContent={'space-between'} alignItems={'center'} m={1.5}>
+          <Stack direction='row' spacing={3}>
             <IconButton onClick={() => handleClickLike(id, writer.name)}>
               <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
                 <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
@@ -128,7 +155,7 @@ export default function Feed(props) {
               </Grid>
               <Grid item>
                 <Typography>{writer.name}</Typography>
-                <Typography variant="body2" color="textSecondary">{getDate()}</Typography>
+                <Typography variant='body2' color="textSecondary">{getDate()}</Typography>
               </Grid>
             </Grid>
 
@@ -157,7 +184,7 @@ export default function Feed(props) {
   );
 }
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
+const StyledBadge = styled(Badge)(({theme}) => ({
   '& .MuiBadge-badge': {
     right: 15,
     top: 35

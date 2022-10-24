@@ -196,7 +196,7 @@ export default function FeedDetail(props) {
         <IconButton onClick={() => handleClickLike(id, writer.name)}>
           <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
         </IconButton>{likeCount}
-        <IconButton sx={{marginLeft: "20px"}}>
+        <IconButton onClick={() => commentRef.current.focus()} sx={{marginLeft: "20px"}}>
           <AddCommentRoundedIcon sx={{fontSize: 30}}></AddCommentRoundedIcon>
         </IconButton>{commentCount}
       </Box>
