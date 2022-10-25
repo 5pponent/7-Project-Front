@@ -129,7 +129,7 @@ export default function Register(props) {
                        error={!!mailErrorMessage} helperText={mailErrorMessage} disabled={mode === 'REGIST'}
             />
             <Box sx={{display: auth ? 'block' : 'none', textAlign: 'end'}}>
-              <Button onClick={handleClickSendMail} size='small' sx={{width: 'max-content'}}>인증코드 재전송</Button>
+              <Button type={"button"} onClick={handleClickSendMail} size='small' sx={{width: 'max-content'}}>인증코드 재전송</Button>
             </Box>
 
             <TextField fullWidth label='인증코드' name="code" onChange={handleAuthInfoChange}
@@ -138,7 +138,7 @@ export default function Register(props) {
                        sx={{display: auth ? 'block' : 'none'}}
             />
 
-            <Button type='submit' variant='contained' color='primary' onClick={auth ? handleClickCodeCheck : handleClickSendMail}
+            <Button type='button' variant='contained' color='primary' onClick={auth ? handleClickCodeCheck : handleClickSendMail}
                     sx={{display: mode === 'AUTH' ? 'block' : 'none'}}>
               {auth ? "확인" : "인증코드 발송"}
             </Button>

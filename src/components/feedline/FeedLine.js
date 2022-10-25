@@ -12,7 +12,7 @@ export default function FeedLine(props) {
   });
 
   return (
-    <Stack spacing={3} sx={{width: "100%", maxWidth: 800}}>
+    <Stack spacing={3} sx={{width: "100%", maxWidth: 800}} mb={3}>
       { feeds.map(f => {
         return (
           <Feed

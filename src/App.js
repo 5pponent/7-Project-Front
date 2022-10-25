@@ -91,7 +91,13 @@ export default function App() {
           <Template element={<Setting/>}/>
         }></Route>
 
+        <Route path={"/server-error"} element={
+          // TODO (5xx 코드 응답 시 에러 페이지 추가)
+          <p>Server Error</p>
+        }></Route>
+
         <Route path={"*"} element={
+          // TODO (존재하지 않는 라우터 경로 진입 시 에러 페이지 추가)
           <p>404 Not Found</p>
         }></Route>
       </Routes>
