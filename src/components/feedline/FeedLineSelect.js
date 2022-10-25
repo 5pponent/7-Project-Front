@@ -37,7 +37,7 @@ export default function FeedLineSelect(props) {
   }, []);
 
   return (
-    <Stack width={"95%"} maxWidth={"800px"} mx={"auto"}>
+    <Stack maxWidth={"800px"} mx={"auto"} px={1}>
 
       <FeedLine
         feed={feed}

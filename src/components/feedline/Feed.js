@@ -39,9 +39,7 @@ export default function Feed(props) {
   const [commentFocus, setCommentFocus] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
-  const getFeedDetail = (data) => {
-    setFeedDetail(data)
-  }
+  const getFeedDetail = (data) => {setFeedDetail(data)}
   const openContent = async () => {
     await customAxios.get(`/feed/${id}`)
       .then(res => {
@@ -51,16 +49,10 @@ export default function Feed(props) {
       .catch(error => {
         console.error(error);
       })
-  };
-  const closeContent = () => {
-    setOpen(false)
-  };
-  const handleClickProfile = (e) => {
-    setAnchor(e.currentTarget)
-  };
-  const handleCloseProfile = () => {
-    setAnchor(null)
-  };
+  }
+  const closeContent = () => {setOpen(false)}
+  const handleClickProfile = (e) => {setAnchor(e.currentTarget)}
+  const handleCloseProfile = () => {setAnchor(null)}
   const handleClickProfileView = () => {
     navigate(`/profile?user=${writer.id}`)
   };

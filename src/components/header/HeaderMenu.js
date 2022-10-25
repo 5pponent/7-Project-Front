@@ -114,12 +114,6 @@ export default function CustomizedMenus(props) {
           </MenuItem>
         </Tooltip>
 
-        <Tooltip title="팔로우 / 팔로워" placement="left" arrow>
-          <MenuItem onClick={handleClickMessenger} disableRipple>
-            <PeopleAltIcon/>
-          </MenuItem>
-        </Tooltip>
-
         <Tooltip title="설정" placement="left" arrow>
           <MenuItem onClick={handleClickSetting} disableRipple>
             <SettingsIcon/>
