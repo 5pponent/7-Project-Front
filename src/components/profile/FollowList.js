@@ -6,7 +6,7 @@ import SmallProfile from "../SmallProfile";
 import CircularProgress from "@mui/material/CircularProgress";
 
 export default function FollowList(props) {
-  const [state, dispatch] = useContext(store);
+  const [, dispatch] = useContext(store);
   const [userList, setUserList] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -42,7 +42,6 @@ export default function FollowList(props) {
   };
 
   useEffect(() => {
-    console.log(state.user.id);
     customAxios.get(`/user/${props.user}/${props.mode === 'FOLLOWERS' ? 'follower' : 'following'}`)
       .then(res => {
         setUserList(res.data.users);

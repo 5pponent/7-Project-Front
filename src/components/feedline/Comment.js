@@ -72,6 +72,9 @@ export default function Comment(props) {
           <ProfileMenu
             anchor={anchor}
             open={Boolean(anchor)}
+            isFollowed={writer.isFollowed}
+            userId={writer.id}
+            userName={writer.name}
             onClose={handleCloseProfile}
             onClick={handleClickProfileView}/>
         </Box>

@@ -1,5 +1,6 @@
 import React, {useContext, useState} from 'react';
 import customAxios from "../../AxiosProvider";
+import {store} from "../../store/store";
 import {useNavigate} from "react-router-dom";
 import {
   Divider,
@@ -19,7 +20,6 @@ import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
 import ProfileMenu from "../ProfileMenu";
-import {store} from "../../store/store";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -39,36 +39,18 @@ export default function Feed(props) {
   const [commentFocus, setCommentFocus] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
-<<<<<<< HEAD
-  const getFeedDetail = (data) => {setFeedDetail(data)};
-  const openContent = () => {
-    customAxios.get(`/feed/${id}`)
-=======
   const getFeedDetail = (data) => {setFeedDetail(data)}
   const openContent = async () => {
     await customAxios.get(`/feed/${id}`)
->>>>>>> 1a62d87008d15dcf383e051c35ff5d16b4def172
       .then(res => {
         setFeedDetail(res.data);
         setOpen(true);
       })
-<<<<<<< HEAD
       .catch(error => console.error(error))
   };
   const closeContent = () => {
     setOpen(false);
     setCommentFocus(false);
-=======
-      .catch(error => {
-        console.error(error);
-      })
-  }
-  const closeContent = () => {setOpen(false)}
-  const handleClickProfile = (e) => {setAnchor(e.currentTarget)}
-  const handleCloseProfile = () => {setAnchor(null)}
-  const handleClickProfileView = () => {
-    navigate(`/profile?user=${writer.id}`)
->>>>>>> 1a62d87008d15dcf383e051c35ff5d16b4def172
   };
   const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
   const handleCloseProfile = () => {setAnchor(null)};
@@ -129,15 +111,15 @@ export default function Feed(props) {
 
           <Stack direction='row' spacing={1} sx={{p: 3, pt: 0}} onClick={openContent}>
             {files.slice(0, 3).map(item => (
-              <Box key={item.id} sx={{width: '25%', borderRadius: 3, overflow: 'hidden'}}>
-                <img src={item.source} alt={item.originalName} width={'100%'} height={'100%'}/>
+              <Box key={item.id} sx={{width: '25%', maxHeight: '180px', borderRadius: 3, overflow: 'hidden'}}>
+                <img src={item.source} alt={item.originalName} style={{objectFit: 'contain', borderRadius: '10px'}} width='100%' height='100%'/>
               </Box>
             ))}
 
             {files.length > 3 &&
-              <Box sx={{width: '25%', bgcolor: 'rgba(0,0,0,0.35)', borderRadius: 3, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#d8dbdc'}}>
-                  +{files.length - 3}
+              <Box sx={{width: '25%', bgcolor: 'rgba(0,0,0,0.48)', borderRadius: 3, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#ffffff'}}>
+                  + {files.length - 3}
                 </Typography>
               </Box>
             }
@@ -147,7 +129,7 @@ export default function Feed(props) {
         <Divider/>
 
         {/*좋아요, 댓글, 프로필*/}
-        <Stack direction='row' justifyContent={'space-between'} alignItems={'center'} m={1.5}>
+        <Stack direction='row' justifyContent='space-between' alignItems='center' m={1.5}>
           <Stack direction='row' spacing={3}>
             <IconButton onClick={() => handleClickLike(id, writer.name)}>
               <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
@@ -175,6 +157,9 @@ export default function Feed(props) {
             <ProfileMenu
               anchor={anchor}
               open={Boolean(anchor)}
+              isFollowed={writer.isFollowed}
+              userId={writer.id}
+              userName={writer.name}
               onClose={handleCloseProfile}
               onClick={handleClickProfileView}/>
           </Box>
@@ -202,5 +187,5 @@ const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
     right: 15,
     top: 35
-  },
+  }
 }));

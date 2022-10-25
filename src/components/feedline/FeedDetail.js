@@ -132,13 +132,13 @@ export default function FeedDetail(props) {
     setCommentContent({content: ``});
     setModifyComment(false);
   };
-  const handleClickButton = () => {
+  const handleClickCheckButton = () => {
     if (reply) return handleClickReply(id, currentComment.id)
     else if (modifyComment) return handleClickModifyComment(id, currentComment.id, commentContent)
     else return handleCreateComment(id, commentContent)
   };
   const loadCommentList = (feedId, page) => {
-    setLoad(true)
+    setLoad(true);
     customAxios.get(`/feed/${feedId}/comment?page=${page + 1}`)
       .then(res => {
         setComment({
@@ -211,7 +211,7 @@ export default function FeedDetail(props) {
           <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
           <TextField inputRef={commentRef} multiline size='small' fullWidth value={commentContent.content}
                      placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
-          <Button type='submit' variant='contained' onClick={handleClickButton}>
+          <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
             {modifyComment ? '수정' : '입력'}
           </Button>
         </Stack>
