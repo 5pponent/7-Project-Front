@@ -46,6 +46,7 @@ export default function ProfileUpdateDialog(props) {
     form.append("image", image);
     customAxios.put("/user/profile-image", form)
       .then(res => {
+        console.log(res.data)
         dispatch({type: 'OpenSnackbar', payload: "프로필 사진을 수정했습니다."});
         dispatch({type: 'User', payload: res.data});
         setUser(res.data);
@@ -56,7 +57,15 @@ export default function ProfileUpdateDialog(props) {
       .finally(() => dispatch({type: 'CloseLoading'}));
   }
   const handleClickDefaultImage = () => {
-    // TODO(기본 사진으로 변경)
+    dispatch({type: 'OpenLoading', payload: "프로필 사진을 업데이트중입니다.."});
+    customAxios.delete(`/user/profile-image`)
+      .then(res => {
+        dispatch({type: 'OpenSnackbar', payload: "기본 사진으로 변경했습니다."});
+        setUser(res.data);
+        props.reloadUser();
+      })
+      .catch(err => {console.error(err.response)})
+      .finally(() => dispatch({type: 'CloseLoading'}));
   }
   const handleClickCancel = () => {props.handleCloseDialog(false)}
   const handleChangeName = (e) => {setName(e.target.value)}

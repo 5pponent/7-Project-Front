@@ -75,7 +75,8 @@ export default function Profile(props) {
       customAxios.get(`/feed?userid=${searchParams}&page=${feed.currentPage + 1}`)
         .then(res => loadFeedList(res.data))
     }
-  };
+  }
+
   const handleCloseDialog = (stat) => {
     setUpdateProfile(stat)
   }
@@ -187,7 +188,8 @@ export default function Profile(props) {
                   <Skeleton animation="wave"/>
                   <Skeleton animation="wave"/>
                   <Skeleton animation="wave"/>
-                  <Skeleton variant="rectangular" width={220} height={30}/>
+                  <Skeleton variant="rectangular" width={"100%"} height={40}/>
+                  <Skeleton variant="rectangular" width={"100%"} height={40}/>
                 </>
                 :
                 <>
@@ -255,14 +257,17 @@ export default function Profile(props) {
         {/*피드, 팔로우, 팔로워*/}
         <Stack height={"87vh"} width={"100%"} maxWidth={"800px"}>
           {mode === 'FEED' &&
-            <OutlinedInput
-              size={"small"}
-              value={searchValue}
-              placeholder={"피드 검색"}
-              startAdornment={
-                <InputAdornment position={"start"}><SearchIcon/></InputAdornment>
-              }
-            />
+            <Box px={2} pb={2}>
+              <OutlinedInput
+                size={"small"}
+                value={searchValue}
+                fullWidth
+                placeholder={"피드 검색"}
+                startAdornment={
+                  <InputAdornment position={"start"}><SearchIcon/></InputAdornment>
+                }
+              />
+            </Box>
           }
           <Stack style={{overflowY: "auto"}} p={2}>
             {mode === 'FEED' &&
@@ -277,6 +282,7 @@ export default function Profile(props) {
             {mode === 'FOLLOWERS' &&
               <FollowList
                 mode={mode}
+                setMode={setMode}
                 isMe={state.user.id === user.id}
                 user={searchParams}
                 reloadUser={reloadUser}
@@ -285,6 +291,7 @@ export default function Profile(props) {
             {mode === 'FOLLOWING' &&
               <FollowList
                 mode={mode}
+                setMode={setMode}
                 isMe={state.user.id === user.id}
                 user={searchParams}
                 reloadUser={reloadUser}

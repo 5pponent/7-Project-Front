@@ -90,9 +90,9 @@ export default function Feed(props) {
       <Box sx={{boxShadow: 5, borderRadius: 1.5}} elevation={5}>
 
         {/*컨텐츠 + 더보기 버튼*/}
-        <Stack sx={{cursor: 'pointer'}} onClick={openContent}>
+        <Stack>
           <Stack direction='row' justifyContent='space-between' alignItems={"flex-start"}>
-            <Box p={3} width="100%">
+            <Box p={3} width="100%" sx={{cursor: 'pointer'}} onClick={openContent}>
               <Content>{content}</Content>
             </Box>
 
@@ -106,7 +106,7 @@ export default function Feed(props) {
             </Box>
           </Stack>
 
-          <Stack direction='row' spacing={1} sx={{p: 3, pt: 0}}>
+          <Stack direction='row' spacing={1} sx={{p: 3, pt: 0, cursor: 'pointer'}} onClick={openContent}>
             {files.slice(0, 3).map(item => (
               <Box key={item.id} sx={{width: '25%', borderRadius: 3, overflow: 'hidden'}}>
                 <img src={item.source} alt={item.originalName} width={'100%'} height={'100%'}/>

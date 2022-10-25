@@ -4,15 +4,29 @@ import {store} from "../../store/store";
 import customAxios from "../../AxiosProvider";
 import SmallProfile from "../SmallProfile";
 import CircularProgress from "@mui/material/CircularProgress";
+import ProfileMenu from "../ProfileMenu";
+import {useNavigate} from "react-router-dom";
 
 export default function FollowList(props) {
   const [state, dispatch] = useContext(store);
+  const navigate = useNavigate();
   const [userList, setUserList] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [firstLoading, setFirstLoading] = useState(true);
+  const [anchor, setAnchor] = useState(null);
+  const [target, setTarget] = useState(0);
 
+  const handleClickProfile = (e, id) => {
+    setAnchor(e.currentTarget);
+    setTarget(id);
+  }
+  const handleCloseProfile = () => {setAnchor(null)}
+  const handleClickProfileView = (userId) => {
+    navigate(`/profile?user=${userId}`);
+    props.setMode('FEED');
+  }
   const handleClickUnfollow = (id, name) => {
     customAxios.delete(`/user/${id}/follow`)
       .then(res => {
@@ -39,12 +53,12 @@ export default function FollowList(props) {
         })
         .catch(error => console.error(error.response))
     }
-  };
+  }
 
   useEffect(() => {
-    console.log(state.user.id);
     customAxios.get(`/user/${props.user}/${props.mode === 'FOLLOWERS' ? 'follower' : 'following'}`)
       .then(res => {
+        console.log()
         setUserList(res.data.users);
         setCurrentPage(res.data.currentPage);
         setTotalPages(res.data.totalPages);
@@ -63,14 +77,20 @@ export default function FollowList(props) {
         </Typography>
       </Stack>
 
+      <ProfileMenu
+        open={Boolean(anchor)}
+        anchor={anchor}
+        onClick={() => {handleClickProfileView(target)}}
+        onClose={handleCloseProfile}
+      />
+
       <Stack>
         {userList.length > 0 ?
           userList.map((it) => {
             return(
-              <>
+              <Box key={it.id}>
                 <Divider/>
                 <Stack
-                  key={it.id}
                   direction={"row"}
                   alignItems={"center"}
                   justifyContent={"space-between"}
@@ -81,6 +101,7 @@ export default function FollowList(props) {
                     spacing={1}
                     image={it.image && it.image.source}
                     name={it.name}
+                    onClick={(e) => handleClickProfile(e, it.id)}
                   />
                   {(props.mode === 'FOLLOWING' && props.isMe) &&
                     <Button onClick={() => {handleClickUnfollow(it.id, it.name)}}>
@@ -88,7 +109,7 @@ export default function FollowList(props) {
                     </Button>
                   }
                 </Stack>
-              </>
+              </Box>
             );
           })
           : firstLoading ?
