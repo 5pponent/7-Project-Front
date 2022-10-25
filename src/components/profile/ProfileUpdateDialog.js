@@ -55,6 +55,9 @@ export default function ProfileUpdateDialog(props) {
       .catch(err => console.error(err.response))
       .finally(() => dispatch({type: 'CloseLoading'}));
   }
+  const handleClickDefaultImage = () => {
+    // TODO(기본 사진으로 변경)
+  }
   const handleClickCancel = () => {props.handleCloseDialog(false)}
   const handleChangeName = (e) => {setName(e.target.value)}
   const handleClickUpdateName = () => {
@@ -172,7 +175,7 @@ export default function ProfileUpdateDialog(props) {
                         <Typography variant={"subtitle2"} fontSize={11}>클릭하여 변경</Typography>
                       </Stack>
                     </IconButton>
-                    { image &&
+                    { image ?
                       <>
                         <ForwardRoundedIcon sx={{fontSize: 40, mb: 2, mr: 1, color: "gray"}}/>
                         <Stack alignItems={"center"}>
@@ -180,6 +183,8 @@ export default function ProfileUpdateDialog(props) {
                           <Typography variant={"subtitle2"} fontSize={11}>미리보기</Typography>
                         </Stack>
                       </>
+                      :
+                      <Button onClick={handleClickDefaultImage}>기본 사진으로 변경</Button>
                     }
                   </Stack>
                   { image &&
