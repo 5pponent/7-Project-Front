@@ -1,16 +1,19 @@
 import {useContext, useState} from 'react';
 import {store} from "../../store/store";
 import {
+  AppBar,
+  Avatar,
+  Box,
+  ButtonBase,
   Drawer,
   IconButton,
-  Tooltip,
+  InputBase,
+  Stack,
   Toolbar,
-  Typography,
-  AppBar,
-  ButtonBase,
-  InputBase, Avatar, Stack, Box
+  Tooltip,
+  Typography
 } from '@mui/material';
-import {styled, alpha} from '@mui/material/styles';
+import {alpha, styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
@@ -62,27 +65,47 @@ const Title = styled(Typography)(() => ({
 export default function Header(props) {
   const [state, dispatch] = useContext(store);
 
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
+  const [feedContent, setFeedContent] = useState('');
+  const [feedImage, setFeedImage] = useState([]);
+  const [feedDescription, setFeedDescription] = useState([]);
+
   const getOpen = (stat) => {setOpen(stat)};
   const handleClickDrawer = () => {setOpen(!open)};
-  const handleClickLogo = () => {
-    navigate('/');
+  const handleClickLogo = () => {navigate('/')};
+  const handleClickMyProfile = () => {navigate(`/profile?user=${state.user.id}`)};
+  const handleChangeFeedContent = (e) => {setFeedContent(e.target.value)};
+  const handleAddFeedImage = (e) => {
+    for (let i = 0; i < e.target.files.length; i++) {
+      setFeedImage([...feedImage, {file: e.target.files[i], originalName: e.target.files[i].name}]);
+      setFeedDescription([...feedDescription, '']);
+    }
   };
-  const handleClickMyProfile = () => {
-    navigate(`/profile?user=${state.user.id}`);
+  const handleChangeDescription = (e, num) => {
+    const newDescription = feedDescription.map((item, index) => index === num ? e.target.value : item);
+    setFeedDescription(newDescription);
+  };
+  const handleDeleteFeedImage = (num) => {
+    setFeedImage(feedImage.filter((item, index) => index !== num));
+    setFeedDescription(feedDescription.filter((item, index) => index !== num));
+  };
+  const resetFeed = () => {
+    setFeedContent('');
+    setFeedImage([]);
+    setFeedDescription([]);
   };
 
   return (
     <AppBar style={{userSelect: 'none', position: 'sticky'}}>
       <Toolbar
-        sx={{bgcolor: '#2c92ff', color: 'white'}}
+        sx={{bgcolor: '#2c92ff', color: '#FCFCFC'}}
         style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}
       >
 
         {/* 검색 */}
-        <Box width={"200px"}>
+        <Box width="200px">
           <Search>
             <SearchIconWrapper><SearchIcon/></SearchIconWrapper>
             <StyledInputBase placeholder="유저 검색"/>
@@ -98,23 +121,32 @@ export default function Header(props) {
         </Box>
 
         {/* 사용자 프로필, 더보기 메뉴 */}
-        <Stack width={'200px'} direction={"row"} spacing={1}
+        <Stack width='200px' direction={"row"} spacing={1}
                justifyContent={"flex-end"} alignItems={"center"}
         >
 
           <Tooltip title="피드 작성" placement="bottom" arrow>
             <IconButton onClick={handleClickDrawer}>
-              <BorderColorIcon sx={{fontSize: 26, color: "white"}}/>
+              <BorderColorIcon sx={{fontSize: 26, color: "#FCFCFC"}}/>
             </IconButton>
           </Tooltip>
 
           <Drawer anchor='left' open={open} onClose={handleClickDrawer}>
-            <CreateFeed getOpen={getOpen}/>
+            <CreateFeed
+              getOpen={getOpen}
+              feedContent={feedContent}
+              feedImage={feedImage}
+              feedDescription={feedDescription}
+              handleChangeFeedContent={handleChangeFeedContent}
+              handleAddFeedImage={handleAddFeedImage}
+              handleChangeDescription={handleChangeDescription}
+              handleDeleteFeedImage={handleDeleteFeedImage}
+              resetFeed={resetFeed}/>
           </Drawer>
 
-          <Tooltip title={"알림"} placement={"bottom"} arrow>
+          <Tooltip title="알림" placement="bottom" arrow>
             <IconButton>
-              <NotificationsIcon sx={{fontSize: 26, color: "white"}} />
+              <NotificationsIcon sx={{fontSize: 26, color: "#FCFCFC"}} />
             </IconButton>
           </Tooltip>
 
@@ -127,7 +159,6 @@ export default function Header(props) {
           <HeaderMenu/>
 
         </Stack>
-
       </Toolbar>
     </AppBar>
   );

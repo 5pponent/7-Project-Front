@@ -8,6 +8,7 @@ import ProfileMenu from "../ProfileMenu";
 import {useNavigate} from "react-router-dom";
 
 export default function FollowList(props) {
+
   const [state, dispatch] = useContext(store);
   const navigate = useNavigate();
   const [userList, setUserList] = useState([]);

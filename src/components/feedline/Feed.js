@@ -1,5 +1,6 @@
 import React, {useContext, useState} from 'react';
 import customAxios from "../../AxiosProvider";
+import {store} from "../../store/store";
 import {useNavigate} from "react-router-dom";
 import {
   Divider,
@@ -19,7 +20,6 @@ import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
 import ProfileMenu from "../ProfileMenu";
-import {store} from "../../store/store";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -32,7 +32,7 @@ const Content = styled(Typography)`
 
 export default function Feed(props) {
   const navigate = useNavigate();
-  const [state, dispatch] = useContext(store);
+  const [, dispatch] = useContext(store);
   const {commentCount, files, id, isLiked, likeCount, writer, content, createTime} = props.feed;
   const [feedDetail, setFeedDetail] = useState(null);
   const [open, setOpen] = useState(false);
@@ -46,16 +46,15 @@ export default function Feed(props) {
         setFeedDetail(res.data);
         setOpen(true);
       })
-      .catch(error => {
-        console.error(error);
-      })
-  }
-  const closeContent = () => {setOpen(false)}
-  const handleClickProfile = (e) => {setAnchor(e.currentTarget)}
-  const handleCloseProfile = () => {setAnchor(null)}
-  const handleClickProfileView = () => {
-    navigate(`/profile?user=${writer.id}`)
+      .catch(error => console.error(error))
   };
+  const closeContent = () => {
+    setOpen(false);
+    setCommentFocus(false);
+  };
+  const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
+  const handleCloseProfile = () => {setAnchor(null)};
+  const handleClickProfileView = () => {navigate(`/profile?user=${writer.id}`)};
   const handleClickLike = (feedId, name) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
@@ -72,6 +71,10 @@ export default function Feed(props) {
         })
         .catch(error => console.error(error.response))
     }
+  };
+  const handleClickComment = () => {
+    openContent();
+    setCommentFocus(commentFocus => !commentFocus);
   };
   const getDate = () => {
     let today = new Date();
@@ -90,9 +93,9 @@ export default function Feed(props) {
       <Box sx={{boxShadow: 5, borderRadius: 1.5}} elevation={5}>
 
         {/*컨텐츠 + 더보기 버튼*/}
-        <Stack>
-          <Stack direction='row' justifyContent='space-between' alignItems={"flex-start"}>
-            <Box p={3} width="100%" sx={{cursor: 'pointer'}} onClick={openContent}>
+        <Stack sx={{cursor: 'pointer'}}>
+          <Stack direction='row' justifyContent='space-between' alignItems='flex-start'>
+            <Box p={3} width="100%" onClick={openContent}>
               <Content>{content}</Content>
             </Box>
 
@@ -106,17 +109,17 @@ export default function Feed(props) {
             </Box>
           </Stack>
 
-          <Stack direction='row' spacing={1} sx={{p: 3, pt: 0, cursor: 'pointer'}} onClick={openContent}>
+          <Stack direction='row' spacing={1} sx={{p: 3, pt: 0}} onClick={openContent}>
             {files.slice(0, 3).map(item => (
-              <Box key={item.id} sx={{width: '25%', borderRadius: 3, overflow: 'hidden'}}>
-                <img src={item.source} alt={item.originalName} width={'100%'} height={'100%'}/>
+              <Box key={item.id} sx={{width: '25%', maxHeight: '180px', borderRadius: 3, overflow: 'hidden'}}>
+                <img src={item.source} alt={item.originalName} style={{objectFit: 'contain', borderRadius: '10px'}} width='100%' height='100%'/>
               </Box>
             ))}
 
             {files.length > 3 &&
-              <Box sx={{width: '25%', bgcolor: 'rgba(0,0,0,0.35)', borderRadius: 3, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#d8dbdc'}}>
-                  +{files.length - 3}
+              <Box sx={{width: '25%', bgcolor: 'rgba(0,0,0,0.48)', borderRadius: 3, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#ffffff'}}>
+                  + {files.length - 3}
                 </Typography>
               </Box>
             }
@@ -126,14 +129,14 @@ export default function Feed(props) {
         <Divider/>
 
         {/*좋아요, 댓글, 프로필*/}
-        <Stack direction='row' justifyContent={'space-between'} alignItems={'center'} m={1.5}>
+        <Stack direction='row' justifyContent='space-between' alignItems='center' m={1.5}>
           <Stack direction='row' spacing={3}>
             <IconButton onClick={() => handleClickLike(id, writer.name)}>
               <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
                 <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
               </StyledBadge>
             </IconButton>
-            <IconButton>
+            <IconButton onClick={handleClickComment}>
               <StyledBadge badgeContent={commentCount} bgcolor={''} showZero>
                 <AddCommentRoundedIcon sx={{fontSize: 30}}/>
               </StyledBadge>
@@ -154,6 +157,9 @@ export default function Feed(props) {
             <ProfileMenu
               anchor={anchor}
               open={Boolean(anchor)}
+              isFollowed={writer.isFollowed}
+              userId={writer.id}
+              userName={writer.name}
               onClose={handleCloseProfile}
               onClick={handleClickProfileView}/>
           </Box>
@@ -165,6 +171,7 @@ export default function Feed(props) {
         <DialogContent>
           <FeedDetail
             feedDetail={feedDetail}
+            commentFocus={commentFocus}
             feedList={props.feedList}
             getFeedList={props.getFeedList}
             getFeedDetail={getFeedDetail}
@@ -176,9 +183,9 @@ export default function Feed(props) {
   );
 }
 
-const StyledBadge = styled(Badge)(({theme}) => ({
+const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
     right: 15,
     top: 35
-  },
+  }
 }));
