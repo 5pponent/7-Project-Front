@@ -5,7 +5,7 @@ import {
   Avatar, Box, Button, Chip,
   DialogContent,
   DialogTitle, FormControl,
-  IconButton, InputLabel, MenuItem, OutlinedInput, Select, Skeleton,
+  IconButton, InputLabel, MenuItem, OutlinedInput, Select,
   Stack,
   Table,
   TableBody,
@@ -39,8 +39,8 @@ export default function ProfileUpdateDialog(props) {
   const [interests, setInterests] = useState([]);
 
   const onChangeImage = (e) => {setImage(e.target.files[0])}
-  const handleClickCancelImageUpload = (e) => {setImage(null)}
-  const handleClickUploadProfileImage = (e) => {
+  const handleClickCancelImageUpload = () => {setImage(null)}
+  const handleClickUploadProfileImage = () => {
     dispatch({type: 'OpenLoading', payload: "프로필 사진을 업데이트중입니다.."});
     let form = new FormData();
     form.append("image", image);
