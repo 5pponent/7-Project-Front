@@ -56,25 +56,25 @@ export default function FollowList(props) {
   }, []);
 
   return (
-    <Box mt={3} boxShadow={3} borderRadius={2}>
-      <Stack p={3}>
+    <Box>
+      <Stack p={2}>
         <Typography variant={"h6"}>
           {props.mode === 'FOLLOWERS' ? "팔로워 목록" : "팔로우 중인 유저 목록"}
         </Typography>
       </Stack>
 
-      <Divider/>
-
-      <Stack p={3} spacing={2}>
+      <Stack>
         {userList.length > 0 ?
           userList.map((it) => {
             return(
               <>
+                <Divider/>
                 <Stack
                   key={it.id}
                   direction={"row"}
                   alignItems={"center"}
                   justifyContent={"space-between"}
+                  p={2}
                 >
                   <SmallProfile
                     direction={"row"}
@@ -88,7 +88,6 @@ export default function FollowList(props) {
                     </Button>
                   }
                 </Stack>
-                <Divider/>
               </>
             );
           })

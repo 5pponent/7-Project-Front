@@ -18,7 +18,7 @@ export default function Template(props) {
     <>
       <HeaderAppBar/>
 
-      <Box width={"100%"}>
+      <Box width={"100%"} mt={3}>
         {props.element}
       </Box>
 

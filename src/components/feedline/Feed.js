@@ -39,18 +39,36 @@ export default function Feed(props) {
   const [commentFocus, setCommentFocus] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
+<<<<<<< HEAD
   const getFeedDetail = (data) => {setFeedDetail(data)};
   const openContent = () => {
     customAxios.get(`/feed/${id}`)
+=======
+  const getFeedDetail = (data) => {setFeedDetail(data)}
+  const openContent = async () => {
+    await customAxios.get(`/feed/${id}`)
+>>>>>>> 1a62d87008d15dcf383e051c35ff5d16b4def172
       .then(res => {
         setFeedDetail(res.data);
         setOpen(true);
       })
+<<<<<<< HEAD
       .catch(error => console.error(error))
   };
   const closeContent = () => {
     setOpen(false);
     setCommentFocus(false);
+=======
+      .catch(error => {
+        console.error(error);
+      })
+  }
+  const closeContent = () => {setOpen(false)}
+  const handleClickProfile = (e) => {setAnchor(e.currentTarget)}
+  const handleCloseProfile = () => {setAnchor(null)}
+  const handleClickProfileView = () => {
+    navigate(`/profile?user=${writer.id}`)
+>>>>>>> 1a62d87008d15dcf383e051c35ff5d16b4def172
   };
   const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
   const handleCloseProfile = () => {setAnchor(null)};
