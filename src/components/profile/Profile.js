@@ -5,8 +5,8 @@ import {
   Box,
   Button,
   ButtonBase,
-  Card, Chip,
-  Dialog, Divider,
+  Card, Chip, CircularProgress,
+  Dialog,
   Fade,
   IconButton, InputAdornment,
   OutlinedInput,
@@ -16,6 +16,7 @@ import {
   Typography
 } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import FeedLine from "../feedline/FeedLine";
 import {useLocation} from "react-router-dom";
@@ -54,11 +55,16 @@ export default function Profile(props) {
   const [open, setOpen] = useState(false);
   const [todayComment, setTodayComment] = useState(true);
   const [mode, setMode] = useState('FEED');
+  const [feedLoading, setFeedLoading] = useState(true);
   const [searchValue, setSearchValue] = useState('');
+  const [searchingMessage, setSearchingMessage] = useState('');
 
   const getFeedList = (data) => {setFeed({...feed, feeds: data})}
   const loadFeedList = (data) => {
     setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})
+  }
+  const handleChangeSearchValue = (e) => {
+    setSearchValue(e.target.value);
   }
   const updateFeedDetail = (data) => {
     setFeed({
@@ -77,9 +83,7 @@ export default function Profile(props) {
     }
   }
 
-  const handleCloseDialog = (stat) => {
-    setUpdateProfile(stat)
-  };
+  const handleCloseDialog = (stat) => {setUpdateProfile(stat)}
   const reloadUser = () => {
     customAxios.get(`/user/${searchParams}`)
       .then(res => setUser(res.data))
@@ -115,14 +119,31 @@ export default function Profile(props) {
   useEffect(() => {
     customAxios.get(`/user/${searchParams}`)
       .then(res => setUser(res.data))
-      .catch(error => {
-        console.log(error.response);
-      });
-    customAxios.get(`/feed?userid=${searchParams}`)
-      .then(res => setFeed(res.data))
-      .catch(error => console.log(error.response));
+      .catch(error => {console.log(error.response);});
     openPopper();
   }, [searchParams]);
+  useEffect(() => {
+    const late = setTimeout(function() {
+      if (searchValue === '') {
+        setFeedLoading(true);
+        customAxios.get(`/feed?userid=${searchParams}`)
+          .then(res => setFeed(res.data))
+          .catch(error => console.log(error.response))
+          .finally(() => {setFeedLoading(false);});
+      } else {
+        setFeedLoading(true);
+        setSearchingMessage('검색 중입니다..');
+        customAxios.get(`/user/${searchParams}/feed?keyword=${searchValue}`)
+          .then(res => {setFeed(res.data)})
+          .catch(err => {console.log(err.response)})
+          .finally(() => {
+            setSearchingMessage('');
+            setFeedLoading(false);
+          });
+      }
+    }, 1000);
+    if (late > 0) clearTimeout(late - 1);
+  }, [searchParams, searchValue]);
 
   return (
     <>
@@ -255,27 +276,44 @@ export default function Profile(props) {
         {/*피드, 팔로우, 팔로워*/}
         <Stack height={"87vh"} width={"100%"} maxWidth={"800px"}>
           {mode === 'FEED' &&
-            <Box px={2} pb={2}>
+            <Box px={2}>
               <OutlinedInput
                 size={"small"}
                 value={searchValue}
+                onChange={handleChangeSearchValue}
                 fullWidth
                 placeholder={"피드 검색"}
                 startAdornment={
                   <InputAdornment position={"start"}><SearchIcon/></InputAdornment>
                 }
               />
+              <Typography variant={"caption"} color={"gray"}>{searchingMessage}</Typography>
             </Box>
           }
           <Stack style={{overflowY: "auto"}} p={2}>
-            {mode === 'FEED' &&
-              <FeedLine
-                feed={feed}
-                handleScroll={handleScroll}
-                getFeedList={getFeedList}
-                loadFeedList={loadFeedList}
-                updateFeedDetail={updateFeedDetail}
-              />
+            {
+              mode === 'FEED' &&
+
+              (feedLoading ?
+                <Box display="flex" justifyContent="center" style={{padding: 100}}>
+                  <CircularProgress size={60}></CircularProgress>
+                </Box>
+                : (
+                  feed.feeds.length === 0 ?
+                  <Stack alignItems={"center"} spacing={1}>
+                    <SearchOffIcon sx={{fontSize: 70}}/>
+                    <Typography fontWeight={"bold"}>피드가 없습니다..</Typography>
+                  </Stack>
+                  :
+                  <FeedLine
+                    feed={feed}
+                    handleScroll={handleScroll}
+                    getFeedList={getFeedList}
+                    loadFeedList={loadFeedList}
+                    updateFeedDetail={updateFeedDetail}
+                  />
+                  )
+              )
             }
             {mode === 'FOLLOWERS' &&
               <FollowList
