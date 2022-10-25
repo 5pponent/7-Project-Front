@@ -40,7 +40,7 @@ export default function FeedDetail(props) {
   });
   const [commentContent, setCommentContent] = useState({content: ''});
   const [currentComment, setCurrentComment] = useState({id: 0, name: ''});
-  const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail;
+  const {commentCount, content, createTime, files, id, isLiked, likeCount, writer} = props.feedDetail;
   const commentRef = useRef();
 
   useEffect(() => {
@@ -51,6 +51,8 @@ export default function FeedDetail(props) {
     customAxios.get(`/feed/${id}/comment`)
       .then(res => setComment(res.data))
       .catch(error => console.error(error.response))
+
+    props.commentFocus && commentRef.current.focus();
   }, []);
 
   const getMentionName = (name, commentId) => {
@@ -130,13 +132,13 @@ export default function FeedDetail(props) {
     setCommentContent({content: ``});
     setModifyComment(false);
   };
-  const handleClickButton = () => {
+  const handleClickCheckButton = () => {
     if (reply) return handleClickReply(id, currentComment.id)
     else if (modifyComment) return handleClickModifyComment(id, currentComment.id, commentContent)
     else return handleCreateComment(id, commentContent)
   };
   const loadCommentList = (feedId, page) => {
-    setLoad(true)
+    setLoad(true);
     customAxios.get(`/feed/${feedId}/comment?page=${page + 1}`)
       .then(res => {
         setComment({
@@ -180,7 +182,7 @@ export default function FeedDetail(props) {
         </Typography>
         <ImageList cols={1}>
           {
-            props.feedDetail.files.map(f => {
+            files.map(f => {
               return (
                 <ImageListItem key={f.id}>
                   <img src={f.source} alt={f.originalName}/>
@@ -209,7 +211,7 @@ export default function FeedDetail(props) {
           <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
           <TextField inputRef={commentRef} multiline size='small' fullWidth value={commentContent.content}
                      placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
-          <Button type='submit' variant='contained' onClick={handleClickButton}>
+          <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
             {modifyComment ? '수정' : '입력'}
           </Button>
         </Stack>

@@ -78,14 +78,12 @@ export default function Profile(props) {
   };
   const handleCloseDialog = (stat) => {
     setUpdateProfile(stat)
-  }
+  };
   const reloadUser = () => {
     customAxios.get(`/user/${searchParams}`)
       .then(res => setUser(res.data))
-      .catch(error => {
-        console.log(error.response);
-      });
-  }
+      .catch(error => console.log(error.response));
+  };
   const openPopper = () => {
     setAnchorEl(document.getElementById("avatar"));
     setOpen(true);
