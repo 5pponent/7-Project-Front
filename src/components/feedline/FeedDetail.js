@@ -40,7 +40,7 @@ export default function FeedDetail(props) {
   });
   const [commentContent, setCommentContent] = useState({content: ''});
   const [currentComment, setCurrentComment] = useState({id: 0, name: ''});
-  const {commentCount, content, createTime, files, id, isFollowed, isLiked, likeCount, writer} = props.feedDetail;
+  const {commentCount, content, createTime, files, id, isLiked, likeCount, writer} = props.feedDetail;
   const commentRef = useRef();
 
   useEffect(() => {
@@ -51,6 +51,8 @@ export default function FeedDetail(props) {
     customAxios.get(`/feed/${id}/comment`)
       .then(res => setComment(res.data))
       .catch(error => console.error(error.response))
+
+    props.commentFocus && commentRef.current.focus();
   }, []);
 
   const getMentionName = (name, commentId) => {
@@ -180,7 +182,7 @@ export default function FeedDetail(props) {
         </Typography>
         <ImageList cols={1}>
           {
-            props.feedDetail.files.map(f => {
+            files.map(f => {
               return (
                 <ImageListItem key={f.id}>
                   <img src={f.source} alt={f.originalName}/>

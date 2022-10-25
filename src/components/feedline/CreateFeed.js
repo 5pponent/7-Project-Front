@@ -123,7 +123,7 @@ export default function CreateFeed(props) {
         </Grid>
 
         <Grid item xs={12} sx={{display: state.feedImage.length === 0 ? 'none' : 'block'}}>
-          <Stack spacing={3} sx={{p: 1, maxHeight: 600, overflow: 'auto'}}>
+          <Stack spacing={3} sx={{p: 1, maxHeight: 550, overflow: 'auto'}}>
             {state.feedImage.map((item, index) => (
               <Card sx={{height: 300, overflow: 'visible'}}>
                 <CardActions sx={{justifyContent: 'end', pb: 0}}>
@@ -150,7 +150,7 @@ export default function CreateFeed(props) {
         <Grid item xs={12} sx={{textAlign: 'end'}}>
           <Tooltip title={'사진 추가하기'} arrow>
             <label htmlFor="feedImage" ref={imageRef} onChange={handleAddImage} onClick={e => e.target.value = null}>
-              <input type="file" id={"feedImage"} multiple style={{display: 'none'}}/>
+              <input type="file" id={"feedImage"} multiple accept={'image/*'} style={{display: 'none'}}/>
               <AddPhotoAlternateRoundedIcon color="action" sx={{fontSize: 35, cursor: 'pointer'}}/>
             </label>
           </Tooltip>
