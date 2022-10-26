@@ -104,7 +104,7 @@ export default function Feed(props) {
     const hours = (today.getHours() * 60 + today.getMinutes()) - (parseInt(feedDate[1].split(':')[0] * 60) + parseInt(feedDate[1].split(':')[1]));
     if (feedDate[0] === date) {
       if (hours < 60) return `${hours}분 전`
-      if (hours <= 12 * 60) return `${Math.round(hours / 60)}시간 전`
+      if (hours <= 360) return `${Math.round(hours / 60)}시간 전`
       return feedDate[1];
     } else return feedDate[0]
   };

@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import customAxios from "../../AxiosProvider";
 import {useNavigate} from "react-router-dom";
 import {store} from "../../store/store";
-import {Button, Stack, Typography, styled, Box, Avatar} from "@mui/material";
+import {Button, Stack, Typography, styled, Box} from "@mui/material";
 import SmallProfile from "../SmallProfile";
 import ProfileMenu from "../ProfileMenu";
 
@@ -38,12 +38,12 @@ export default function Comment(props) {
   const handleShowReply = (feedId, commentId, page) => {
     customAxios.get(`/feed/${feedId}/comment/${commentId}?size=5&page=${page + 1}`)
       .then(res => setReplyComment({
-        ...replyComment,
-        comments: replyComment.comments.concat(res.data.comments),
-        currentPage: res.data.currentPage,
-        totalElements: res.data.totalElements,
-        totalPages: res.data.totalPages
-      }))
+          ...replyComment,
+          comments: replyComment.comments.concat(res.data.comments),
+          currentPage: res.data.currentPage,
+          totalElements: res.data.totalElements,
+          totalPages: res.data.totalPages
+        }))
       .catch(error => console.error(error))
   };
   const handleDeleteComment = (feedId, commentId) => {
@@ -62,25 +62,12 @@ export default function Comment(props) {
   const handleClickProfileView = () => {
     navigate(`/profile?user=${writer.id}`)
   };
-  const getDate = () => {
-    let today = new Date();
-    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    const feedDate = createTime.split(' ');
-    const hours = (today.getHours() * 60 + today.getMinutes()) - (parseInt(feedDate[1].split(':')[0] * 60) + parseInt(feedDate[1].split(':')[1]));
-    if (feedDate[0] === date) {
-      if (hours < 60) return `${hours}분 전`
-      if (hours <= 12 * 60) return `${Math.round(hours / 60)}시간 전`
-      return feedDate[1];
-    } else return createTime
-  };
 
   return (
     <>
       <Stack direction="row" spacing={2} sx={{pl: layerPadding(layer)}}>
         <Box>
-          <Stack sx={{cursor: 'pointer'}} onClick={handleClickProfile}>
-            <Avatar src={props.image ?? ''}/>
-          </Stack>
+          <SmallProfile image={props.image} name={writer.name} onClick={handleClickProfile}/>
 
           <ProfileMenu
             anchor={anchor}
@@ -93,16 +80,15 @@ export default function Comment(props) {
         </Box>
 
         <Stack>
-          <Stack sx={{bgcolor: '#e7ebf0', padding: '10px', borderRadius: "10px"}}>
-            <Typography sx={{fontSize: '14px', fontWeight: 'bold', wordBreak: 'keep-all'}}>
-              {writer.name}</Typography>
-            <Typography sx={{fontSize: '14px', whiteSpace: 'pre-wrap'}}>
-              {content}
-            </Typography>
+          <Typography sx={{
+            fontSize: '14px', whiteSpace: 'pre-wrap', bgcolor: '#e7ebf0', padding: '10px',
+            borderRadius: "10px"
+          }}>
+            {content}
             <Typography textAlign="right" color="textSecondary" fontSize="12px" style={{wordBreak: 'keep-all'}} mt={1}>
-              {getDate()}
+              {createTime}
             </Typography>
-          </Stack>
+          </Typography>
 
           <Stack direction='row' spacing={1}>
             <CommentBtn
@@ -130,17 +116,17 @@ export default function Comment(props) {
 
       {replyComment.comments.length !== 0 &&
         replyComment.comments.map(c => {
-          return (
-            <Comment
-              key={c.id}
-              comment={c}
-              feedId={props.feedId}
-              image={c.writer.image ? c.writer.image.source : ''}
-              currentPage={replyComment.currentPage}
-              getMentionName={props.getMentionName}
-              getCommentContent={props.getCommentContent}
-            />
-          )
+            return (
+              <Comment
+                key={c.id}
+                comment={c}
+                feedId={props.feedId}
+                image={c.writer.image ? c.writer.image.source : ''}
+                currentPage={replyComment.currentPage}
+                getMentionName={props.getMentionName}
+                getCommentContent={props.getCommentContent}
+              />
+            )
         })}
     </>
   );
