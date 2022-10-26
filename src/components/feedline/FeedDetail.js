@@ -154,22 +154,27 @@ export default function FeedDetail(props) {
   };
   const openModify = () => {
     setModifyOpen(true);
-  }
+  };
   const closeModify = () => {
     setModifyOpen(false);
-  }
+  };
+  const getDate = () => {
+    let today = new Date();
+    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    const feedDate = createTime.split(' ');
+    const hours = (today.getHours() * 60 + today.getMinutes()) - (parseInt(feedDate[1].split(':')[0] * 60) + parseInt(feedDate[1].split(':')[1]));
+    if (feedDate[0] === date) {
+      if (hours < 60) return `${hours}분 전`
+      if (hours <= 12 * 60) return `${Math.round(hours / 60)}시간 전`
+      return feedDate[1];
+    } else return createTime
+  };
 
   return (
     <>
       <Box sx={{display: modifyOpen ? 'none' : 'block'}}>
-        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-          <Stack spacing={1}>
-            <SmallProfile direction={"row"} spacing={2}
-                          image={writer.image && writer.image.source} name={writer.name}/>
-            <Typography color="textSecondary" fontSize="14px">
-              {createTime}
-            </Typography>
-          </Stack>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <SmallProfile direction={"row"} spacing={2} getDate={getDate} image={writer.image && writer.image.source} name={writer.name}/>
 
           <Stack>
             <IconButton onClick={props.closeContent}>
