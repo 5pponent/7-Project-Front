@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {store} from "../../store/store";
 import {
   AppBar,
@@ -62,40 +62,17 @@ const Title = styled(Typography)(() => ({
   wordBreak: 'keep-all'
 }));
 
-export default function Header(props) {
+export default function Header (props) {
   const [state, dispatch] = useContext(store);
 
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
-  const [feedContent, setFeedContent] = useState('');
-  const [feedImage, setFeedImage] = useState([]);
-  const [feedDescription, setFeedDescription] = useState([]);
 
   const getOpen = (stat) => {setOpen(stat)};
   const handleClickDrawer = () => {setOpen(!open)};
   const handleClickLogo = () => {navigate('/')};
   const handleClickMyProfile = () => {navigate(`/profile?user=${state.user.id}`)};
-  const handleChangeFeedContent = (e) => {setFeedContent(e.target.value)};
-  const handleAddFeedImage = (e) => {
-    for (let i = 0; i < e.target.files.length; i++) {
-      setFeedImage([...feedImage, {file: e.target.files[i], originalName: e.target.files[i].name}]);
-      setFeedDescription([...feedDescription, '']);
-    }
-  };
-  const handleChangeDescription = (e, num) => {
-    const newDescription = feedDescription.map((item, index) => index === num ? e.target.value : item);
-    setFeedDescription(newDescription);
-  };
-  const handleDeleteFeedImage = (num) => {
-    setFeedImage(feedImage.filter((item, index) => index !== num));
-    setFeedDescription(feedDescription.filter((item, index) => index !== num));
-  };
-  const resetFeed = () => {
-    setFeedContent('');
-    setFeedImage([]);
-    setFeedDescription([]);
-  };
 
   return (
     <AppBar style={{userSelect: 'none', position: 'sticky'}}>
@@ -132,16 +109,7 @@ export default function Header(props) {
           </Tooltip>
 
           <Drawer anchor='left' open={open} onClose={handleClickDrawer}>
-            <CreateFeed
-              getOpen={getOpen}
-              feedContent={feedContent}
-              feedImage={feedImage}
-              feedDescription={feedDescription}
-              handleChangeFeedContent={handleChangeFeedContent}
-              handleAddFeedImage={handleAddFeedImage}
-              handleChangeDescription={handleChangeDescription}
-              handleDeleteFeedImage={handleDeleteFeedImage}
-              resetFeed={resetFeed}/>
+            <CreateFeed getOpen={getOpen}/>
           </Drawer>
 
           <Tooltip title="알림" placement="bottom" arrow>

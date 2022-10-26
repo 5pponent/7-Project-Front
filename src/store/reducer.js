@@ -18,6 +18,40 @@ export default function reducer(state, action) {
       return {...state, snackbar: {open: true, message: action.payload}};
     case 'CloseSnackbar':
       return {...state, snackbar: {open: false, message: ''}};
+    case 'CreateFeed':
+      return {...state, feedContent: {...state.feedContent, content: action.payload}};
+    case 'AddImage':
+      return {
+        ...state,
+        feedContent: {
+          ...state.feedContent,
+          image: state.feedContent.image.concat({
+            file: action.payload.file,
+            originalName: action.payload.originalName,
+            path: action.payload.path,
+            description: ''
+          })
+        }
+      };
+    case 'DeleteImage':
+      return {
+        ...state,
+        feedContent: {
+          ...state.feedContent,
+          image: state.feedContent.image.filter((item, index) => index !== action.payload)
+        }
+      };
+    case 'AddDescription':
+      return {
+        ...state,
+        feedContent: {
+          ...state.feedContent,
+          image: state.feedContent.image.map((item, index) =>
+            index === action.payload.index ? {...item, description: action.payload.description} : item)
+        }
+      };
+    case 'ResetFeed':
+      return {...state, feedContent: {content: '', image: []}};
     default:
       return state;
   }

@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import customAxios from '../../AxiosProvider';
 import {store} from '../../store/store';
 import {
@@ -23,14 +23,14 @@ import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateR
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import SmallProfile from '../SmallProfile';
 
-export default function CreateFeed(props) {
+function CreateFeed(props) {
   const [state, dispatch] = useContext(store);
   const [scope, setScope] = useState('all');
   const [errorMessage, setErrormessage] = useState('');
 
   const validate = () => {
     let valid = true;
-    if (!props.feedContent && props.feedImage.length === 0) {
+    if (!state.feedContent.content && state.feedContent.image.length === 0) {
       setErrormessage('내용 또는 사진을 입력해 주세요!');
       dispatch({type: 'CloseLoading'});
       valid = false;
@@ -44,19 +44,40 @@ export default function CreateFeed(props) {
   const closeDrawer = () => {
     props.getOpen(false)
   };
+  const handleChangeFeedContent = (e) => {
+    dispatch({type: 'CreateFeed', payload: e.target.value})
+  };
+  const handleDeleteFeedImage = (index) => {
+    dispatch({type: 'DeleteImage', payload: index})
+  };
+  const handleChangeDescription = (e, index) => {
+    dispatch({type: 'AddDescription', payload: {index: index, description: e.target.value}})
+  };
+  const handleAddFeedImage = (e) => {
+    for (let i = 0; i < e.target.files.length; i++) {
+      dispatch({
+        type: 'AddImage',
+        payload: {
+          file: e.target.files[i],
+          originalName: e.target.files[i].name,
+          path: URL.createObjectURL(e.target.files[i])
+        }
+      })
+    }
+  };
   const handleCreateFeed = async () => {
     if (validate()) {
       dispatch({type: 'OpenLoading', payload: '피드를 작성중입니다..'});
       const feedForm = new FormData();
-      feedForm.append('content', props.feedContent);
-      props.feedDescription.map(item => feedForm.append('descriptions', item));
-      props.feedImage.map(item => feedForm.append('images', item.file));
+      feedForm.append('content', state.feedContent.content);
+      state.feedContent.image.map(item => feedForm.append('descriptions', item.description));
+      state.feedContent.image.map(item => feedForm.append('images', item.file));
       feedForm.append('showScope', scope);
       await customAxios.post(`/feed`, feedForm)
         .then(res => {
           closeDrawer();
-          props.resetFeed();
-          dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
+          dispatch({type: 'ResetFeed'});
+          dispatch({typSe: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
         })
         .catch(error => console.error(error.response))
         .finally(() => dispatch({type: 'CloseLoading'}));
@@ -102,26 +123,28 @@ export default function CreateFeed(props) {
 
         <Grid item xs={12}>
           <TextField fullWidth maxRows={10} multiline autoFocus error={!!errorMessage} helperText={errorMessage}
-                     placeholder={'내용을 입력해 주세요.'} value={props.feedContent} onChange={props.handleChangeFeedContent}/>
+                     placeholder={'내용을 입력해 주세요.'} value={state.feedContent.content} onChange={handleChangeFeedContent}/>
         </Grid>
 
-        <Grid item xs={12} sx={{display: props.feedImage.length === 0 ? 'none' : 'block'}}>
+        <Grid item xs={12} sx={{display: state.feedContent.image.length === 0 ? 'none' : 'block'}}>
           <Stack spacing={3} sx={{p: 1, maxHeight: 550, overflow: 'auto'}}>
-            {props.feedImage.map((item, index) => (
+            {state.feedContent.image.map((item, index) => (
               <Card key={index} sx={{height: 300, overflow: 'visible'}}>
                 <CardActions sx={{justifyContent: 'end', pb: 0}}>
-                  <DeleteRoundedIcon color={'action'} onClick={() => props.handleDeleteFeedImage(index)}
+                  <DeleteRoundedIcon color={'action'} onClick={() => handleDeleteFeedImage(index)}
                                      sx={{cursor: 'pointer', fontSize: 'xx-large', color: '#931e1e'}}/>
                 </CardActions>
 
                 <CardContent sx={{p: 0}}>
                   <Grid container spacing={1}>
                     <Grid item xs={6} sx={{display: 'flex', alignItems: 'center'}}>
-                      <img src={URL.createObjectURL(item.file)} alt={item.originalName} width='100%'/>
+                      <img src={item.path} alt={item.originalName} width='100%'/>
                     </Grid>
-                    <Grid item xs={6} style={{padding: 0}} sx={{p: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                      <TextField multiline rows={9} placeholder={'설명'} value={props.feedDescription[index]}
-                                 onChange={(e) => props.handleChangeDescription(e, index)} sx={{mt: 1, overflow: 'auto'}}/>
+                    <Grid item xs={6} style={{padding: 0}}
+                          sx={{p: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                      <TextField multiline rows={9} placeholder={'설명'}
+                                 value={state.feedContent.image[index].description}
+                                 onChange={(e) => handleChangeDescription(e, index)} sx={{mt: 1, overflow: 'auto'}}/>
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -132,7 +155,7 @@ export default function CreateFeed(props) {
 
         <Grid item xs={12} sx={{textAlign: 'end'}}>
           <Tooltip title={'사진 추가하기'} arrow>
-            <label htmlFor="feedImage" onChange={props.handleAddFeedImage} onClick={e => e.target.value = null}>
+            <label htmlFor="feedImage" onChange={handleAddFeedImage} onClick={e => e.target.value = null}>
               <input type="file" id="feedImage" multiple accept='image/*' style={{display: 'none'}}/>
               <AddPhotoAlternateRoundedIcon color="action" sx={{fontSize: 35, cursor: 'pointer'}}/>
             </label>
@@ -146,3 +169,5 @@ export default function CreateFeed(props) {
     </Stack>
   );
 }
+
+export default React.memo(CreateFeed)
