@@ -13,13 +13,14 @@ import {
   Badge,
   Dialog,
   DialogContent,
-  styled
+  styled, DialogActions, Button
 } from '@mui/material';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
 import ProfileMenu from "../ProfileMenu";
+import ModifyFeed from "./ModifyFeed";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -35,26 +36,46 @@ export default function Feed(props) {
   const [, dispatch] = useContext(store);
   const {commentCount, files, id, isLiked, likeCount, writer, content, createTime} = props.feed;
   const [feedDetail, setFeedDetail] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [modifyOpen, setModifyOpen] = useState(false);
   const [commentFocus, setCommentFocus] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
-  const getFeedDetail = (data) => {setFeedDetail(data)}
+  const getFeedDetail = (data) => {
+    setFeedDetail(data)
+  }
   const openContent = async () => {
     await customAxios.get(`/feed/${id}`)
       .then(res => {
         setFeedDetail(res.data);
-        setOpen(true);
+        setDetailOpen(true);
       })
       .catch(error => console.error(error))
   };
   const closeContent = () => {
-    setOpen(false);
+    setDetailOpen(false);
     setCommentFocus(false);
   };
-  const handleClickProfile = (e) => {setAnchor(e.currentTarget)};
-  const handleCloseProfile = () => {setAnchor(null)};
-  const handleClickProfileView = () => {navigate(`/profile?user=${writer.id}`)};
+  const openModify = async () => {
+    await customAxios.get(`/feed/${id}`)
+      .then(res => {
+        setFeedDetail(res.data);
+        setModifyOpen(true);
+      })
+      .catch(error => console.error(error))
+  };
+  const closeModify = () => {
+    setModifyOpen(false);
+  };
+  const handleClickProfile = (e) => {
+    setAnchor(e.currentTarget)
+  };
+  const handleCloseProfile = () => {
+    setAnchor(null)
+  };
+  const handleClickProfileView = () => {
+    navigate(`/profile?user=${writer.id}`)
+  };
   const handleClickLike = (feedId, name) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
@@ -105,6 +126,7 @@ export default function Feed(props) {
                 writer={writer.id}
                 feedList={props.feedList}
                 getFeedList={props.getFeedList}
+                openModify={openModify}
               />
             </Box>
           </Stack>
@@ -112,12 +134,20 @@ export default function Feed(props) {
           <Stack direction='row' spacing={1} sx={{p: 3, pt: 0}} onClick={openContent}>
             {files.slice(0, 3).map(item => (
               <Box key={item.id} sx={{width: '25%', maxHeight: '180px', borderRadius: 3, overflow: 'hidden'}}>
-                <img src={item.source} alt={item.originalName} style={{objectFit: 'contain', borderRadius: '10px'}} width='100%' height='100%'/>
+                <img src={item.source} alt={item.originalName} style={{objectFit: 'contain', borderRadius: '10px'}}
+                     width='100%' height='100%'/>
               </Box>
             ))}
 
             {files.length > 3 &&
-              <Box sx={{width: '25%', bgcolor: 'rgba(0,0,0,0.48)', borderRadius: 3, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Box sx={{
+                width: '25%',
+                bgcolor: 'rgba(0,0,0,0.48)',
+                borderRadius: 3,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
                 <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#ffffff'}}>
                   + {files.length - 3}
                 </Typography>
@@ -167,7 +197,7 @@ export default function Feed(props) {
       </Box>
 
       {/* 컨텐츠 상세보기 다이얼로그 */}
-      <Dialog open={open} onClose={closeContent} fullWidth maxWidth='md'>
+      <Dialog open={detailOpen} onClose={closeContent} fullWidth maxWidth='md'>
         <DialogContent>
           <FeedDetail
             feedDetail={feedDetail}
@@ -178,6 +208,21 @@ export default function Feed(props) {
             closeContent={closeContent}
           />
         </DialogContent>
+      </Dialog>
+
+      {/* 컨텐츠 수정하기 다이얼로그 */}
+      <Dialog open={modifyOpen} onClose={closeModify} fullWidth maxWidth='md'>
+        <DialogContent>
+          <ModifyFeed
+            feedDetail={feedDetail}
+            closeContent={closeModify}
+          />
+        </DialogContent>
+
+        <DialogActions sx={{justifyContent: 'center'}}>
+          <Button variant='contained'>수정</Button>
+          <Button variant='contained' onClick={closeModify}>취소</Button>
+        </DialogActions>
       </Dialog>
     </>
   );

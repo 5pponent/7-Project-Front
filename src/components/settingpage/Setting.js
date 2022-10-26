@@ -1,5 +1,6 @@
 import {useContext, useState} from "react";
-import axios from 'axios';
+import {useNavigate} from "react-router-dom";
+import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
 import {
   Accordion,
@@ -18,7 +19,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MuiSwitch from "../MUISwitch";
-import {useNavigate} from "react-router-dom";
+
 
 const Label = styled(Typography)(() => ({
   fontSize: '14px',
@@ -63,10 +64,7 @@ export default function Setting(props) {
   };
   const signOut = async () => {
     signOutValid() &&
-    await axios.delete(`/user`, {
-      headers: {authorization: localStorage.getItem('token')},
-      data: password
-    })
+    await customAxios.delete(`/user`, {data: password})
       .then(res => {
         localStorage.removeItem('token');
         navigate('/login');
