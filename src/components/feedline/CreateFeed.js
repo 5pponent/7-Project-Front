@@ -48,7 +48,8 @@ function CreateFeed(props) {
     dispatch({type: 'CreateFeed', payload: e.target.value})
   };
   const handleDeleteFeedImage = (index) => {
-    dispatch({type: 'DeleteImage', payload: index})
+    URL.revokeObjectURL(state.feedContent.image[index].path);
+    dispatch({type: 'DeleteImage', payload: index});
   };
   const handleChangeDescription = (e, index) => {
     dispatch({type: 'AddDescription', payload: {index: index, description: e.target.value}})

@@ -12,8 +12,8 @@ export default function MoreMenu(props) {
 	const handleMenuClick = (e) => { setAnchorEl(e.currentTarget) };
 	const handleMenuClose = () => { setAnchorEl(null) };
 	const handleClickModify = () => {
-		console.log('수정');
 		handleMenuClose();
+		props.openModify();
 	};
 	const handleClickDelete = () => {
 		dispatch({type: 'OpenLoading', payload: '피드를 삭제중입니다..'});

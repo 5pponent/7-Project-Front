@@ -20,11 +20,13 @@ import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import SmallProfile from '../SmallProfile';
 import MoreMenu from './MoreMenu';
 import Comment from './Comment';
+import ModifyFeed from "./ModifyFeed";
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
   const [reply, setReply] = useState(false);
   const [load, setLoad] = useState(false);
+  const [modifyOpen, setModifyOpen] = useState(false);
   const [modifyComment, setModifyComment] = useState(false);
   const [myComment, setMyComment] = useState({
     comments: [],
@@ -150,88 +152,126 @@ export default function FeedDetail(props) {
       .catch(error => console.error(error.response))
       .finally(() => setLoad(false))
   };
+  const openModify = () => {
+    setModifyOpen(true);
+  }
+  const closeModify = () => {
+    setModifyOpen(false);
+  }
 
   return (
     <>
-      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
-        <Stack spacing={1}>
-          <SmallProfile direction={"row"} spacing={2}
-                        image={writer.image && writer.image.source} name={writer.name}/>
-          <Typography color="textSecondary" fontSize="14px">
-            {createTime}
+      <Box sx={{display: modifyOpen ? 'none' : 'block'}}>
+        <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+          <Stack spacing={1}>
+            <SmallProfile direction={"row"} spacing={2}
+                          image={writer.image && writer.image.source} name={writer.name}/>
+            <Typography color="textSecondary" fontSize="14px">
+              {createTime}
+            </Typography>
+          </Stack>
+
+          <Stack>
+            <IconButton onClick={props.closeContent}>
+              <CloseIcon color='text.secondary'/>
+            </IconButton>
+            <MoreMenu
+              feedId={id}
+              writer={writer.id}
+              closeContent={props.closeContent}
+              openModify={openModify}
+              feedList={props.feedList}
+              getFeedList={props.getFeedList}
+            />
+          </Stack>
+        </Stack>
+
+        <Box mt={1}>
+          <Typography sx={{whiteSpace: 'pre-wrap'}}>
+            {content}
           </Typography>
-        </Stack>
+          <ImageList cols={1}>
+            {
+              files.map(f => {
+                return (
+                  <ImageListItem key={f.id}>
+                    <img src={f.source} alt={f.originalName}/>
+                    <Typography>{f.description}</Typography>
+                  </ImageListItem>
+                );
+              })
+            }
+          </ImageList>
+        </Box>
 
-        <Stack>
-          <IconButton onClick={props.closeContent}>
-            <CloseIcon color='text.secondary'/>
-          </IconButton>
-          <MoreMenu
-            feedId={id}
-            writer={writer.id}
-            closeContent={props.closeContent}
-            feedList={props.feedList}
-            getFeedList={props.getFeedList}
-          />
-        </Stack>
-      </Stack>
+        <Box>
+          <IconButton onClick={() => handleClickLike(id, writer.name)}>
+            <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
+          </IconButton>{likeCount}
+          <IconButton onClick={() => commentRef.current.focus()} sx={{marginLeft: "20px"}}>
+            <AddCommentRoundedIcon sx={{fontSize: 30}}></AddCommentRoundedIcon>
+          </IconButton>{commentCount}
+        </Box>
 
-      <Box mt={1}>
-        <Typography sx={{whiteSpace: 'pre-wrap'}}>
-          {content}
-        </Typography>
-        <ImageList cols={1}>
-          {
-            files.map(f => {
-              return (
-                <ImageListItem key={f.id}>
-                  <img src={f.source} alt={f.originalName}/>
-                  <Typography>{f.description}</Typography>
-                </ImageListItem>
-              );
-            })
-          }
-        </ImageList>
-      </Box>
+        <Divider/>
 
-      <Box>
-        <IconButton onClick={() => handleClickLike(id, writer.name)}>
-          <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
-        </IconButton>{likeCount}
-        <IconButton onClick={() => commentRef.current.focus()} sx={{marginLeft: "20px"}}>
-          <AddCommentRoundedIcon sx={{fontSize: 30}}></AddCommentRoundedIcon>
-        </IconButton>{commentCount}
-      </Box>
+        {/* 댓글 작성 */}
+        <Stack p={1}>
+          <Stack direction={"row"} alignItems={"center"} justifyContent={"flex-start"} spacing={2}>
+            <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
+            <TextField inputRef={commentRef} multiline size='small' fullWidth value={commentContent.content}
+                       placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
+            <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
+              {modifyComment ? '수정' : '입력'}
+            </Button>
+          </Stack>
 
-      <Divider/>
-
-      {/* 댓글 작성 */}
-      <Stack p={1}>
-        <Stack direction={"row"} alignItems={"center"} justifyContent={"flex-start"} spacing={2}>
-          <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
-          <TextField inputRef={commentRef} multiline size='small' fullWidth value={commentContent.content}
-                     placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
-          <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
-            {modifyComment ? '수정' : '입력'}
+          <Button onClick={handleClickCancelReplay} sx={{width: 'max-content', display: reply ? 'block' : 'none'}}>
+            답글취소
+          </Button>
+          <Button onClick={handleClickCancelModify}
+                  sx={{width: 'max-content', display: modifyComment ? 'block' : 'none'}}>
+            수정취소
           </Button>
         </Stack>
 
-        <Button onClick={handleClickCancelReplay} sx={{width: 'max-content', display: reply ? 'block' : 'none'}}>
-          답글취소
-        </Button>
-        <Button onClick={handleClickCancelModify}
-                sx={{width: 'max-content', display: modifyComment ? 'block' : 'none'}}>
-          수정취소
-        </Button>
-      </Stack>
+        <Stack spacing={1}>
+          <Stack spacing={1} sx={{display: myComment.comments.length !== 0 ? 'block' : 'none'}}>
+            <Divider>내 댓글</Divider>
 
-      <Stack spacing={1}>
-        <Stack spacing={1} sx={{display: myComment.comments.length !== 0 ? 'block' : 'none'}}>
-          <Divider>내 댓글</Divider>
+            {/*내 댓글 목록*/}
+            <Stack p={1} spacing={3}>
+              {myComment.comments.map((c) => {
+                return (
+                  <Comment
+                    key={c.id}
+                    comment={c}
+                    feedId={id}
+                    image={c.writer.image ? c.writer.image.source : ''}
+                    getMentionName={getMentionName}
+                    getCommentContent={getCommentContent}
+                  />
+                );
+              })}
+              <Box sx={{display: 'flex', justifyContent: 'center'}} style={{margin: 0}}>
+                <Pagination
+                  onChange={(e, value) => handleChangeMyCommentPage(value)}
+                  count={myComment.totalPages}
+                  page={myComment.currentPage}
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  showFirstButton
+                  showLastButton/>
+              </Box>
+            </Stack>
+          </Stack>
 
-          {/*내 댓글 목록*/}
+          <Divider>전체 댓글</Divider>
+
+          {/*댓글 목록*/}
           <Stack p={1} spacing={3}>
-            {myComment.comments.map((c) => {
+            {comment.comments.length !== 0 ? comment.comments.map((c) => {
               return (
                 <Comment
                   key={c.id}
@@ -242,49 +282,30 @@ export default function FeedDetail(props) {
                   getCommentContent={getCommentContent}
                 />
               );
-            })}
-            <Box sx={{display: 'flex', justifyContent: 'center'}} style={{margin: 0}}>
-              <Pagination
-                onChange={(e, value) => handleChangeMyCommentPage(value)}
-                count={myComment.totalPages}
-                page={myComment.currentPage}
-                size="small"
-                variant="outlined"
-                color="primary"
-                showFirstButton
-                showLastButton/>
-            </Box>
+            }) : "댓글이 없습니다."
+            }
+
+            {comment.currentPage < comment.totalPages &&
+              <>
+                <Box display="flex" justifyContent="center" style={{padding: 20}}
+                     sx={{display: load ? 'flex' : 'none'}}>
+                  <CircularProgress size={30}/>
+                </Box>
+                <Button
+                  onClick={() => loadCommentList(id, comment.currentPage)}>더보기({comment.totalElements - comment.comments.length})</Button>
+              </>
+            }
           </Stack>
         </Stack>
+      </Box>
 
-        <Divider>전체 댓글</Divider>
-
-        {/*댓글 목록*/}
-        <Stack p={1} spacing={3}>
-          {comment.comments.length !== 0 ? comment.comments.map((c) => {
-            return (
-              <Comment
-                key={c.id}
-                comment={c}
-                feedId={id}
-                image={c.writer.image ? c.writer.image.source : ''}
-                getMentionName={getMentionName}
-                getCommentContent={getCommentContent}
-              />
-            );
-          }) : "댓글이 없습니다."
-          }
-
-          {comment.currentPage < comment.totalPages &&
-            <>
-              <Box display="flex" justifyContent="center" style={{padding: 20}} sx={{display: load ? 'flex' : 'none'}}>
-                <CircularProgress size={30}/>
-              </Box>
-              <Button onClick={() => loadCommentList(id, comment.currentPage)}>더보기({comment.totalElements - comment.comments.length})</Button>
-            </>
-          }
+      <Box style={{display: modifyOpen ? 'block' : 'none'}}>
+        <ModifyFeed feedDetail={props.feedDetail}/>
+        <Stack spacing={1} direction='row' sx={{justifyContent: 'center'}}>
+          <Button variant='contained'>수정</Button>
+          <Button variant='contained' onClick={closeModify}>취소</Button>
         </Stack>
-      </Stack>
+      </Box>
     </>
   );
 }
