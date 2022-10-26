@@ -137,8 +137,8 @@ function CreateFeed(props) {
 
                 <CardContent sx={{p: 0}}>
                   <Grid container spacing={1}>
-                    <Grid item xs={6} sx={{display: 'flex', alignItems: 'center'}}>
-                      <img src={item.path} alt={item.originalName} width='100%'/>
+                    <Grid item xs={6} sx={{display: 'flex', alignItems: 'center', maxHeight: '240px'}}>
+                      <img src={item.path} alt={item.originalName} width='100%' height={'100%'} style={{objectFit: 'contain'}}/>
                     </Grid>
                     <Grid item xs={6} style={{padding: 0}}
                           sx={{p: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
