@@ -3,7 +3,7 @@ import {Menu, MenuItem} from "@mui/material";
 import customAxios from "../AxiosProvider";
 import {store} from "../store/store";
 
-export default function ProfileMenu(props) {
+function ProfileMenu(props) {
   const [, dispatch] = useContext(store);
 
   const [isFollowed, setIsFollowed] = useState(props.isFollowed);
@@ -51,3 +51,5 @@ export default function ProfileMenu(props) {
     </Menu>
   )
 };
+
+export default React.memo(ProfileMenu)

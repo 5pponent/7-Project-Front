@@ -1,9 +1,9 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Stack} from '@mui/material';
 import FeedLine from './FeedLine';
 import customAxios from "../../AxiosProvider";
 
-export default function FeedLineSelect(props) {
+function FeedLineSelect(props) {
   const [feed, setFeed] = useState({
     currentPage: 0,
     feeds: [],
@@ -50,3 +50,5 @@ export default function FeedLineSelect(props) {
     </Stack>
   );
 }
+
+export default React.memo(FeedLineSelect)

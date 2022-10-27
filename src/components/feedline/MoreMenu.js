@@ -1,5 +1,4 @@
-import {useContext, useState} from "react";
-import customAxios from "../../AxiosProvider";
+import React, {useContext, useState} from "react";
 import {store} from "../../store/store";
 import {Divider, IconButton, Menu, MenuItem, Typography} from "@mui/material";
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';

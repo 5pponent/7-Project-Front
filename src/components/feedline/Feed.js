@@ -139,12 +139,10 @@ export default function Feed(props) {
                 key={item.id}
                 sx={{
                   width: '25%',
-                  maxHeight: '180px',
+                  height: '180px',
                   borderRadius: 3,
-                  overflow: 'hidden',
-                  bgcolor: 'lightgrey'
                 }}>
-                <img src={item.source} alt={item.originalName} style={{objectFit: 'contain', borderRadius: '10px'}}
+                <img src={item.source} alt={item.originalName} style={{objectFit: 'cover', borderRadius: '10px'}}
                      width='100%' height='100%'/>
               </Box>
             ))}

@@ -44,6 +44,7 @@ export default function FeedDetail(props) {
   });
   const [commentContent, setCommentContent] = useState({content: ''});
   const [currentComment, setCurrentComment] = useState({id: 0, name: ''});
+  const [commentErrorMessage, setCommentErrorMessage] = useState('');
   const {commentCount, content, createTime, files, id, isLiked, likeCount, writer} = props.feedDetail;
   const commentRef = useRef();
 
@@ -58,6 +59,15 @@ export default function FeedDetail(props) {
 
     props.commentFocus && commentRef.current.focus();
   }, []);
+
+  const validate = () => {
+    let valid = true;
+    if (!commentContent.content) {
+      setCommentErrorMessage('댓글을 입력해 주세요');
+      valid = false;
+    } else setCommentErrorMessage('')
+    return valid
+  };
 
   const getMentionName = (name, commentId) => {
     setCommentContent({content: `@${name} `});
@@ -95,14 +105,16 @@ export default function FeedDetail(props) {
     }
   };
   const handleCreateComment = (feedId, content) => {
-    dispatch({type: 'OpenLoading', payload: '댓글을 작성중입니다..'});
-    customAxios.post(`/feed/${feedId}/comment`, content)
-      .then(() => {
-        setCommentContent({content: ''});
-        dispatch({type: 'OpenSnackbar', payload: `댓글이 입력되었습니다.`});
-      })
-      .catch(err => console.log(err.response))
-      .finally(() => dispatch({type: 'CloseLoading'}))
+    if (validate()) {
+      dispatch({type: 'OpenLoading', payload: '댓글을 작성중입니다..'});
+      customAxios.post(`/feed/${feedId}/comment`, content)
+        .then(() => {
+          setCommentContent({content: ''});
+          dispatch({type: 'OpenSnackbar', payload: `댓글이 입력되었습니다.`});
+        })
+        .catch(err => console.log(err.response))
+        .finally(() => dispatch({type: 'CloseLoading'}))
+    }
   };
   const handleClickReply = (feedId, commentId) => {
     dispatch({type: 'OpenLoading', payload: '답글을 전송중입니다..'});
@@ -231,8 +243,8 @@ export default function FeedDetail(props) {
         <Stack p={1}>
           <Stack direction={"row"} alignItems={"center"} justifyContent={"flex-start"} spacing={2}>
             <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
-            <TextField inputRef={commentRef} multiline size='small' fullWidth value={commentContent.content}
-                       placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
+            <TextField inputRef={commentRef} multiline size='small' fullWidth error={!!commentErrorMessage} helperText={commentErrorMessage}
+                       value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
             <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
               {modifyComment ? '수정' : '입력'}
             </Button>
@@ -257,6 +269,7 @@ export default function FeedDetail(props) {
                 return (
                   <Comment
                     key={c.id}
+                    commentList={myComment.comments}
                     comment={c}
                     feedId={id}
                     image={c.writer.image ? c.writer.image.source : ''}
@@ -287,6 +300,7 @@ export default function FeedDetail(props) {
               return (
                 <Comment
                   key={c.id}
+                  commentList={comment.comments}
                   comment={c}
                   feedId={id}
                   image={c.writer.image ? c.writer.image.source : ''}

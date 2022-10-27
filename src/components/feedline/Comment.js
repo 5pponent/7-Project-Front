@@ -45,22 +45,23 @@ export default function Comment(props) {
       }))
       .catch(error => console.error(error))
   };
+  const deleteCommentList = (id) => {
+    props.commentList.filter(item => item.id !== id);
+
+  };
   const handleDeleteComment = (feedId, commentId) => {
     dispatch({type: 'OpenLoading', payload: '댓글을 삭제중입니다..'});
     customAxios.delete(`/feed/${feedId}/comment/${commentId}`)
-      .then(res => dispatch({type: 'OpenSnackbar', payload: `댓글이 삭제되었습니다.`}))
+      .then(() => {
+        deleteCommentList();
+        dispatch({type: 'OpenSnackbar', payload: `댓글이 삭제되었습니다.`});
+      })
       .catch(error => console.error(error))
       .finally(() => dispatch({type: 'CloseLoading'}))
   };
-  const handleClickProfile = (e) => {
-    setAnchor(e.currentTarget)
-  };
-  const handleCloseProfile = () => {
-    setAnchor(null)
-  };
-  const handleClickProfileView = () => {
-    navigate(`/profile?user=${writer.id}`)
-  };
+  const handleClickProfile = (e) => setAnchor(e.currentTarget);
+  const handleCloseProfile = () => setAnchor(null);
+  const handleClickProfileView = () => navigate(`/profile?user=${writer.id}`);
   const getDate = () => {
     let today = new Date();
     const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();

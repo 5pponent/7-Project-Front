@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import React, {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
@@ -102,13 +102,6 @@ export default function Setting(props) {
               </Grid>
 
               <Grid item xs={3}>
-                <Label>PW</Label>
-              </Grid>
-              <Grid item xs={9}>
-                <Button size='small' onClick={handleClickChangePW}>변경</Button>
-              </Grid>
-
-              <Grid item xs={3}>
                 <Label>재직 분야</Label>
               </Grid>
               <Grid item xs={9}>
@@ -127,6 +120,13 @@ export default function Setting(props) {
               </Grid>
               <Grid item xs={9}>
 
+              </Grid>
+
+              <Grid item xs={3}>
+                <Label>PW</Label>
+              </Grid>
+              <Grid item xs={9}>
+                <Button size='small' onClick={handleClickChangePW}>변경</Button>
               </Grid>
 
               <Grid item xs={3}>

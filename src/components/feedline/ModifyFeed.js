@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
+import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
 import {
   Card,
@@ -15,9 +16,8 @@ import {
 import SmallProfile from "../SmallProfile";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateRounded";
-import customAxios from "../../AxiosProvider";
 
-export default function ModifyFeed(props) {
+export default React.memo(function ModifyFeed(props) {
   const [, dispatch] = useContext(store);
   const {content, files, id, writer} = props.feedDetail;
 
@@ -45,12 +45,8 @@ export default function ModifyFeed(props) {
     return valid;
   };
 
-  const handleChangeScope = (e) => {
-    setScope(e.target.value)
-  };
-  const handleChangeFeedContent = (e) => {
-    setFeed({...feed, content: e.target.value})
-  };
+  const handleChangeScope = (e) => setScope(e.target.value);
+  const handleChangeFeedContent = (e) => setFeed({...feed, content: e.target.value});
   const handleDeleteFeedImage = (num) => {
     URL.revokeObjectURL(feed.image[num].path);
     const newFeedImage = feed.image.filter((item, index) => index !== num);
@@ -176,4 +172,4 @@ export default function ModifyFeed(props) {
       </Grid>
     </Grid>
   )
-};
+})
