@@ -178,10 +178,11 @@ export default function Profile(props) {
         direction={"row"}
         alignItems={"center"}
         justifyContent={"center"}
+        spacing={1}
       >
 
         {/*프로필 카드*/}
-        <Stack sx={{maxWidth: 300}}>
+        <Stack sx={{width: 300}}>
           <Card variant={"outlined"}>
             <Stack alignItems={"center"}>
               <IconButton
@@ -204,7 +205,7 @@ export default function Profile(props) {
               }
             </Stack>
 
-            <Stack sx={{userSelect: 'none'}} p={2} spacing={1.5}>
+            <Stack sx={{userSelect: 'none'}} p={2} spacing={2}>
               {user.id === 0 ?
                 <>
                   <Skeleton animation="wave"/>
@@ -225,7 +226,7 @@ export default function Profile(props) {
                       <Chip size={"small"} style={{backgroundColor: '#e3f2fd'}} label={user.occupation && user.occupation}/>
                     }
                   </Stack>
-                  <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                  <Stack direction={"row"} spacing={1}>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 57}}>
                       <Typography variant='subtitle2'>관심분야</Typography>
                     </Box>
@@ -236,10 +237,10 @@ export default function Profile(props) {
                     </Box>
                   </Stack>
                   <Stack direction={"row"} justifyContent={"space-around"}>
-                    <Button size={"small"} onClick={() => {setMode('FOLLOWERS')}}>
+                    <Button variant={"outlined"} size={"small"} onClick={() => {setMode('FOLLOWERS')}}>
                       followers<br/>{user.followerCount}
                     </Button>
-                    <Button size={"small"} onClick={() => {setMode('FOLLOWING')}}>
+                    <Button variant={"outlined"} size={"small"} onClick={() => {setMode('FOLLOWING')}}>
                       following<br/>{user.followingCount}
                     </Button>
                   </Stack>
@@ -278,9 +279,10 @@ export default function Profile(props) {
         </Stack>
 
         {/*피드, 팔로우, 팔로워*/}
-        <Stack height={"87vh"} width={"100%"} maxWidth={"800px"}>
-          {mode === 'FEED' &&
-            <Box px={2} pb={2}>
+        <Stack height={"85vh"} width={"100%"} maxWidth={"800px"}>
+          <Box px={2} pb={2}>
+          {mode === 'FEED' ?
+            <>
               <OutlinedInput
                 size={"small"}
                 value={searchValue}
@@ -292,8 +294,16 @@ export default function Profile(props) {
                 }
               />
               <Typography variant={"caption"} color={"gray"}>{searchingMessage}</Typography>
-            </Box>
+            </>
+            :
+            <Stack>
+              <Typography variant={"h6"}>
+                {props.mode === 'FOLLOWERS' ? "팔로워 목록" : "팔로우 중인 유저 목록"}
+              </Typography>
+            </Stack>
           }
+          </Box>
+
           <Stack style={{overflowY: "auto"}} p={2}>
             {mode === 'FEED' &&
               (feedLoading ?

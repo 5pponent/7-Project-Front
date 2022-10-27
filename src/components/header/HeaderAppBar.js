@@ -106,29 +106,8 @@ export default React.memo(function Header (props) {
     <AppBar style={{userSelect: 'none', position: 'sticky'}}>
       <Toolbar
         sx={{bgcolor: '#2c92ff', color: '#FCFCFC'}}
-        style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}
+        style={{justifyContent: "space-evenly", alignItems: "center"}}
       >
-
-        {/* 검색 */}
-        <Box width="200px" id={"search"}>
-          <OutlinedInput
-            size={"small"}
-            inputProps={{autoComplete: 'off'}}
-            style={{
-              backgroundColor: "rgba(255,255,255,0.15)", color: "white", borderRadius: 30
-            }}
-            placeholder={"유저 검색"}
-            value={searchValue}
-            onChange={handleChangeSearchValue}
-            startAdornment={<SearchIcon sx={{pr: 1}}/>}
-            endAdornment={
-              searchValue !== '' ?
-                <IconButton onClick={handleClickClear} sx={{color: "white"}}>
-                  <CloseIcon/>
-                </IconButton> : ""
-            }
-          />
-        </Box>
 
         {/* 타이틀 */}
         <Box width={"200px"}>
@@ -138,30 +117,53 @@ export default React.memo(function Header (props) {
           </ButtonBase>
         </Box>
 
-        {/* 사용자 프로필, 더보기 메뉴 */}
-        <Stack width='200px' direction={"row"} spacing={1}
-               justifyContent={"flex-end"} alignItems={"center"}>
+        <Stack direction={"row"} alignItems={"center"}>
+          {/* 검색 */}
+          <Box width="200px" id={"search"}>
+            <OutlinedInput
+              size={"small"}
+              inputProps={{autoComplete: 'off'}}
+              style={{
+                backgroundColor: "rgba(255,255,255,0.15)", color: "white", borderRadius: 30
+              }}
+              placeholder={"유저 검색"}
+              value={searchValue}
+              onChange={handleChangeSearchValue}
+              startAdornment={<SearchIcon sx={{pr: 1}}/>}
+              endAdornment={
+                searchValue !== '' ?
+                  <IconButton onClick={handleClickClear} sx={{color: "white"}}>
+                    <CloseIcon/>
+                  </IconButton> : ""
+              }
+            />
+          </Box>
 
-          <Tooltip title="피드 작성" placement="bottom" arrow>
-            <IconButton onClick={handleClickDrawer}>
-              <BorderColorIcon sx={{fontSize: 26, color: "#FCFCFC"}}/>
-            </IconButton>
-          </Tooltip>
+          {/* 사용자 프로필, 더보기 메뉴 */}
+          <Stack width='200px' direction={"row"} spacing={1}
+                 justifyContent={"flex-end"} alignItems={"center"}>
 
-          <Tooltip title="알림" placement="bottom" arrow>
-            <IconButton>
-              <NotificationsIcon sx={{fontSize: 26, color: "#FCFCFC"}} />
-            </IconButton>
-          </Tooltip>
+            <Tooltip title="피드 작성" placement="bottom" arrow>
+              <IconButton onClick={handleClickDrawer}>
+                <BorderColorIcon sx={{fontSize: 26, color: "#FCFCFC"}}/>
+              </IconButton>
+            </Tooltip>
 
-          <Tooltip title="내 프로필" placement="bottom" arrow>
-            <ButtonBase onClick={handleClickMyProfile}>
-              <Avatar src={state.user.image ? state.user.image.source : ''}/>
-            </ButtonBase>
-          </Tooltip>
+            <Tooltip title="알림" placement="bottom" arrow>
+              <IconButton>
+                <NotificationsIcon sx={{fontSize: 26, color: "#FCFCFC"}} />
+              </IconButton>
+            </Tooltip>
 
-          <HeaderMenu/>
+            <Tooltip title="내 프로필" placement="bottom" arrow>
+              <ButtonBase onClick={handleClickMyProfile}>
+                <Avatar src={state.user.image ? state.user.image.source : ''}/>
+              </ButtonBase>
+            </Tooltip>
 
+            <HeaderMenu/>
+
+          </Stack>
         </Stack>
 
         <Drawer anchor='left' open={open} onClose={handleClickDrawer}>

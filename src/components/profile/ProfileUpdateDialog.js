@@ -71,7 +71,9 @@ export default function ProfileUpdateDialog(props) {
     customAxios.delete(`/user/profile-image`)
       .then(res => {
         dispatch({type: 'OpenSnackbar', payload: "기본 사진으로 변경했습니다."});
+        dispatch({type: 'User', payload: res.data});
         setUser(res.data);
+        setImage(null);
         props.reloadUser();
       })
       .catch(err => {console.error(err.response)})

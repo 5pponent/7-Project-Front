@@ -72,11 +72,6 @@ export default function FollowList(props) {
 
   return (
     <Box>
-      <Stack p={2}>
-        <Typography variant={"h6"}>
-          {props.mode === 'FOLLOWERS' ? "팔로워 목록" : "팔로우 중인 유저 목록"}
-        </Typography>
-      </Stack>
 
       <ProfileMenu
         open={Boolean(anchor)}
@@ -90,7 +85,6 @@ export default function FollowList(props) {
           userList.map((it) => {
             return(
               <Box key={it.id}>
-                <Divider/>
                 <Stack
                   direction={"row"}
                   alignItems={"center"}
@@ -110,6 +104,7 @@ export default function FollowList(props) {
                     </Button>
                   }
                 </Stack>
+                <Divider/>
               </Box>
             );
           })
