@@ -8,7 +8,7 @@ import {
   Grid,
   InputLabel,
   MenuItem,
-  Select,
+  Select, Stack,
   TextField,
   Tooltip
 } from "@mui/material";
@@ -89,25 +89,25 @@ export default function ModifyFeed(props) {
 
   return (
     <Grid container spacing={2} p={2}>
-      <Grid item xs={3}>
-        <SmallProfile
-          direction="row"
-          spacing={2}
-          image={writer.image && writer.image.source}
-          name={writer.name}/>
-      </Grid>
 
-      <Grid item xs={5.7}/>
+      <Grid item xs={12}>
+        <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
+          <SmallProfile
+            direction="row"
+            spacing={1}
+            image={writer.image && writer.image.source}
+            name={writer.name}
+          />
 
-      <Grid item xs={3.3}>
-        <FormControl fullWidth size="small">
-          <InputLabel id="select-label">공개 범위</InputLabel>
-          <Select labelId="select-label" value={scope} size="small" label="공개 범위" onChange={handleChangeScope}>
-            <MenuItem value='me'>나만 보기</MenuItem>
-            <MenuItem value='followers'>친구 공개</MenuItem>
-            <MenuItem value='all'>전체 공개</MenuItem>
-          </Select>
-        </FormControl>
+          <FormControl size="small">
+            <InputLabel id="select-label">공개 범위</InputLabel>
+            <Select labelId="select-label" value={scope} size="small" label="공개 범위" onChange={handleChangeScope}>
+              <MenuItem value='all'>전체 공개</MenuItem>
+              <MenuItem value='followers'>친구 공개</MenuItem>
+              <MenuItem value='me'>나만 보기</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
       </Grid>
 
       <Grid item xs={12}>

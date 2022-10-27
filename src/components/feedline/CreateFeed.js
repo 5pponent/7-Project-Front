@@ -76,9 +76,9 @@ function CreateFeed(props) {
       feedForm.append('showScope', scope);
       await customAxios.post(`/feed`, feedForm)
         .then(res => {
-          closeDrawer();
           dispatch({type: 'ResetFeed'});
-          dispatch({typSe: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
+          dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
+          closeDrawer();
         })
         .catch(error => console.error(error.response))
         .finally(() => dispatch({type: 'CloseLoading'}));
@@ -86,41 +86,33 @@ function CreateFeed(props) {
   };
 
   return (
-    <Stack sx={{width: '500px'}}>
-      <Grid container>
-        <Grid item xs={10.5} p={2}>
-          <Typography variant="h5" sx={{fontWeight: 'bold'}}>피드 작성</Typography>
-        </Grid>
-
-        <Grid item xs={1.5} p={1.5}>
-          <IconButton onClick={closeDrawer}><CloseIcon/></IconButton>
-        </Grid>
-      </Grid>
+    <Stack sx={{maxWidth: 500}}>
+      <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"} p={2} mx={1}>
+        <Typography variant="h5" sx={{fontWeight: 'bold'}}>피드 작성</Typography>
+        <IconButton onClick={closeDrawer}><CloseIcon/></IconButton>
+      </Stack>
 
       <Divider/>
 
+      <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"} pt={2} mx={2}>
+        <SmallProfile
+          image={state.user.image && state.user.image.source}
+          name={state.user.name}
+          direction='row'
+          spacing={1}
+        />
+
+        <FormControl size="small">
+          <InputLabel id="select-label">공개 범위</InputLabel>
+          <Select labelId="select-label" value={scope} size="small" label="공개 범위" onChange={handleChangeScope}>
+            <MenuItem value='all'>전체 공개</MenuItem>
+            <MenuItem value='followers'>친구 공개</MenuItem>
+            <MenuItem value='me'>나만 보기</MenuItem>
+          </Select>
+        </FormControl>
+      </Stack>
+
       <Grid container spacing={2} p={2}>
-        <Grid item xs={3}>
-          <SmallProfile
-            image={state.user.image && state.user.image.source}
-            name={state.user.name}
-            direction='row'
-            spacing={1}
-          />
-        </Grid>
-
-        <Grid item xs={5.7}/>
-
-        <Grid item xs={3.3}>
-          <FormControl fullWidth size="small">
-            <InputLabel id="select-label">공개 범위</InputLabel>
-            <Select labelId="select-label" value={scope} size="small" label="공개 범위" onChange={handleChangeScope}>
-              <MenuItem value='me'>나만 보기</MenuItem>
-              <MenuItem value='followers'>친구 공개</MenuItem>
-              <MenuItem value='all'>전체 공개</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
 
         <Grid item xs={12}>
           <TextField fullWidth maxRows={10} multiline autoFocus error={!!errorMessage} helperText={errorMessage}
@@ -128,7 +120,7 @@ function CreateFeed(props) {
         </Grid>
 
         <Grid item xs={12} sx={{display: state.feedContent.image.length === 0 ? 'none' : 'block'}}>
-          <Stack spacing={3} sx={{p: 1, maxHeight: 550, overflow: 'auto'}}>
+          <Stack spacing={3} sx={{p: 1, maxHeight: "50vh", overflow: 'auto'}}>
             {state.feedContent.image.map((item, index) => (
               <Card key={index} sx={{height: 300, overflow: 'visible'}}>
                 <CardActions sx={{justifyContent: 'end', pb: 0}}>

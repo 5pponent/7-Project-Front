@@ -170,15 +170,57 @@ export default function Setting(props) {
 }
 
 function ChangePW() {
+  const [, dispatch] = useContext(store);
+  const [form, setForm] = useState({
+    currentPassword: '', newPassword: '', newPasswordCheck: ''
+  });
+  const [errMessage, setErrMessage] = useState('');
+  const handleChangeValue = (e) => {
+    const {name, value} = e.target;
+    setForm({...form, [name]: value});
+  }
+  const handleClickSubmit = (e) => {
+    e.preventDefault();
+    dispatch({type: 'OpenLoading', payload: "비밀번호를 변경 중입니다.."});
+    customAxios.put(`/user/password`, form)
+      .then(res => {
+        dispatch({type: 'OpenSnackbar', payload: "비밀번호가 변경되었습니다."});
+      })
+      .catch(err => {
+        setErrMessage(err.response.data.message);
+        console.log(err.response);
+      })
+      .finally(() => {dispatch({type: 'CloseLoading'})});
+  }
+
   return (
     <Stack spacing={2} sx={{marginBottom: '6px'}}>
       <Typography variant='h5' fontWeight='bold'>비밀번호 변경</Typography>
 
-      <Stack spacing={1}>
-        <TextField fullWidth label='기존 PW' type='password'/>
-        <TextField fullWidth label='새 PW' type='password'/>
-        <TextField fullWidth label='새 PW 확인' type='password'/>
-        <Button type='submit' variant='contained' color='success'>변경하기</Button>
+      <Stack spacing={1} component={"form"}>
+
+        <TextField inputProps={{autoComplete: "current-password"}}
+          value={form.currentPassword} onChange={handleChangeValue}
+          label='기존 PW' type='password' name="currentPassword"/>
+
+        <TextField inputProps={{autoComplete: "new-password"}}
+          value={form.newPassword} onChange={handleChangeValue}
+          label='새 PW' type='password' name="newPassword"/>
+
+        <TextField inputProps={{autoComplete: "new-password"}}
+          value={form.newPasswordCheck} onChange={handleChangeValue}
+          label='새 PW 확인' type='password' name="newPasswordCheck"/>
+
+        {errMessage.length > 0 &&
+          <Alert severity={"error"}>
+            <Typography variant={"caption"} color={"red"}>{errMessage}</Typography>
+          </Alert>
+        }
+
+        <Button onClick={handleClickSubmit} type='submit' variant='contained' color='success'>
+          변경하기
+        </Button>
+
       </Stack>
     </Stack>
   )
