@@ -237,28 +237,6 @@ export default function FeedDetail(props) {
           </IconButton>{commentCount}
         </Box>
 
-        <Divider/>
-
-        {/* 댓글 작성 */}
-        <Stack p={1}>
-          <Stack direction={"row"} alignItems={"center"} justifyContent={"flex-start"} spacing={2}>
-            <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
-            <TextField inputRef={commentRef} multiline size='small' fullWidth error={!!commentErrorMessage} helperText={commentErrorMessage}
-                       value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
-            <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
-              {modifyComment ? '수정' : '입력'}
-            </Button>
-          </Stack>
-
-          <Button onClick={handleClickCancelReplay} sx={{width: 'max-content', display: reply ? 'block' : 'none'}}>
-            답글취소
-          </Button>
-          <Button onClick={handleClickCancelModify}
-                  sx={{width: 'max-content', display: modifyComment ? 'block' : 'none'}}>
-            수정취소
-          </Button>
-        </Stack>
-
         <Stack spacing={1}>
           <Stack spacing={1} sx={{display: myComment.comments.length !== 0 ? 'block' : 'none'}}>
             <Divider>내 댓글</Divider>
@@ -322,6 +300,26 @@ export default function FeedDetail(props) {
               </>
             }
           </Stack>
+        </Stack>
+
+        {/* 댓글 작성 */}
+        <Stack fullWidth sx={{p: 1, position: 'sticky', bottom: 0, bgcolor: '#ffffff'}}>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
+            <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
+            <TextField inputRef={commentRef} multiline size='small' fullWidth error={!!commentErrorMessage} helperText={commentErrorMessage}
+                       value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
+            <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
+              {modifyComment ? '수정' : '입력'}
+            </Button>
+          </Stack>
+
+          <Button onClick={handleClickCancelReplay} sx={{width: 'max-content', display: reply ? 'block' : 'none'}}>
+            답글취소
+          </Button>
+          <Button onClick={handleClickCancelModify}
+                  sx={{width: 'max-content', display: modifyComment ? 'block' : 'none'}}>
+            수정취소
+          </Button>
         </Stack>
       </Box>
 
