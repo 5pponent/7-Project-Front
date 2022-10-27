@@ -101,6 +101,7 @@ export default function Feed(props) {
       .catch(error => console.error(error))
       .finally(() => dispatch({type: 'CloseLoading'}))
   };
+  const handleClickImage = (image) => dispatch({type: 'OpenImageView', payload: image});
   const getDate = () => {
     let today = new Date();
     const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -118,8 +119,8 @@ export default function Feed(props) {
       <Box sx={{boxShadow: 5, borderRadius: 1.5}} elevation={5}>
 
         {/*컨텐츠 + 더보기 버튼*/}
-        <Stack sx={{cursor: 'pointer'}}>
-          <Stack direction='row' justifyContent='space-between' alignItems='flex-start'>
+        <Stack>
+          <Stack direction='row' sx={{cursor: 'pointer', justifyContent:'space-between', alignItems:'flex-start'}}>
             <Box p={3} width="100%" onClick={openContent}>
               <Content>{content}</Content>
             </Box>
@@ -132,15 +133,21 @@ export default function Feed(props) {
               />
             </Box>
           </Stack>
+          
+          <Box sx={{textAlign: 'end', pr: 3}}>
+            <Button onClick={openContent}>상세보기</Button>
+          </Box>
 
-          <Stack direction='row' spacing={1} sx={{p: 3, pt: 0}} onClick={openContent}>
+          <Stack direction='row' spacing={1} sx={{p: 3, pt: 0}}>
             {files.slice(0, 3).map(item => (
               <Box
                 key={item.id}
+                onClick={() => handleClickImage(item.source)}
                 sx={{
                   width: '25%',
                   height: '180px',
                   borderRadius: 3,
+                  cursor: 'pointer'
                 }}>
                 <img src={item.source} alt={item.originalName} style={{objectFit: 'cover', borderRadius: '10px'}}
                      width='100%' height='100%'/>
