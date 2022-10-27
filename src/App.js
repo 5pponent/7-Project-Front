@@ -129,6 +129,6 @@ export default function App() {
   );
 }
 
-const Transition = forwardRef(function Transition(props) {
+const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" {...props} />;
 });

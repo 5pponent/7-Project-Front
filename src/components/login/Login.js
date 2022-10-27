@@ -8,8 +8,6 @@ import {
   Dialog,
   DialogContent,
   Grid,
-  Input,
-  InputAdornment,
   Stack,
   TextField,
   Typography
@@ -17,7 +15,6 @@ import {
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import Register from './Register';
 import {useNavigate} from "react-router-dom";
-import LoadingProcess from "../LoadingProcess";
 
 export default function Login(props) {
   let navigate = useNavigate();
@@ -125,9 +122,11 @@ export default function Login(props) {
           <Stack spacing={1}>
             <TextField label='Email' name="email" onChange={handleLoginInfoChange}
                        helperText={emailErrorMessage} error={!!emailErrorMessage}
+                       inputProps={{autoComplete: "username"}}
             />
             <TextField label='PW' type='password' name="password" onChange={handleLoginInfoChange}
                        helperText={pwErrorMessage} error={!!pwErrorMessage}
+                       inputProps={{autoComplete: "password"}}
             />
             {auth &&
               <>

@@ -91,7 +91,6 @@ export default function CustomizedMenus(props) {
           aria-haspopup="true"
           variant="contained"
           color="inherit"
-          disableElevation
           onClick={handleClick}
         >
           <MoreVertIcon sx={{fontSize: 30}}/>

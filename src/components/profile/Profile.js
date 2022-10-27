@@ -178,7 +178,7 @@ export default function Profile(props) {
       >
 
         {/*프로필 카드*/}
-        <Stack sx={{maxWidth: 300}}>
+        <Stack sx={{width: 300}}>
           <Card variant={"outlined"}>
             <Stack alignItems={"center"}>
               <IconButton

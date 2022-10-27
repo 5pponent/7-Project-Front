@@ -76,9 +76,9 @@ function CreateFeed(props) {
       feedForm.append('showScope', scope);
       await customAxios.post(`/feed`, feedForm)
         .then(res => {
-          closeDrawer();
           dispatch({type: 'ResetFeed'});
-          dispatch({typSe: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
+          dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
+          closeDrawer();
         })
         .catch(error => console.error(error.response))
         .finally(() => dispatch({type: 'CloseLoading'}));
