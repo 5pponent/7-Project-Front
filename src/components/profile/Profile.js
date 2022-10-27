@@ -1,14 +1,21 @@
 import React, {useContext, useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
+import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
+import "./message.css";
+import "../../css/fonts.css";
 import {
   Avatar,
   Box,
   Button,
   ButtonBase,
-  Card, Chip, CircularProgress,
+  Card,
+  Chip,
+  CircularProgress,
   Dialog,
   Fade,
-  IconButton, InputAdornment,
+  IconButton,
+  InputAdornment,
   OutlinedInput,
   Popper,
   Skeleton,
@@ -19,11 +26,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import FeedLine from "../feedline/FeedLine";
-import {useLocation} from "react-router-dom";
-import customAxios from "../../AxiosProvider";
 import ProfileUpdateDialog from "./ProfileUpdateDialog";
-import "./message.css";
-import "../../css/fonts.css";
 import FollowList from "./FollowList";
 
 export default function Profile(props) {

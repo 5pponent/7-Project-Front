@@ -17,10 +17,6 @@ const initialState = {
     message: '',
     occupation: '직업'
   },
-  feedContent: {
-    content: '',
-    image: []
-  },
   loading: {
     open: false,
     message: ''

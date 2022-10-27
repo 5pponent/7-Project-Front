@@ -1,4 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
+import {useNavigate} from "react-router-dom";
+import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
 import {
   AppBar,
@@ -15,9 +17,9 @@ import {
   Stack,
   Toolbar,
   Tooltip,
-  Typography
+  Typography,
+  styled
 } from '@mui/material';
-import {styled} from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
@@ -25,8 +27,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import CloseIcon from '@mui/icons-material/Close';
 import HeaderMenu from './HeaderMenu';
 import CreateFeed from '../feedline/CreateFeed';
-import {useNavigate} from "react-router-dom";
-import customAxios from "../../AxiosProvider";
+
 import SmallProfile from "../SmallProfile";
 
 const Title = styled(Typography)(() => ({
@@ -35,29 +36,22 @@ const Title = styled(Typography)(() => ({
   wordBreak: 'keep-all'
 }));
 
-export default function Header (props) {
+export default React.memo(function Header (props) {
   const [state, dispatch] = useContext(store);
 
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
-
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchLoading, setSearchLoading] = useState(true);
+  const [feedContent, setFeedContent] = useState('');
+  const [feedImage, setFeedImage] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [searchResult, setSearchResult] = useState({
     currentPage: 0, totalPages: 0, totalElements: 0, users: []
   });
   const [searchUsers, setSearchUsers] = useState([]);
-
-  const getOpen = (stat) => {setOpen(stat)};
-  const handleClickDrawer = () => {setOpen(!open)};
-  const handleClickLogo = () => {navigate('/')};
-  const handleClickMyProfile = () => {navigate(`/profile?user=${state.user.id}`)};
-  const handleClickProfile = (id) => {navigate(`/profile?user=${id}`)}
-  const handleChangeSearchValue = (e) => {setSearchValue(e.target.value)}
-  const handleClickClear = () => {setSearchValue('')}
 
   useEffect(() => {
     setAnchorEl(document.getElementById("search"));
@@ -79,6 +73,34 @@ export default function Header (props) {
     }, 1000);
     if (lateSearch > 0) clearTimeout(lateSearch - 1);
   }, [searchValue]);
+
+  const getOpen = (stat) => {setOpen(stat)};
+  const handleClickDrawer = () => {setOpen(!open)};
+  const handleClickLogo = () => {navigate('/')};
+  const handleClickMyProfile = () => {navigate(`/profile?user=${state.user.id}`)};
+  const handleClickProfile = (id) => {navigate(`/profile?user=${id}`)}
+  const handleChangeSearchValue = (e) => {setSearchValue(e.target.value)}
+  const handleClickClear = () => {setSearchValue('')}
+  const handleChangeFeedContent = (e) => {setFeedContent(e.target.value)};
+  const handleAddFeedImage = (e) => {
+    let newImage = [];
+    for (let i = 0; i < e.target.files.length; i++) {
+      newImage = newImage.concat({file: e.target.files[i], originalName: e.target.files[i].name, path: URL.createObjectURL(e.target.files[i]), description: ' '});
+    }
+    setFeedImage(feedImage.concat(newImage));
+  };
+  const handleChangeDescription = (e, num) => {
+    const newDescription = feedImage.map((item, index) => index === num ? {...item, description: e.target.value} : item);
+    setFeedImage(newDescription);
+  };
+  const handleDeleteFeedImage = (num) => {
+    URL.revokeObjectURL(feedImage[num].path);
+    setFeedImage(feedImage.filter((item, index) => index !== num));
+  };
+  const resetFeed = () => {
+    setFeedContent('');
+    setFeedImage([]);
+  };
 
   return (
     <AppBar style={{userSelect: 'none', position: 'sticky'}}>
@@ -145,7 +167,15 @@ export default function Header (props) {
         </Stack>
 
         <Drawer anchor='left' open={open} onClose={handleClickDrawer}>
-          <CreateFeed getOpen={getOpen}/>
+          <CreateFeed
+            feedContent={feedContent}
+            feedImage={feedImage}
+            getOpen={getOpen}
+            handleChangeFeedContent={handleChangeFeedContent}
+            handleAddFeedImage={handleAddFeedImage}
+            handleChangeDescription={handleChangeDescription}
+            handleDeleteFeedImage={handleDeleteFeedImage}
+            resetFeed={resetFeed}/>
         </Drawer>
 
         {/*검색 결과*/}
@@ -194,4 +224,4 @@ export default function Header (props) {
       </Toolbar>
     </AppBar>
   );
-}
+})

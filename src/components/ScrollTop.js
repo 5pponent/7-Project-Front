@@ -1,10 +1,8 @@
+import React, { useEffect, useState } from "react";
 import { Fab, Fade } from "@mui/material";
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useState } from "react";
-import { useEffect } from "react";
 
 export default function ScrollUpButton() {
-
   const [show, setShow] = useState(false);
   const [scroll, setScroll] = useState(0);
 

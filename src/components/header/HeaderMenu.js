@@ -51,7 +51,7 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-export default function CustomizedMenus(props) {
+export default React.memo(function CustomizedMenus(props) {
   const [state, dispatch] = useContext(store);
 
   let navigate = useNavigate();
@@ -133,4 +133,4 @@ export default function CustomizedMenus(props) {
       </StyledMenu>
     </>
   );
-}
+})

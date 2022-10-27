@@ -1,8 +1,9 @@
+import React from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import {Stack, Typography} from "@mui/material";
 
-export default function LoadingProcess(props) {
+function LoadingProcess(props) {
   return (
     <>
       <Backdrop
@@ -19,3 +20,5 @@ export default function LoadingProcess(props) {
     </>
   );
 }
+
+export default React.memo(LoadingProcess)

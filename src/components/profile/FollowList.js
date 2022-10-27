@@ -1,11 +1,11 @@
-import {Box, Button, Divider, Stack, Typography} from "@mui/material";
 import {useContext, useEffect, useState} from 'react';
-import {store} from "../../store/store";
-import customAxios from "../../AxiosProvider";
-import SmallProfile from "../SmallProfile";
-import CircularProgress from "@mui/material/CircularProgress";
-import ProfileMenu from "../ProfileMenu";
 import {useNavigate} from "react-router-dom";
+import customAxios from "../../AxiosProvider";
+import {store} from "../../store/store";
+import {Box, Button, Divider, Stack, Typography} from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import SmallProfile from "../SmallProfile";
+import ProfileMenu from "../ProfileMenu";
 
 export default function FollowList(props) {
 

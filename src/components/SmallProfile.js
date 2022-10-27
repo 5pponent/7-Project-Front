@@ -1,7 +1,7 @@
-import {Avatar, Stack, Typography} from "@mui/material";
 import React from "react";
+import {Avatar, Stack, Typography} from "@mui/material";
 
-export default function SmallProfile(props) {
+export default React.memo(function SmallProfile(props) {
   return (
     <Stack
       direction={props.direction}
@@ -19,4 +19,4 @@ export default function SmallProfile(props) {
       </Stack>
     </Stack>
   );
-}
+})
