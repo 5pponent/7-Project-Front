@@ -26,10 +26,14 @@ customAxios.interceptors.response.use(
     const {response: errorResponse} = error;
     const originalRequest = error.config;
 
-    // 인증 에러 발생시
+    // 인증 에러 발생 시
     if (errorResponse.status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/login';
+    }
+    // 서버 에러 발생 시
+    else if (errorResponse.status >= 500) {
+      window.location.href = '/server-error';
     }
 
     return Promise.reject(error);

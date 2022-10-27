@@ -176,8 +176,9 @@ export default function Profile(props) {
         alignItems={"center"}
         justifyContent={"center"}
       >
+
         {/*프로필 카드*/}
-        <Stack sx={{width: 300}}>
+        <Stack sx={{maxWidth: 300}}>
           <Card variant={"outlined"}>
             <Stack alignItems={"center"}>
               <IconButton
@@ -276,7 +277,7 @@ export default function Profile(props) {
         {/*피드, 팔로우, 팔로워*/}
         <Stack height={"87vh"} width={"100%"} maxWidth={"800px"}>
           {mode === 'FEED' &&
-            <Box px={2}>
+            <Box px={2} pb={2}>
               <OutlinedInput
                 size={"small"}
                 value={searchValue}
@@ -291,28 +292,27 @@ export default function Profile(props) {
             </Box>
           }
           <Stack style={{overflowY: "auto"}} p={2}>
-            {
-              mode === 'FEED' &&
-
+            {mode === 'FEED' &&
               (feedLoading ?
                 <Box display="flex" justifyContent="center" style={{padding: 100}}>
                   <CircularProgress size={60}></CircularProgress>
                 </Box>
-                : (
+                :
+                (
                   feed.feeds.length === 0 ?
-                  <Stack alignItems={"center"} spacing={1}>
-                    <SearchOffIcon sx={{fontSize: 70}}/>
-                    <Typography fontWeight={"bold"}>피드가 없습니다..</Typography>
-                  </Stack>
-                  :
-                  <FeedLine
-                    feed={feed}
-                    handleScroll={handleScroll}
-                    getFeedList={getFeedList}
-                    loadFeedList={loadFeedList}
-                    updateFeedDetail={updateFeedDetail}
-                  />
-                  )
+                    <Stack alignItems={"center"} spacing={1}>
+                      <SearchOffIcon sx={{fontSize: 70}}/>
+                      <Typography fontWeight={"bold"}>피드가 없습니다..</Typography>
+                    </Stack>
+                    :
+                    <FeedLine
+                      feed={feed}
+                      handleScroll={handleScroll}
+                      getFeedList={getFeedList}
+                      loadFeedList={loadFeedList}
+                      updateFeedDetail={updateFeedDetail}
+                    />
+                )
               )
             }
             {mode === 'FOLLOWERS' &&
