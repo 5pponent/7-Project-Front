@@ -29,7 +29,7 @@ export default function reducer(state, action) {
             file: action.payload.file,
             originalName: action.payload.originalName,
             path: action.payload.path,
-            description: ''
+            description: ' '
           })
         }
       };

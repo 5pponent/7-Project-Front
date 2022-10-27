@@ -21,6 +21,7 @@ import FeedDetail from './FeedDetail';
 import MoreMenu from './MoreMenu';
 import ProfileMenu from "../ProfileMenu";
 import ModifyFeed from "./ModifyFeed";
+import NoticeModal from "../NoticeModal";
 
 // 컨텐츠 글 5줄까지만 표시, 이후엔 ...으로 생략
 const Content = styled(Typography)`
@@ -38,12 +39,11 @@ export default function Feed(props) {
   const [feedDetail, setFeedDetail] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [modifyOpen, setModifyOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [commentFocus, setCommentFocus] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
-  const getFeedDetail = (data) => {
-    setFeedDetail(data)
-  }
+  const getFeedDetail = (data) => {setFeedDetail(data)}
   const openContent = async () => {
     await customAxios.get(`/feed/${id}`)
       .then(res => {
@@ -64,18 +64,12 @@ export default function Feed(props) {
       })
       .catch(error => console.error(error))
   };
-  const closeModify = () => {
-    setModifyOpen(false);
-  };
-  const handleClickProfile = (e) => {
-    setAnchor(e.currentTarget)
-  };
-  const handleCloseProfile = () => {
-    setAnchor(null)
-  };
-  const handleClickProfileView = () => {
-    navigate(`/profile?user=${writer.id}`)
-  };
+  const closeModify = () => setModifyOpen(false);
+  const openDelete = () => setDeleteOpen(true);
+  const closeDelete = () => setDeleteOpen(false);
+  const handleClickProfile = (e) => setAnchor(e.currentTarget);
+  const handleCloseProfile = () => setAnchor(null);
+  const handleClickProfileView = () => navigate(`/profile?user=${writer.id}`);
   const handleClickLike = (feedId, name) => {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
@@ -96,6 +90,16 @@ export default function Feed(props) {
   const handleClickComment = () => {
     openContent();
     setCommentFocus(commentFocus => !commentFocus);
+  };
+  const handleClickDelete = () => {
+    dispatch({type: 'OpenLoading', payload: '피드를 삭제중입니다..'});
+    customAxios.delete(`/feed/${id}`)
+      .then(() => {
+        props.getFeedList(props.feedList.filter(item => item.id !== id));
+        dispatch({type: 'OpenSnackbar', payload: `피드가 삭제되었습니다.`});
+      })
+      .catch(error => console.error(error))
+      .finally(() => dispatch({type: 'CloseLoading'}))
   };
   const getDate = () => {
     let today = new Date();
@@ -122,18 +126,24 @@ export default function Feed(props) {
 
             <Box p={1}>
               <MoreMenu
-                feedId={id}
                 writer={writer.id}
-                feedList={props.feedList}
-                getFeedList={props.getFeedList}
                 openModify={openModify}
+                openDelete={openDelete}
               />
             </Box>
           </Stack>
 
           <Stack direction='row' spacing={1} sx={{p: 3, pt: 0}} onClick={openContent}>
             {files.slice(0, 3).map(item => (
-              <Box key={item.id} sx={{width: '25%', maxHeight: '180px', borderRadius: 3, overflow: 'hidden'}}>
+              <Box
+                key={item.id}
+                sx={{
+                  width: '25%',
+                  maxHeight: '180px',
+                  borderRadius: 3,
+                  overflow: 'hidden',
+                  bgcolor: 'lightgrey'
+                }}>
                 <img src={item.source} alt={item.originalName} style={{objectFit: 'contain', borderRadius: '10px'}}
                      width='100%' height='100%'/>
               </Box>
@@ -142,15 +152,19 @@ export default function Feed(props) {
             {files.length > 3 &&
               <Box sx={{
                 width: '25%',
-                bgcolor: 'rgba(0,0,0,0.48)',
+                opacity: 0.5,
                 borderRadius: 3,
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
+                backgroundImage: `linear-gradient(
+                  rgba(0, 0, 0, 0.4),
+                  rgba(0, 0, 0, 0.4)
+                ), url(${files[3].source})`
               }}>
-                <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#ffffff'}}>
-                  + {files.length - 3}
-                </Typography>
+                  <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#ffffff'}}>
+                    + {files.length - 3}
+                  </Typography>
               </Box>
             }
           </Stack>
@@ -224,6 +238,16 @@ export default function Feed(props) {
           <Button variant='contained' onClick={closeModify}>취소</Button>
         </DialogActions>
       </Dialog>
+
+    {/* 피드 삭제 다이얼로그 */}
+      <NoticeModal
+        open={deleteOpen}
+        title={'피드 삭제'}
+        content1={'삭제 시 복구할 수 없습니다.'}
+        content2={'삭제하시겠습니까?'}
+        onAccept={handleClickDelete}
+        onClose={closeDelete}
+      />
     </>
   );
 }

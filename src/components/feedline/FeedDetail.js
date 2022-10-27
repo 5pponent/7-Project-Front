@@ -21,11 +21,13 @@ import SmallProfile from '../SmallProfile';
 import MoreMenu from './MoreMenu';
 import Comment from './Comment';
 import ModifyFeed from "./ModifyFeed";
+import NoticeModal from "../NoticeModal";
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
   const [reply, setReply] = useState(false);
   const [load, setLoad] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [modifyOpen, setModifyOpen] = useState(false);
   const [modifyComment, setModifyComment] = useState(false);
   const [myComment, setMyComment] = useState({
@@ -69,9 +71,7 @@ export default function FeedDetail(props) {
     setCurrentComment({id: commentId, name: name});
     commentRef.current.focus();
   };
-  const handleChangeComment = (e) => {
-    setCommentContent({content: e.target.value});
-  };
+  const handleChangeComment = (e) => setCommentContent({content: e.target.value});
   const handleChangeMyCommentPage = (index) => {
     customAxios.get(`/feed/${id}/comment?user=me&size=3&page=${index}`)
       .then(res => setMyComment(res.data))
@@ -152,11 +152,20 @@ export default function FeedDetail(props) {
       .catch(error => console.error(error.response))
       .finally(() => setLoad(false))
   };
-  const openModify = () => {
-    setModifyOpen(true);
-  };
-  const closeModify = () => {
-    setModifyOpen(false);
+  const openModify = () => setModifyOpen(true);
+  const closeModify = () => setModifyOpen(false);
+  const openDelete = () => setDeleteOpen(true);
+  const closeDelete = () => setDeleteOpen(false);
+  const handleClickDelete = () => {
+    dispatch({type: 'OpenLoading', payload: '피드를 삭제중입니다..'});
+    customAxios.delete(`/feed/${id}`)
+      .then(res => {
+        props.closeContent();
+        props.getFeedList(props.feedList.filter(item => item.id !== id));
+        dispatch({type: 'OpenSnackbar', payload: `피드가 삭제되었습니다.`});
+      })
+      .catch(error => console.error(error))
+      .finally(() => dispatch({type: 'CloseLoading'}))
   };
   const getDate = () => {
     let today = new Date();
@@ -174,19 +183,17 @@ export default function FeedDetail(props) {
     <>
       <Box sx={{display: modifyOpen ? 'none' : 'block'}}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <SmallProfile direction={"row"} spacing={2} getDate={getDate} image={writer.image && writer.image.source} name={writer.name}/>
+          <SmallProfile direction={"row"} spacing={2} getDate={getDate} image={writer.image && writer.image.source}
+                        name={writer.name}/>
 
           <Stack>
             <IconButton onClick={props.closeContent}>
               <CloseIcon color='text.secondary'/>
             </IconButton>
             <MoreMenu
-              feedId={id}
               writer={writer.id}
-              closeContent={props.closeContent}
               openModify={openModify}
-              feedList={props.feedList}
-              getFeedList={props.getFeedList}
+              openDelete={openDelete}
             />
           </Stack>
         </Stack>
@@ -311,6 +318,16 @@ export default function FeedDetail(props) {
           <Button variant='contained' onClick={closeModify}>취소</Button>
         </Stack>
       </Box>
+
+      {/* 피드 삭제 다이얼로그 */}
+      <NoticeModal
+        open={deleteOpen}
+        title={'피드 삭제'}
+        content1={'삭제 시 복구할 수 없습니다.'}
+        content2={'삭제하시겠습니까?'}
+        onAccept={handleClickDelete}
+        onClose={closeDelete}
+      />
     </>
   );
 }
