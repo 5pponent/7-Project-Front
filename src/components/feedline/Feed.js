@@ -217,7 +217,7 @@ export default function Feed(props) {
 
       {/* 컨텐츠 상세보기 다이얼로그 */}
       <Dialog open={detailOpen} onClose={closeContent} fullWidth maxWidth='md'>
-        <DialogContent sx={{pb: 0}}>
+        <DialogContent sx={{pb: 0, pt: 0}}>
           <FeedDetail
             feedDetail={feedDetail}
             commentFocus={commentFocus}

@@ -194,7 +194,7 @@ export default function FeedDetail(props) {
   return (
     <>
       <Box sx={{display: modifyOpen ? 'none' : 'block'}}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack direction="row" sx={{justifyContent: "space-between", alignItems: "center", position: 'sticky', top: 0, zIndex: 10, bgcolor: 'white', pt: 3}}>
           <SmallProfile direction={"row"} spacing={2} getDate={getDate} image={writer.image && writer.image.source}
                         name={writer.name}/>
 
@@ -303,7 +303,7 @@ export default function FeedDetail(props) {
         </Stack>
 
         {/* 댓글 작성 */}
-        <Stack fullWidth sx={{p: 1, position: 'sticky', bottom: 0, bgcolor: '#ffffff'}}>
+        <Stack fullWidth sx={{p: 1, pb: 3, position: 'sticky', bottom: 0, bgcolor: 'white'}}>
           <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
             <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
             <TextField inputRef={commentRef} multiline size='small' fullWidth error={!!commentErrorMessage} helperText={commentErrorMessage}
