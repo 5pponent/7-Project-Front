@@ -10,6 +10,7 @@ export default function Comment(props) {
   const {childCount, content, createTime, id, layer, writer} = props.comment;
   const [state, dispatch] = useContext(store);
   const [anchor, setAnchor] = useState(null);
+  const [deleteShow, setDeleteShow] = useState(false);
   const [replyComment, setReplyComment] = useState({
     comments: [],
     currentPage: 0,
@@ -49,6 +50,8 @@ export default function Comment(props) {
     props.commentList.filter(item => item.id !== id);
 
   };
+  const showDeleteButton = () => setDeleteShow(true);
+  const hideDeleteButton = () => setDeleteShow(false);
   const handleDeleteComment = (feedId, commentId) => {
     dispatch({type: 'OpenLoading', payload: '댓글을 삭제중입니다..'});
     customAxios.delete(`/feed/${feedId}/comment/${commentId}`)
@@ -104,7 +107,7 @@ export default function Comment(props) {
             </Typography>
           </Stack>
 
-          <Stack direction='row' spacing={1}>
+          <Stack direction='row' spacing={1} sx={{display: deleteShow ? 'none' : 'bock'}}>
             <CommentBtn
               onClick={() => handleShowReply(props.feedId, id, replyComment.currentPage)}
               disabled={replyComment.currentPage === replyComment.totalPages}
@@ -120,9 +123,21 @@ export default function Comment(props) {
               수정
             </CommentBtn>
             <CommentBtn
-              onClick={() => handleDeleteComment(props.feedId, id)}
+              onClick={showDeleteButton}
               sx={{display: show}}>
               삭제
+            </CommentBtn>
+          </Stack>
+
+          <Stack direction='row' spacing={1} sx={{display: deleteShow ? 'bock' : 'none'}}>
+            <Typography fontSize='small' sx={{color: '#b22e2e'}}>삭제하시겠습니까?</Typography>
+            <CommentBtn
+              onClick={() => handleDeleteComment(props.feedId, id)}>
+              삭제
+            </CommentBtn>
+            <CommentBtn
+              onClick={hideDeleteButton}>
+              취소
             </CommentBtn>
           </Stack>
         </Stack>
