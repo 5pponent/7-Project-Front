@@ -8,6 +8,7 @@ export default function SmallProfile(props) {
       spacing={props.spacing}
       sx={{cursor: 'pointer'}}
       onClick={props.onClick}
+      alignItems={"center"}
     >
       <Avatar src={props.image ?? ''}/>
       <Stack>
