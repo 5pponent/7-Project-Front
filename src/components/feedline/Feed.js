@@ -253,11 +253,6 @@ export default function Feed(props) {
             closeContent={closeModify}
           />
         </DialogContent>
-
-        <DialogActions sx={{justifyContent: 'center'}}>
-          <Button variant='contained'>수정</Button>
-          <Button variant='contained' onClick={closeModify}>취소</Button>
-        </DialogActions>
       </Dialog>
 
     {/* 피드 삭제 다이얼로그 */}

@@ -374,11 +374,7 @@ export default function FeedDetail(props) {
       </Box>
 
       <Box style={{display: modifyOpen ? 'block' : 'none'}}>
-        <ModifyFeed feedDetail={props.feedDetail}/>
-        <Stack spacing={1} direction='row' sx={{justifyContent: 'center'}}>
-          <Button variant='contained'>수정</Button>
-          <Button variant='contained' onClick={closeModify}>취소</Button>
-        </Stack>
+        <ModifyFeed feedDetail={props.feedDetail} closeModify={closeModify}/>
       </Box>
 
       {/* 피드 삭제 다이얼로그 */}
