@@ -2,7 +2,7 @@ import FeedLineSelect from './components/feedline/FeedLineSelect'
 import Login from './components/login/Login';
 import Profile from './components/profile/Profile';
 import Setting from './components/settingpage/Setting';
-import ChatApp from './components/chatting/ChatApp';
+import ChatApp from './components/chat/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
 import Template from "./components/Template";
 import {BrowserRouter, Route, Routes} from "react-router-dom";

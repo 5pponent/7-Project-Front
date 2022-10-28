@@ -30,11 +30,14 @@ import CreateFeed from '../feedline/CreateFeed';
 
 import SmallProfile from "../SmallProfile";
 
-const Title = styled(Typography)(() => ({
-  fontSize: '22px',
-  fontWeight: 'bold',
-  wordBreak: 'keep-all'
-}));
+const Title = styled(Typography)`
+  font-size: 22px;
+  font-weight: bold;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+`
 
 export default React.memo(function Header (props) {
   const [state, dispatch] = useContext(store);
@@ -103,27 +106,27 @@ export default React.memo(function Header (props) {
   };
 
   return (
-    <AppBar style={{userSelect: 'none', position: 'sticky'}}>
-      <Toolbar
-        sx={{bgcolor: '#2c92ff', color: '#FCFCFC'}}
-        style={{justifyContent: "space-evenly", alignItems: "center"}}
-      >
+    <AppBar style={{userSelect: 'none', position: 'sticky', backgroundColor: '#2c92ff'}}>
+      <Toolbar style={{
+        display: "flex", justifyContent: "space-evenly", alignItems: "center",
+      }}>
 
         {/* 타이틀 */}
-        <Box width={"200px"}>
-          <ButtonBase onClick={handleClickLogo}>
-            <MenuBookIcon sx={{fontSize: 44}}/>&nbsp;
+        <Box>
+          <ButtonBase onClick={handleClickLogo} sx={{borderRadius: 5, px: 1.5}}>
+            <MenuBookIcon sx={{fontSize: 40}}/>&nbsp;
             <Title>모두의 일기장</Title>
           </ButtonBase>
         </Box>
 
-        <Stack direction={"row"} alignItems={"center"}>
+        <Stack direction={"row"} alignItems={"center"} spacing={2}>
           {/* 검색 */}
-          <Box width="200px" id={"search"}>
+          <Box id={"search"}>
             <OutlinedInput
               size={"small"}
               inputProps={{autoComplete: 'off'}}
               style={{
+                fontSize: 12, maxWidth: 200,
                 backgroundColor: "rgba(255,255,255,0.15)", color: "white", borderRadius: 30
               }}
               placeholder={"유저 검색"}
@@ -140,18 +143,18 @@ export default React.memo(function Header (props) {
           </Box>
 
           {/* 사용자 프로필, 더보기 메뉴 */}
-          <Stack width='200px' direction={"row"} spacing={1}
+          <Stack direction={"row"} spacing={1}
                  justifyContent={"flex-end"} alignItems={"center"}>
 
             <Tooltip title="피드 작성" placement="bottom" arrow>
               <IconButton onClick={handleClickDrawer}>
-                <BorderColorIcon sx={{fontSize: 26, color: "#FCFCFC"}}/>
+                <BorderColorIcon sx={{fontSize: 24, color: "#FCFCFC"}}/>
               </IconButton>
             </Tooltip>
 
             <Tooltip title="알림" placement="bottom" arrow>
               <IconButton>
-                <NotificationsIcon sx={{fontSize: 26, color: "#FCFCFC"}} />
+                <NotificationsIcon sx={{fontSize: 24, color: "#FCFCFC"}} />
               </IconButton>
             </Tooltip>
 

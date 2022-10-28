@@ -93,7 +93,7 @@ export default React.memo(function CustomizedMenus(props) {
           color="inherit"
           onClick={handleClick}
         >
-          <MoreVertIcon sx={{fontSize: 30}}/>
+          <MoreVertIcon sx={{fontSize: 28}}/>
         </IconButton>
       </Tooltip>
 
