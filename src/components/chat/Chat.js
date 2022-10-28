@@ -3,7 +3,6 @@ import { Box, Grid, ListItemText } from "@mui/material";
 
 export default function Chat(props) {
 
-
   return (
     <Grid item xs={12} align={props.direction}>
       <Box
