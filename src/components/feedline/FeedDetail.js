@@ -30,6 +30,7 @@ export default function FeedDetail(props) {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [modifyOpen, setModifyOpen] = useState(false);
   const [modifyComment, setModifyComment] = useState(false);
+  const [newReply, setNewReply] = useState(null);
   const [myComment, setMyComment] = useState({
     comments: [],
     currentPage: 0,
@@ -69,6 +70,11 @@ export default function FeedDetail(props) {
     return valid
   };
 
+  const addReply = (data) => setNewReply(data);
+  const openModify = () => setModifyOpen(true);
+  const closeModify = () => setModifyOpen(false);
+  const openDelete = () => setDeleteOpen(true);
+  const closeDelete = () => setDeleteOpen(false);
   const getMentionName = (name, commentId) => {
     setCommentContent({content: `@${name} `});
     setCurrentComment({id: commentId, name: name});
@@ -80,6 +86,16 @@ export default function FeedDetail(props) {
     setCommentContent({content: comment});
     setCurrentComment({id: commentId, name: name});
     commentRef.current.focus();
+  };
+  const addCommentList = (commentData) => {
+    const newComment = myComment.comments.concat(commentData);
+    setMyComment({...myComment, comments: newComment});
+  };
+  const modifyCommentList = (commentData) => {
+    const newComment = myComment.comments.map(item => (
+      item.id === commentData.id ? commentData : item
+    ))
+    setMyComment({...myComment, comments: newComment});
   };
   const handleChangeComment = (e) => setCommentContent({content: e.target.value});
   const handleChangeMyCommentPage = (index) => {
@@ -108,7 +124,8 @@ export default function FeedDetail(props) {
     if (validate()) {
       dispatch({type: 'OpenLoading', payload: '댓글을 작성중입니다..'});
       customAxios.post(`/feed/${feedId}/comment`, content)
-        .then(() => {
+        .then(res => {
+          addCommentList(res.data);
           setCommentContent({content: ''});
           dispatch({type: 'OpenSnackbar', payload: `댓글이 입력되었습니다.`});
         })
@@ -119,7 +136,8 @@ export default function FeedDetail(props) {
   const handleClickReply = (feedId, commentId) => {
     dispatch({type: 'OpenLoading', payload: '답글을 전송중입니다..'});
     customAxios.post(`/feed/${feedId}/comment/${commentId}`, commentContent)
-      .then(() => {
+      .then(res => {
+        addReply(res.data);
         setCommentContent({content: ''});
         setReply(false);
         dispatch({type: 'OpenSnackbar', payload: `${currentComment.name}님께 답글이 전송되었습니다.`});
@@ -130,9 +148,10 @@ export default function FeedDetail(props) {
   const handleClickModifyComment = (feedId, commentId, content) => {
     dispatch({type: 'OpenLoading', payload: '댓글을 수정중입니다..'});
     customAxios.put(`/feed/${feedId}/comment/${commentId}`, content)
-      .then(() => {
+      .then(res => {
+        addReply(res.data);
+        modifyCommentList(res.data);
         setCommentContent({content: ''});
-        setModifyComment(false);
         dispatch({type: 'OpenSnackbar', payload: `댓글이 수정되었습니다.`});
       })
       .catch(error => console.error(error))
@@ -164,10 +183,6 @@ export default function FeedDetail(props) {
       .catch(error => console.error(error.response))
       .finally(() => setLoad(false))
   };
-  const openModify = () => setModifyOpen(true);
-  const closeModify = () => setModifyOpen(false);
-  const openDelete = () => setDeleteOpen(true);
-  const closeDelete = () => setDeleteOpen(false);
   const handleClickDelete = () => {
     dispatch({type: 'OpenLoading', payload: '피드를 삭제중입니다..'});
     customAxios.delete(`/feed/${id}`)
@@ -180,21 +195,45 @@ export default function FeedDetail(props) {
       .finally(() => dispatch({type: 'CloseLoading'}))
   };
   const getDate = () => {
-    let today = new Date();
-    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
     const feedDate = createTime.split(' ');
-    const hours = (today.getHours() * 60 + today.getMinutes()) - (parseInt(feedDate[1].split(':')[0] * 60) + parseInt(feedDate[1].split(':')[1]));
-    if (feedDate[0] === date) {
-      if (hours < 60) return `${hours}분 전`
-      if (hours <= 12 * 60) return `${Math.round(hours / 60)}시간 전`
-      return feedDate[1];
-    } else return createTime
+    const todayDate = feedDate[0].split('-');
+    const todayTime = feedDate[1].split(':');
+    let today = new Date();
+    const todayHour = {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      date: today.getDate(),
+      hour: today.getHours(),
+      minute: today.getMinutes()
+    }
+    const date = {
+      year: todayDate[0],
+      month: todayDate[1],
+      date: todayDate[2],
+      hour: todayTime[0],
+      minute: todayTime[1]
+    }
+    const date1 = new Date(date.year, date.month, date.date, date.hour, date.minute).getTime();
+    const date2 = new Date(todayHour.year, todayHour.month, todayHour.date, todayHour.hour, todayHour.minute).getTime();
+    const beforeHours = (date2 - date1) / 1000 / 60;
+
+    if (beforeHours < 60) return `${beforeHours}분 전`
+    if (beforeHours <= 12 * 60) return `${Math.round(beforeHours / 60)}시간 전`
+    return createTime;
   };
 
   return (
     <>
       <Box sx={{display: modifyOpen ? 'none' : 'block'}}>
-        <Stack direction="row" sx={{justifyContent: "space-between", alignItems: "center", position: 'sticky', top: 0, zIndex: 10, bgcolor: 'white', pt: 3}}>
+        <Stack direction="row" sx={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          bgcolor: 'white',
+          pt: 3
+        }}>
           <SmallProfile direction={"row"} spacing={2} getDate={getDate} image={writer.image && writer.image.source}
                         name={writer.name}/>
 
@@ -247,10 +286,15 @@ export default function FeedDetail(props) {
                 return (
                   <Comment
                     key={c.id}
-                    commentList={myComment.comments}
+                    commentList={myComment}
+                    setCommentList={setMyComment}
                     comment={c}
                     feedId={id}
                     image={c.writer.image ? c.writer.image.source : ''}
+                    newReply={newReply}
+                    addReply={addReply}
+                    modifyComment={modifyComment}
+                    handleClickCancelModify={handleClickCancelModify}
                     getMentionName={getMentionName}
                     getCommentContent={getCommentContent}
                   />
@@ -278,10 +322,15 @@ export default function FeedDetail(props) {
               return (
                 <Comment
                   key={c.id}
-                  commentList={comment.comments}
+                  commentList={comment}
+                  setCommentList={setComment}
                   comment={c}
                   feedId={id}
                   image={c.writer.image ? c.writer.image.source : ''}
+                  newReply={newReply}
+                  addReply={addReply}
+                  modifyComment={modifyComment}
+                  handleClickCancelModify={handleClickCancelModify}
                   getMentionName={getMentionName}
                   getCommentContent={getCommentContent}
                 />
@@ -306,7 +355,8 @@ export default function FeedDetail(props) {
         <Stack fullWidth sx={{p: 1, pb: 3, position: 'sticky', bottom: 0, bgcolor: 'white'}}>
           <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
             <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
-            <TextField inputRef={commentRef} multiline size='small' fullWidth error={!!commentErrorMessage} helperText={commentErrorMessage}
+            <TextField inputRef={commentRef} multiline size='small' fullWidth error={!!commentErrorMessage}
+                       helperText={commentErrorMessage}
                        value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
             <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
               {modifyComment ? '수정' : '입력'}

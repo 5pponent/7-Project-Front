@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import customAxios from "../../AxiosProvider";
 import {useNavigate} from "react-router-dom";
 import {store} from "../../store/store";
@@ -9,6 +9,7 @@ export default function Comment(props) {
   const navigate = useNavigate();
   const {childCount, content, createTime, id, layer, writer} = props.comment;
   const [state, dispatch] = useContext(store);
+  const [count, setCount] = useState(0);
   const [anchor, setAnchor] = useState(null);
   const [deleteShow, setDeleteShow] = useState(false);
   const [replyComment, setReplyComment] = useState({
@@ -35,6 +36,27 @@ export default function Comment(props) {
         return 10
     }
   };
+
+  useEffect(() => {
+    setCount(childCount);
+  }, []);
+
+  useEffect(() => {
+    if (props.newReply && id === props.newReply.parentId) {
+      if (props.modifyComment) {
+        const newReply = replyComment.comments.map(item => (
+          item.id === props.newReply.id ? props.newReply : item
+        ))
+        setReplyComment({...replyComment, comments: newReply})
+        props.handleClickCancelModify();
+      } else {
+        const newReply = replyComment.comments.concat(props.newReply);
+        setReplyComment({...replyComment, comments: newReply});
+        setCount(count + 1);
+      }
+    }
+  }, [props.newReply]);
+
   const handleShowReply = (feedId, commentId, page) => {
     customAxios.get(`/feed/${feedId}/comment/${commentId}?size=5&page=${page + 1}`)
       .then(res => setReplyComment({
@@ -46,17 +68,17 @@ export default function Comment(props) {
       }))
       .catch(error => console.error(error))
   };
-  const deleteCommentList = (id) => {
-    props.commentList.filter(item => item.id !== id);
-
-  };
   const showDeleteButton = () => setDeleteShow(true);
   const hideDeleteButton = () => setDeleteShow(false);
+  const deleteCommentList = (commentId) => {
+    const newCommentList = props.commentList.comments.filter(item => item.id !== commentId);
+    props.setCommentList({...props.commentList, comments: newCommentList});
+  };
   const handleDeleteComment = (feedId, commentId) => {
     dispatch({type: 'OpenLoading', payload: '댓글을 삭제중입니다..'});
     customAxios.delete(`/feed/${feedId}/comment/${commentId}`)
       .then(() => {
-        deleteCommentList();
+        deleteCommentList(id);
         dispatch({type: 'OpenSnackbar', payload: `댓글이 삭제되었습니다.`});
       })
       .catch(error => console.error(error))
@@ -66,15 +88,31 @@ export default function Comment(props) {
   const handleCloseProfile = () => setAnchor(null);
   const handleClickProfileView = () => navigate(`/profile?user=${writer.id}`);
   const getDate = () => {
-    let today = new Date();
-    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
     const feedDate = createTime.split(' ');
-    const hours = (today.getHours() * 60 + today.getMinutes()) - (parseInt(feedDate[1].split(':')[0] * 60) + parseInt(feedDate[1].split(':')[1]));
-    if (feedDate[0] === date) {
-      if (hours < 60) return `${hours}분 전`
-      if (hours <= 12 * 60) return `${Math.round(hours / 60)}시간 전`
-      return feedDate[1];
-    } else return createTime
+    const todayDate = feedDate[0].split('-');
+    const todayTime = feedDate[1].split(':');
+    let today = new Date();
+    const todayHour = {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      date: today.getDate(),
+      hour: today.getHours(),
+      minute: today.getMinutes()
+    }
+    const date = {
+      year: todayDate[0],
+      month: todayDate[1],
+      date: todayDate[2],
+      hour: todayTime[0],
+      minute: todayTime[1]
+    }
+    const date1 = new Date(date.year, date.month, date.date, date.hour, date.minute).getTime();
+    const date2 = new Date(todayHour.year, todayHour.month, todayHour.date, todayHour.hour, todayHour.minute).getTime();
+    const beforeHours = (date2 - date1) / 1000 / 60;
+
+    if (beforeHours < 60) return `${beforeHours}분 전`
+    if (beforeHours <= 12 * 60) return `${Math.round(beforeHours / 60)}시간 전`
+    return createTime;
   };
 
   return (
@@ -111,8 +149,8 @@ export default function Comment(props) {
             <CommentBtn
               onClick={() => handleShowReply(props.feedId, id, replyComment.currentPage)}
               disabled={replyComment.currentPage === replyComment.totalPages}
-              sx={{display: childCount === 0 ? 'none' : 'block'}}>
-              답글보기 ({childCount})
+              sx={{display: count === 0 ? 'none' : 'block'}}>
+              답글보기 ({count})
             </CommentBtn>
             <CommentBtn onClick={() => props.getMentionName(writer.name, id)}>
               답글달기
@@ -149,8 +187,14 @@ export default function Comment(props) {
             <Comment
               key={c.id}
               comment={c}
+              commentList={replyComment}
+              setCommentList={setReplyComment}
               feedId={props.feedId}
               image={c.writer.image ? c.writer.image.source : ''}
+              newReply={props.newReply}
+              addReply={props.addReply}
+              modifyComment={props.modifyComment}
+              handleClickCancelModify={props.handleClickCancelModify}
               currentPage={replyComment.currentPage}
               getMentionName={props.getMentionName}
               getCommentContent={props.getCommentContent}
