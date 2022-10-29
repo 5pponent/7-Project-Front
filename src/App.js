@@ -1,3 +1,4 @@
+import React from 'react';
 import FeedLineSelect from './components/feedline/FeedLineSelect'
 import Login from './components/login/Login';
 import Profile from './components/profile/Profile';

@@ -1,4 +1,5 @@
 import {Stack, TextField} from "@mui/material";
+import React from 'react';
 import ChatProfile from "./ChatProfile";
 
 export default function ChatUserList(props) {
