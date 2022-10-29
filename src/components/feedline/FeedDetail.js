@@ -259,7 +259,7 @@ export default function FeedDetail(props) {
                 return (
                   <ImageListItem key={f.id}>
                     <img src={f.source} alt={f.originalName}/>
-                    <Typography>{f.description}</Typography>
+                    <Typography sx={{whiteSpace: 'pre-wrap'}} my={2}>{f.description}</Typography>
                   </ImageListItem>
                 );
               })

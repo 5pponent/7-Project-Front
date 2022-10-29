@@ -119,7 +119,7 @@ export default React.memo(function Header (props) {
           </ButtonBase>
         </Box>
 
-        <Stack direction={"row"} alignItems={"center"} spacing={2}>
+        <Stack direction={"row"} alignItems={"center"}>
           {/* 검색 */}
           <Box id={"search"}>
             <OutlinedInput
@@ -143,30 +143,26 @@ export default React.memo(function Header (props) {
           </Box>
 
           {/* 사용자 프로필, 더보기 메뉴 */}
-          <Stack direction={"row"} spacing={1}
-                 justifyContent={"flex-end"} alignItems={"center"}>
+          <Tooltip title="피드 작성" placement="bottom" arrow>
+            <IconButton onClick={handleClickDrawer}>
+              <BorderColorIcon sx={{fontSize: 24, color: "#FCFCFC"}}/>
+            </IconButton>
+          </Tooltip>
 
-            <Tooltip title="피드 작성" placement="bottom" arrow>
-              <IconButton onClick={handleClickDrawer}>
-                <BorderColorIcon sx={{fontSize: 24, color: "#FCFCFC"}}/>
-              </IconButton>
-            </Tooltip>
+          <Tooltip title="알림" placement="bottom" arrow>
+            <IconButton>
+              <NotificationsIcon sx={{fontSize: 24, color: "#FCFCFC"}} />
+            </IconButton>
+          </Tooltip>
 
-            <Tooltip title="알림" placement="bottom" arrow>
-              <IconButton>
-                <NotificationsIcon sx={{fontSize: 24, color: "#FCFCFC"}} />
-              </IconButton>
-            </Tooltip>
+          <Tooltip title="내 프로필" placement="bottom" arrow>
+            <ButtonBase onClick={handleClickMyProfile}>
+              <Avatar src={state.user.image ? state.user.image.source : ''}/>
+            </ButtonBase>
+          </Tooltip>
 
-            <Tooltip title="내 프로필" placement="bottom" arrow>
-              <ButtonBase onClick={handleClickMyProfile}>
-                <Avatar src={state.user.image ? state.user.image.source : ''}/>
-              </ButtonBase>
-            </Tooltip>
+          <HeaderMenu/>
 
-            <HeaderMenu/>
-
-          </Stack>
         </Stack>
 
         <Drawer anchor='left' open={open} onClose={handleClickDrawer}>
