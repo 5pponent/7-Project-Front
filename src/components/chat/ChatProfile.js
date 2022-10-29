@@ -1,4 +1,5 @@
 import { Avatar, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import React from 'react';
 
 // props / image : 유저 이미지, name : 유저 이름
 export default function ChatProfile(props) {
