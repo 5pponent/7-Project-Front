@@ -149,10 +149,6 @@ export default function Feed(props) {
               />
             </Box>
           </Stack>
-          
-          <Box sx={{textAlign: 'end', pr: 3}}>
-            <Button onClick={openContent}>상세보기</Button>
-          </Box>
 
           <Stack direction='row' spacing={1} sx={{p: 3, pt: 0}}>
             {files.slice(0, 3).map(item => (
@@ -189,6 +185,10 @@ export default function Feed(props) {
               </Box>
             }
           </Stack>
+
+          <Box sx={{textAlign: 'end', pr: 3}}>
+            <Button onClick={openContent}>상세보기</Button>
+          </Box>
         </Stack>
 
         <Divider/>
