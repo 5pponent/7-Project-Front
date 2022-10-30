@@ -126,7 +126,8 @@ export default React.memo(function Header (props) {
               size={"small"}
               inputProps={{autoComplete: 'off'}}
               style={{
-                fontSize: 12, maxWidth: 200,
+                fontSize: 12,
+                maxWidth: 200,
                 backgroundColor: "rgba(255,255,255,0.15)", color: "white", borderRadius: 30
               }}
               placeholder={"유저 검색"}
