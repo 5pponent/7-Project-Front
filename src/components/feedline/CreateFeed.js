@@ -64,7 +64,7 @@ export default function CreateFeed(props) {
   };
 
   return (
-    <Stack sx={{width: 500}}>
+    <Stack sx={{width: 400}}>
       <Stack direction="row" sx={{alignItems: "center", justifyContent: "space-between", p: 2, mx: 1}}>
         <Typography variant="h5" sx={{fontWeight: 'bold'}}>피드 작성</Typography>
         <IconButton onClick={closeDrawer}><CloseIcon/></IconButton>
