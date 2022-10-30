@@ -7,9 +7,9 @@ export default function Chat(props) {
     <Grid item xs={12} align={props.direction}>
       <Box
         bgcolor={props.direction === 'left' ? '#b9e7f6' : 'white'}
-        sx={{ 
-          maxWidth:'350px', padding: '15px', margin: '10px',
-          display: 'inline-block', overflowY: 'visible', borderRadius: '25px'
+        sx={{
+          borderRadius: 3, p: 1, m: 1,
+          display: 'inline-block', overflowY: 'visible'
       }}>
         <ListItemText 
           align='left'
