@@ -12,10 +12,11 @@ export default function ChatApp(props) {
 
   const [userId, setUserId] = useState(0);
   const [message, setMessage] = useState('');
-  const handleChangeMessage = (e) => {setMessage(e.target.value)}
+  const handleChangeMessage = (e) => {
+    setMessage(e.target.value)
+  }
   const handleSubmitMessage = (e) => {
     e.preventDefault();
-    console.log(chatLog)
     publish(message);
     setMessage('');
   }
@@ -26,7 +27,9 @@ export default function ChatApp(props) {
   const conn = () => {
     client.current = new StompJS.Client({
       webSocketFactory: () => new SockJS("/ws/chat"),
-      debug: function (str) {console.log(str)},
+      debug: function (str) {
+        console.log(str)
+      },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -40,12 +43,15 @@ export default function ChatApp(props) {
     });
     client.current.activate();
   }
-  const disconnect = () => {client.current.deactivate()}
+  const disconnect = () => {
+    client.current.deactivate()
+  }
   const subscribe = () => {
     client.current.subscribe(`/sub/chat/0`, (data) => {
       let payload = JSON.parse(data.body);
-      setChatLog(chatLog.concat(payload));
-      console.log(payload);
+      setChatLog(chatLog => [
+        ...chatLog, payload
+      ])
     });
   }
   const publish = (message) => {
@@ -57,21 +63,18 @@ export default function ChatApp(props) {
           message: message,
         })
       });
-      setChatLog(chatLog.concat({
-        sender: userId,
-        message: message
-      }));
-    }
-    else return;
+    } else return;
   }
 
   useEffect(() => {
-    setUserId(state.user.id);
-    console.log(state.user.id)
     conn();
-
     return () => disconnect();
   }, []);
+
+  useEffect(() => {
+    setUserId(state.user.id);
+    console.log(state.user.id);
+  }, [state.user.id]);
 
   return (
     <Stack direction={"row"} justifyContent={"center"} spacing={1}>
@@ -93,10 +96,11 @@ export default function ChatApp(props) {
           height: '70vh', width: 300, overflowY: 'auto',
           bgcolor: '#e7ebf0', wordBreak: 'break-all', border: '1px solid #e0e0e0'
         }}>
-          <Chat direction='right' content="Hey man, What's up?" date="09:30" />
-          {chatLog.map((it) => {
+          <Chat direction='right' content="Hey man, What's up?" date="09:30"/>
+          {chatLog.map((it, index) => {
             return (
               <Chat
+                key={index}
                 direction={it.sender === userId ? 'right' : 'left'}
                 content={it.message}
               />
