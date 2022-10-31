@@ -196,8 +196,8 @@ export default function FeedDetail(props) {
   };
   const getDate = () => {
     const feedDate = createTime.split(' ');
-    const todayDate = feedDate[0].split('-');
-    const todayTime = feedDate[1].split(':');
+    const createDate = feedDate[0].split('-');
+    const createDateTime = feedDate[1].split(':');
     let today = new Date();
     const todayHour = {
       year: today.getFullYear(),
@@ -207,14 +207,14 @@ export default function FeedDetail(props) {
       minute: today.getMinutes()
     }
     const date = {
-      year: todayDate[0],
-      month: todayDate[1],
-      date: todayDate[2],
-      hour: todayTime[0],
-      minute: todayTime[1]
+      year: parseInt(createDate[0]),
+      month: parseInt(createDate[1]),
+      date: parseInt(createDate[2]),
+      hour: parseInt(createDateTime[0]),
+      minute: parseInt(createDateTime[1])
     }
-    const date1 = new Date(date.year, date.month, date.date, date.hour, date.minute).getTime();
-    const date2 = new Date(todayHour.year, todayHour.month, todayHour.date, todayHour.hour, todayHour.minute).getTime();
+    const date1 = new Date(`${date.year}-${date.month}-${date.date} ${date.hour}:${date.minute}:00`).getTime();
+    const date2 = new Date(`${todayHour.year}-${todayHour.month}-${todayHour.date} ${todayHour.hour}:${todayHour.minute}:00`).getTime();
     const beforeHours = (date2 - date1) / 1000 / 60;
 
     if (beforeHours < 60) return `${beforeHours}분 전`
