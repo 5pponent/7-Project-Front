@@ -27,6 +27,7 @@ export default function ChatApp(props) {
   const [chatSessionList, setChatSessionList] = useState([]);
   const [targetUser, setTargetUser] = useState({});
   const [chatLogLoading, setChatLogLoading] = useState(false);
+  const [sessionList, setSessionList] = useState([]);
 
   const scrollToBottom = () => {
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -76,6 +77,7 @@ export default function ChatApp(props) {
   const subscribe = (sessionId) => {
     client.current.subscribe(`/sub/chat/${sessionId}`, (data) => {
       setChatLog(chatLog => [...chatLog, JSON.parse(data.body)]);
+      loadSessionList();
     });
   }
   const publish = (sessionId, message) => {
@@ -83,6 +85,7 @@ export default function ChatApp(props) {
       client.current.publish({
         destination: `/pub/chat/${sessionId}`,
         body: JSON.stringify({
+          sessionId: session,
           sender: userId,
           message: message,
         })
@@ -91,8 +94,29 @@ export default function ChatApp(props) {
     else return;
     scrollToBottom();
   }
+  const loadSessionList = () => {
+    customAxios.get(`/chat/session`)
+      .then(res => {
+        setSessionList(res.data);
+        setChatSessionList(res.data.map(it => it.id));
+      })
+      .catch(err => {console.log(err.response)});
+  }
+  const loadChatLog = () => {
+    setChatLogLoading(true);
+    session &&
+    customAxios.get(`/chat/session/${session}/chat`)
+      .then(res => {
+        setChatLog(res.data.chats);
+      })
+      .catch(err => {console.log(err.response)})
+      .finally(() => {
+        setChatLogLoading(false);
+      });
+  }
 
   useEffect(() => {
+    loadSessionList();
     conn();
     return () => client.current.deactivate();
   }, []);
@@ -102,19 +126,8 @@ export default function ChatApp(props) {
   }, [state.user.id]);
 
   useEffect(() => {
-    setChatLogLoading(true);
-    session &&
-    customAxios.get(`/chat/session/${session}/chat`)
-      .then(res => {setChatLog(res.data.chats);})
-      .catch(err => {console.log(err.response)})
-      .finally(() => {
-        setChatLogLoading(false);
-      });
-    customAxios.get(`/chat/session`)
-      .then(res => {
-        setChatSessionList(res.data.map(it => it.id));
-      })
-      .catch(err => {console.log(err.response)});
+    loadChatLog();
+    loadSessionList();
     scrollToBottom();
   }, [session]);
 
@@ -134,6 +147,7 @@ export default function ChatApp(props) {
         {connected ?
           <ChatUserList
             changeSession={changeSession}
+            sessionList={sessionList}
           />
           :
           <Stack alignItems={"center"} spacing={2} justifyContent={"center"} height={"100%"}>
@@ -143,7 +157,7 @@ export default function ChatApp(props) {
         }
       </Stack>
 
-      <Stack spacing={1}>
+      <Stack spacing={1} width={400}>
 
         <Stack>
           <SmallProfile
@@ -155,7 +169,7 @@ export default function ChatApp(props) {
         </Stack>
 
         <Stack sx={{
-          height: '70vh', maxWidth: 400, overflowY: 'auto',
+          height: '70vh', width: '100%', overflowY: 'auto',
           bgcolor: '#e7ebf0', wordBreak: 'break-all', border: '1px solid #e0e0e0'
         }} ref={scrollRef}>
           {!targetUser.name ?
@@ -170,14 +184,16 @@ export default function ChatApp(props) {
               :
               (chatLog.length > 0 ?
                 chatLog.map((it, index) => {
-                  return (
-                    <Chat
-                      key={index}
-                      direction={it.sender.id === userId ? 'right' : 'left'}
-                      content={it.message}
-                      createTime={it.createTime}
-                    />
-                  );
+                  if (it.sessionId === parseInt(session)) {
+                    return (
+                      <Chat
+                        key={index}
+                        direction={it.sender.id === userId ? 'right' : 'left'}
+                        content={it.message}
+                        createTime={it.createTime}
+                      />
+                    );
+                  }
                 })
                 :
                 <Stack alignItems={"center"} height={"100%"} justifyContent={"center"}>
