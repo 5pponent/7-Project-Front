@@ -43,7 +43,9 @@ export default function Feed(props) {
   const [commentFocus, setCommentFocus] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
-  const getFeedDetail = (data) => {setFeedDetail(data)}
+  const getFeedDetail = (data) => {
+    setFeedDetail(data)
+  }
   const openContent = async () => {
     await customAxios.get(`/feed/${id}`)
       .then(res => {
@@ -104,8 +106,8 @@ export default function Feed(props) {
   const handleClickImage = (image) => dispatch({type: 'OpenImageView', payload: image});
   const getDate = () => {
     const feedDate = createTime.split(' ');
-    const todayDate = feedDate[0].split('-');
-    const todayTime = feedDate[1].split(':');
+    const createDate = feedDate[0].split('-');
+    const createDateTime = feedDate[1].split(':');
     let today = new Date();
     const todayHour = {
       year: today.getFullYear(),
@@ -115,14 +117,14 @@ export default function Feed(props) {
       minute: today.getMinutes()
     }
     const date = {
-      year: todayDate[0],
-      month: todayDate[1],
-      date: todayDate[2],
-      hour: todayTime[0],
-      minute: todayTime[1]
+      year: parseInt(createDate[0]),
+      month: parseInt(createDate[1]),
+      date: parseInt(createDate[2]),
+      hour: parseInt(createDateTime[0]),
+      minute: parseInt(createDateTime[1])
     }
-    const date1 = new Date(date.year, date.month, date.date, date.hour, date.minute).getTime();
-    const date2 = new Date(todayHour.year, todayHour.month, todayHour.date, todayHour.hour, todayHour.minute).getTime();
+    const date1 = new Date(`${date.year}-${date.month}-${date.date} ${date.hour}:${date.minute}:00`).getTime();
+    const date2 = new Date(`${todayHour.year}-${todayHour.month}-${todayHour.date} ${todayHour.hour}:${todayHour.minute}:00`).getTime();
     const beforeHours = (date2 - date1) / 1000 / 60;
 
     if (beforeHours < 60) return `${beforeHours}분 전`
@@ -136,7 +138,7 @@ export default function Feed(props) {
 
         {/*컨텐츠 + 더보기 버튼*/}
         <Stack>
-          <Stack direction='row' sx={{cursor: 'pointer', justifyContent:'space-between', alignItems:'flex-start'}}>
+          <Stack direction='row' sx={{cursor: 'pointer', justifyContent: 'space-between', alignItems: 'flex-start'}}>
             <Box p={3} width="100%" onClick={openContent}>
               <Content>{content}</Content>
             </Box>
@@ -179,9 +181,9 @@ export default function Feed(props) {
                   rgba(0, 0, 0, 0.4)
                 ), url(${files[3].source})`
               }}>
-                  <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#ffffff'}}>
-                    + {files.length - 3}
-                  </Typography>
+                <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#ffffff'}}>
+                  + {files.length - 3}
+                </Typography>
               </Box>
             }
           </Stack>
@@ -255,7 +257,7 @@ export default function Feed(props) {
         </DialogContent>
       </Dialog>
 
-    {/* 피드 삭제 다이얼로그 */}
+      {/* 피드 삭제 다이얼로그 */}
       <NoticeModal
         open={deleteOpen}
         title={'피드 삭제'}
