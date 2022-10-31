@@ -103,18 +103,18 @@ export default function ChatApp(props) {
 
   useEffect(() => {
     setChatLogLoading(true);
-    customAxios.get(`/chat/session`)
-      .then(res => {
-        setChatSessionList(res.data.map(it => it.id));
-      })
-      .catch(err => {console.log(err.response)});
     session &&
-    customAxios.get(`/chat/session/${session}`)
+    customAxios.get(`/chat/session/${session}/chat`)
       .then(res => {setChatLog(res.data.chats);})
       .catch(err => {console.log(err.response)})
       .finally(() => {
         setChatLogLoading(false);
       });
+    customAxios.get(`/chat/session`)
+      .then(res => {
+        setChatSessionList(res.data.map(it => it.id));
+      })
+      .catch(err => {console.log(err.response)});
     scrollToBottom();
   }, [session]);
 

@@ -36,13 +36,15 @@ export default function ChatUserList(props) {
       .catch(err => {console.log(err.response)});
   }
   const handleCloseDialog = () => {setOpen(false)}
-
-  useEffect(() => {
-    state.user.id !== 0 &&
+  const loadSessionList = () => {
     customAxios.get(`/chat/session`)
-      .then(res => {setSessionList(res.data)})
+      .then(res => {setSessionList(res.data); console.log(res.data)})
       .catch(err => {console.log(err.response)})
       .finally(() => {setFirstLoading(false)});
+  }
+
+  useEffect(() => {
+    state.user.id !== 0 && loadSessionList();
   }, [state.user.id]);
 
   return (
@@ -69,6 +71,8 @@ export default function ChatUserList(props) {
                   key={it.id}
                   image={it.users[0].image ? it.users[0].image.source : ''}
                   name={it.users[0].name}
+                  lastChat={it.lastChat}
+                  unreadCount={it.unreadCount}
                   onClick={(e) => {handleClickProfile(e, it.users[0].id)}}
                 />
               )
