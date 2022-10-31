@@ -10,9 +10,6 @@ import {useNavigate} from "react-router-dom";
 export default function ChatUserList(props) {
   const [state, dispatch] = useContext(store);
 
-  let navigate = useNavigate();
-
-  const [firstLoading, setFirstLoading] = useState(true);
   const [following, setFollowing] = useState([]);
   const [sessionList, setSessionList] = useState([]);
   const [searchValue, setSearchValue] = useState('');
@@ -36,16 +33,6 @@ export default function ChatUserList(props) {
       .catch(err => {console.log(err.response)});
   }
   const handleCloseDialog = () => {setOpen(false)}
-  const loadSessionList = () => {
-    customAxios.get(`/chat/session`)
-      .then(res => {setSessionList(res.data); console.log(res.data)})
-      .catch(err => {console.log(err.response)})
-      .finally(() => {setFirstLoading(false)});
-  }
-
-  useEffect(() => {
-    state.user.id !== 0 && loadSessionList();
-  }, [state.user.id]);
 
   return (
     <>
@@ -65,7 +52,7 @@ export default function ChatUserList(props) {
             채팅 상대 추가
           </Button>
           {
-            sessionList.length > 0 ? sessionList.map((it) => {
+            props.sessionList.length > 0 ? props.sessionList.map((it) => {
               return (
                 <ChatProfile
                   key={it.id}
@@ -78,15 +65,9 @@ export default function ChatUserList(props) {
               )
             })
             :
-            (firstLoading ?
-              <Stack alignItems={"center"} height={"100%"} justifyContent={"center"}>
-                <CircularProgress/>
-              </Stack>
-              :
-              <Stack alignItems={"center"} height={"100%"} justifyContent={"center"}>
-                <Typography>채팅 세션이 없습니다.</Typography>
-              </Stack>
-            )
+            <Stack alignItems={"center"} height={"100%"} justifyContent={"center"}>
+              <Typography>채팅 세션이 없습니다.</Typography>
+            </Stack>
           }
         </Stack>
       </Stack>

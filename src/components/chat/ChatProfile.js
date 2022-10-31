@@ -19,8 +19,8 @@ export default function ChatProfile(props) {
   return (
     <ListItem button onClick={props.onClick}>
       <ListItemIcon>
-        <Badge color={"error"} badgeContent={unreadCount} invisible={unreadCount > 0 ? false : true}>
-          <Avatar alt={name} src={image} />
+        <Badge color={"error"} badgeContent={unreadCount} invisible={unreadCount === 0}>
+          <Avatar alt={name} src={image}/>
         </Badge>
       </ListItemIcon>
       <Stack>
