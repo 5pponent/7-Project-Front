@@ -1,7 +1,7 @@
-import {Avatar, ListItem, ListItemIcon, ListItemText, styled, Typography} from "@mui/material";
-import React from 'react';
+import {Avatar, Badge, ListItem, ListItemIcon, ListItemText, Stack, styled, Typography} from "@mui/material";
+import React, {useEffect} from 'react';
 
-const Content = styled(ListItemText)`
+const Content = styled(Typography)`
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -9,18 +9,24 @@ const Content = styled(ListItemText)`
   white-space: pre-wrap;
 `
 
-// props / image : 유저 이미지, name : 유저 이름
 export default function ChatProfile(props) {
 
   const name = props.name;
   const image = props.image;
+  const lastChat = props.lastChat;
+  const unreadCount = props.unreadCount;
 
   return (
     <ListItem button onClick={props.onClick}>
       <ListItemIcon>
-        <Avatar alt={name} src={image} />
+        <Badge color={"error"} badgeContent={unreadCount} invisible={unreadCount > 0 ? false : true}>
+          <Avatar alt={name} src={image} />
+        </Badge>
       </ListItemIcon>
-      <Content primary={name} />
+      <Stack>
+        <Content sx={{fontSize: 14, fontWeight: 'bold'}}>{name}</Content>
+        <Content sx={{fontSize: 12}}>{lastChat}</Content>
+      </Stack>
     </ListItem>
   );
 }
