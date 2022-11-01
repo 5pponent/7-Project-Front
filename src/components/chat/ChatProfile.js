@@ -18,12 +18,10 @@ export default function ChatProfile(props) {
 
   return (
     <ListItem button onClick={props.onClick}>
-      <ListItemIcon>
-        <Badge color={"error"} badgeContent={unreadCount} invisible={unreadCount === 0}>
-          <Avatar alt={name} src={image}/>
-        </Badge>
-      </ListItemIcon>
-      <Stack>
+      <Badge color={"error"} badgeContent={unreadCount} invisible={unreadCount === 0}>
+        <Avatar alt={name} src={image}/>
+      </Badge>
+      <Stack pl={1}>
         <Content sx={{fontSize: 14, fontWeight: 'bold'}}>{name}</Content>
         <Content sx={{fontSize: 12}}>{lastChat}</Content>
       </Stack>

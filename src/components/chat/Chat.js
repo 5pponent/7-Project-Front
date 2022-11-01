@@ -1,4 +1,4 @@
-import {Box, Grid, ListItemText, Typography} from "@mui/material";
+import {Box, Grid, ListItemText, Stack, Typography} from "@mui/material";
 import React from 'react';
 
 export default function Chat(props) {
@@ -32,13 +32,17 @@ export default function Chat(props) {
   }
 
   return (
-    <Grid item xs={12} align={props.direction}>
+    <Stack
+      direction={props.direction === 'left' ? "row" : "row-reverse"}
+      justifyContent={"flex-start"}
+      alignItems={"flex-end"}
+    >
       <Box
         bgcolor={props.direction === 'left' ? '#b9e7f6' : 'white'}
         sx={{
           borderRadius: 3, p: 1.0, m: 1, maxWidth: 200,
           display: 'inline-block', overflowY: 'visible'
-      }}>
+        }}>
         <Typography
           align='left' fontSize={14}
         >{props.content}</Typography>
@@ -46,6 +50,9 @@ export default function Chat(props) {
           variant={"caption"} sx={{color: "gray"}}
         >{getDate()}</Typography>
       </Box>
-    </Grid>
+      <Typography variant={"caption"} color={"gray"}>
+        {!props.hasRead && '안읽음'}
+      </Typography>
+    </Stack>
   );
 }
