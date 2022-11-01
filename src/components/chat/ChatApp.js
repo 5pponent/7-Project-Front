@@ -121,6 +121,7 @@ export default function ChatApp(props) {
   useEffect(() => {
     loadCurrentSession();
     loadSessionList();
+    scrollToBottom();
     conn();
     return () => client.current.deactivate();
   }, []);

@@ -30,6 +30,7 @@ const Content = styled(Typography)`
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   white-space: pre-wrap;
+  word-break: break-all;
 `
 
 export default function Feed(props) {

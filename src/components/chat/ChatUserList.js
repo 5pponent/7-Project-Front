@@ -56,8 +56,8 @@ export default function ChatUserList(props) {
               return (
                 <ChatProfile
                   key={it.id}
-                  image={it.users[0].image ? it.users[0].image.source : ''}
-                  name={it.users[0].name}
+                  image={it.users[0] && (it.users[0].image ? it.users[0].image.source : '')}
+                  name={it.users[0] ? it.users[0].name : '대화상대 없음'}
                   lastChat={it.lastChat}
                   unreadCount={it.unreadCount}
                   onClick={(e) => {handleClickProfile(e, it.users[0].id)}}
