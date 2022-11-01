@@ -1,14 +1,12 @@
 import {Button, Dialog, DialogTitle, Stack, TextField, Typography} from "@mui/material";
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
 import ChatProfile from "./ChatProfile";
-import CircularProgress from "@mui/material/CircularProgress";
 import SmallProfile from "../SmallProfile";
-import {useNavigate} from "react-router-dom";
 
 export default function ChatUserList(props) {
-  const [state, dispatch] = useContext(store);
+  const [state,] = useContext(store);
 
   const [following, setFollowing] = useState([]);
   const [sessionList, setSessionList] = useState([]);
@@ -56,7 +54,7 @@ export default function ChatUserList(props) {
               return (
                 <ChatProfile
                   key={it.id}
-                  image={it.users[0].image ? it.users[0].image.source : ''}
+                  image={it.users[0] && (it.users[0].image ? it.users[0].image.source : '')}
                   name={it.users[0].name}
                   lastChat={it.lastChat}
                   unreadCount={it.unreadCount}

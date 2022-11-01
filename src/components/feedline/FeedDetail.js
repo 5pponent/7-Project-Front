@@ -339,12 +339,11 @@ export default function FeedDetail(props) {
         </Stack>
 
         {/* 댓글 작성 */}
-        <Stack fullwidth={"true"} sx={{p: 1, pb: 3, position: 'sticky', bottom: 0, bgcolor: 'white'}}>
+        <Stack sx={{width: '100%', p: 1, pb: 3, position: 'sticky', bottom: 0, bgcolor: 'white'}}>
           <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
             <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
-            <TextField inputRef={commentRef} multiline size='small' fullwidth={"true"} error={!!commentErrorMessage}
-                       helperText={commentErrorMessage}
-                       value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
+            <TextField inputRef={commentRef} multiline size='small' error={!!commentErrorMessage} helperText={commentErrorMessage}
+                       value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment} sx={{width: '100%'}}/>
             <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
               {modifyComment ? '수정' : '입력'}
             </Button>

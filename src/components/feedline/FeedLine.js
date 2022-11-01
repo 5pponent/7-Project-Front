@@ -3,7 +3,7 @@ import {CircularProgress, Box, Stack} from '@mui/material';
 import Feed from './Feed';
 
 export default function FeedLine(props) {
-  const {currentPage, feeds, totalElements, totalPages} = props.feed;
+  const {currentPage, feeds, totalPages} = props.feed;
 
   const watch = () => window.addEventListener('scroll', props.handleScroll);
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function FeedLine(props) {
 
   return (
     <Stack spacing={3} sx={{width: "100%", maxWidth: 800}} mb={3}>
-      { feeds.map(f => {
+      {feeds.map(f => {
         return (
           <Feed
             key={f.id}
@@ -26,7 +26,7 @@ export default function FeedLine(props) {
         );
       })
       }
-      { feeds.length === 0 &&
+      {feeds.length === 0 &&
         <Box display="flex" justifyContent="center" style={{padding: 100}}>
           <CircularProgress size={60}></CircularProgress>
         </Box>

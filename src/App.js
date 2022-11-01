@@ -69,7 +69,7 @@ export default function App() {
 
       <Routes>
         <Route path={"/"} element={
-          <Template element={<FeedLineSelect/>}/>
+          <Template marginNum={0} element={<FeedLineSelect/>}/>
         }></Route>
 
         <Route path={"/login"} element={
@@ -77,19 +77,19 @@ export default function App() {
         }></Route>
 
         <Route path={"/profile"} element={
-          <Template element={<Profile/>}/>
+          <Template marginNum={3} element={<Profile/>}/>
         }></Route>
 
         <Route path={"/chat"} element={
-          <Template element={<ChatApp/>}/>
+          <Template marginNum={3} element={<ChatApp/>}/>
         }></Route>
 
         <Route path={"/schedule"} element={
-          <Template element={<ScheduleApp/>}/>
+          <Template marginNum={3} element={<ScheduleApp/>}/>
         }></Route>
 
         <Route path={"/setting"} element={
-          <Template element={<Setting/>}/>
+          <Template marginNum={3} element={<Setting/>}/>
         }></Route>
 
         <Route path={"/server-error"} element={
