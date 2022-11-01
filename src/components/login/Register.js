@@ -44,7 +44,6 @@ export default function Register(props) {
   };
   const registValidate = () => {
     let valid = true;
-    let regPassword = /^(?=.[a-zA-Z0-9])(?=.[a-zA-Z!@#$%^&])(?=.[0-9!@#$%^&*]).{6,20}$/;
     if (!registInfo.password) {
       setPwErrorMessage('비밀번호가 형식에 맞지 않습니다.');
       valid = false;
@@ -103,12 +102,18 @@ export default function Register(props) {
   const handleClickRegist = async (e) => {
     e.preventDefault();
     dispatch({type: 'OpenLoading', payload: '회원가입을 진행 중입니다..'});
-    registValidate() && await axios.post(`/auth/join`, {email: authInfo.email, ...registInfo})
+    registValidate() &&
+    await axios.post(`/auth/join`, {email: authInfo.email, ...registInfo})
       .then(res => {
         localStorage.setItem('token', res.data.token);
         navigate('/');
       })
-      .catch(error => {console.log(error.response);})
+      .catch(error => {
+        if (error.response.status === 400)
+          setPwErrorMessage(error.response.data[0].message);
+        else setPwErrorMessage('');
+        console.log(error.response);
+      })
       .finally(() => dispatch({type: 'CloseLoading'}))
     dispatch({type: 'CloseLoading'});
   };
@@ -150,7 +155,7 @@ export default function Register(props) {
             <TextField fullWidth label='PW 확인' type='password' onChange={handleValueChange} name="passwordCheck"
                        error={!!pwchkErrorMessage} helperText={pwchkErrorMessage} sx={{display: showForm}}
             />
-            <TextField fullWidth label='이름' onChange={handleValueChange} name="name"
+            <TextField fullWidth label='이름' onChange={handleValueChange} name="name" inputProps={{autoComplete: "off"}}
                        error={!!nameErrorMessage} helperText={nameErrorMessage} sx={{display: showForm}}
             />
 

@@ -44,7 +44,7 @@ export default function App() {
 
       {notice &&
         <Box style={{
-          position: "fixed", top: 80, left: 20, backgroundColor: '#fff4e5'
+          position: "fixed", top: 75, left: 10, backgroundColor: '#fff4e5'
         }} sx={{p: 1, borderRadius: 3, boxShadow: 3, zIndex: 99999}}>
           <Stack>
             <Alert severity={"warning"}>
@@ -55,8 +55,7 @@ export default function App() {
               </AlertTitle>
               <Divider/>
               <Typography variant={"subtitle2"} my={1}>
-                문제 발생 시 피드, 댓글 또는<br/>
-                ahdwjdtprtm@gmail.com 로<br/>
+                문제 발생 시 피드에 작성하여<br/>
                 피드백 부탁드립니다.
               </Typography>
             </Alert>
