@@ -45,7 +45,7 @@ export default function ChatUserList(props) {
         height: '70vh', overflowY: 'auto', border: '1px solid #e0e0e0',
         wordBreak: 'break-all', alignItems: 'center'
       }}>
-        <Stack spacing={1} py={1} width={"100%"}>
+        <Stack spacing={1} py={1}>
           <Button variant={"outlined"} onClick={handleOpenDialog} sx={{mx: 1}}>
             채팅 상대 추가
           </Button>
@@ -55,7 +55,7 @@ export default function ChatUserList(props) {
                 <ChatProfile
                   key={it.id}
                   image={it.users[0] && (it.users[0].image ? it.users[0].image.source : '')}
-                  name={it.users[0].name}
+                  name={it.users[0] ? it.users[0].name : '대화상대 없음'}
                   lastChat={it.lastChat}
                   unreadCount={it.unreadCount}
                   onClick={(e) => {handleClickProfile(e, it.users[0].id)}}
@@ -72,21 +72,23 @@ export default function ChatUserList(props) {
 
       <Dialog open={open} onClose={handleCloseDialog}>
         <DialogTitle>채팅 상대 추가</DialogTitle>
-        <Stack spacing={2} p={2}>
-        {
-          following.map((it) => {
-            return (
-              <SmallProfile
-                key={it.id}
-                direction={"row"}
-                spacing={1}
-                name={it.name}
-                image={it.image ? it.image.source : ''}
-                onClick={(e) => handleClickProfile(e, it.id)}
-              />
-            )
-          })
-        }
+        <Divider/>
+        <Stack spacing={2} p={3}>
+          <Typography variant={"subtitle2"}>팔로우 한 유저와 채팅할 수 있습니다.</Typography>
+          {
+            following.map((it) => {
+              return (
+                <SmallProfile
+                  key={it.id}
+                  direction={"row"}
+                  spacing={1}
+                  name={it.name}
+                  image={it.image ? it.image.source : ''}
+                  onClick={(e) => handleClickProfile(e, it.id)}
+                />
+              )
+            })
+          }
         </Stack>
       </Dialog>
     </>

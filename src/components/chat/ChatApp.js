@@ -35,8 +35,7 @@ export default function ChatApp(props) {
   const handleChangeMessage = (e) => {setMessage(e.target.value)}
   const handleSubmitMessage = (e) => {
     e.preventDefault();
-    if (message === '') return;
-    publish(session, message);
+    message !== '' && publish(session, message);
     setMessage('');
   }
   const changeSession = (userId) => {
@@ -54,9 +53,6 @@ export default function ChatApp(props) {
     client.current = new StompJS.Client({
       webSocketFactory: () => new SockJS("/ws/chat"),
       debug: function (str) {console.log(str)},
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
       onConnect: () => {
         // 연결 성공 시 수행, 여기서 클라이언트에 대한 모든 구독 실행해야 함
         customAxios.get(`/chat/session`)
@@ -94,6 +90,10 @@ export default function ChatApp(props) {
     else return;
     scrollToBottom();
   }
+  const loadCurrentSession = () => {
+    customAxios.get(`/chat/session/${session}`)
+      .then(res => {setTargetUser(res.data.users[0])});
+  }
   const loadSessionList = () => {
     customAxios.get(`/chat/session`)
       .then(res => {
@@ -114,17 +114,19 @@ export default function ChatApp(props) {
         setChatLogLoading(false);
       });
   }
+  const readChat = (chatId) => {
+    customAxios.get(`/chat/session/${session}/chat/${chatId}`).then(r => {})
+  }
 
   useEffect(() => {
+    loadCurrentSession();
     loadSessionList();
+    scrollToBottom();
     conn();
     return () => client.current.deactivate();
   }, []);
 
-  useEffect(() => {
-    setUserId(state.user.id);
-  }, [state.user.id]);
-
+  useEffect(() => {setUserId(state.user.id)}, [state.user.id]);
   useEffect(() => {
     loadChatLog();
     loadSessionList();
@@ -132,26 +134,27 @@ export default function ChatApp(props) {
   }, [session]);
 
   useEffect(() => {
-    if (client.current.connected) setConnected(true);
-    else setConnected(false);
+    client.current.connected ? setConnected(true) : setConnected(false)
   }, [client.current.connected]);
 
   useEffect(() => {
+    loadSessionList();
     scrollToBottom();
   }, [chatLog]);
 
   return (
     <Stack direction={"row"} justifyContent={"center"} spacing={1}>
 
-      <Stack spacing={1}>
+      <Stack spacing={1} maxWidth={180}>
         {connected ?
           <ChatUserList
             changeSession={changeSession}
             sessionList={sessionList}
           />
           :
-          <Stack alignItems={"center"} spacing={2} justifyContent={"center"} height={"100%"}>
-            <CircularProgress sx={{mt: 10}}/>
+          <Stack alignItems={"center"} spacing={2} border={"1px solid #e0e0e0"}
+                 justifyContent={"center"} height={"100%"} px={3}>
+            <CircularProgress/>
             <Typography variant={"caption"} color={"gray"}>소켓에 연결 중입니다..</Typography>
           </Stack>
         }
@@ -183,14 +186,17 @@ export default function ChatApp(props) {
               </Stack>
               :
               (chatLog.length > 0 ?
-                chatLog.map((it, index) => {
+                chatLog.map((it) => {
                   if (it.sessionId === parseInt(session)) {
+                    // 마지막으로 올라온 채팅의 목적지 세션이 내 현재 세션과 같을 경우 읽음 처리
+                    if (it.id === chatLog.at(-1).id) readChat(it.id);
                     return (
                       <Chat
-                        key={index}
+                        key={it.id}
                         direction={it.sender.id === userId ? 'right' : 'left'}
                         content={it.message}
                         createTime={it.createTime}
+                        // hasRead={it.readUsers.includes(targetUser.id)}
                       />
                     );
                   }
