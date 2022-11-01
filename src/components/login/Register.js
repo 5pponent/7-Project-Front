@@ -44,8 +44,9 @@ export default function Register(props) {
   };
   const registValidate = () => {
     let valid = true;
-    if (!registInfo.password) {
-      setPwErrorMessage('비밀번호를 입력해 주세요.');
+    let regPassword = /^(?=.[a-zA-Z0-9])(?=.[a-zA-Z!@#$%^&])(?=.[0-9!@#$%^&*]).{6,20}$/;
+    if (regPassword.test(registInfo.password)) {
+      setPwErrorMessage('비밀번호가 형식에 맞지 않습니다.');
       valid = false;
     } else setPwErrorMessage('');
     if (registInfo.password !== registInfo.passwordCheck) {

@@ -13,7 +13,8 @@ import {
   Badge,
   Dialog,
   DialogContent,
-  styled, DialogActions, Button
+  styled
+  , Button
 } from '@mui/material';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
@@ -110,23 +111,10 @@ export default function Feed(props) {
     const createDate = feedDate[0].split('-');
     const createDateTime = feedDate[1].split(':');
     let today = new Date();
-    const todayHour = {
-      year: today.getFullYear(),
-      month: today.getMonth() + 1,
-      date: today.getDate(),
-      hour: today.getHours(),
-      minute: today.getMinutes()
-    }
-    const date = {
-      year: parseInt(createDate[0]),
-      month: parseInt(createDate[1]),
-      date: parseInt(createDate[2]),
-      hour: parseInt(createDateTime[0]),
-      minute: parseInt(createDateTime[1])
-    }
-    const date1 = new Date(`${date.year}-${date.month}-${date.date} ${date.hour}:${date.minute}:00`).getTime();
-    const date2 = new Date(`${todayHour.year}-${todayHour.month}-${todayHour.date} ${todayHour.hour}:${todayHour.minute}:00`).getTime();
-    const beforeHours = (date2 - date1) / 1000 / 60;
+
+    const todayHour = new Date(`${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:00`);
+    const date = new Date(`${createDate[0]}-${createDate[1]}-${createDate[2]} ${createDateTime[0]}:${createDateTime[1]}:00`);
+    const beforeHours = (todayHour - date) / 1000 / 60;
 
     if (beforeHours < 60) return `${beforeHours}분 전`
     if (beforeHours <= 12 * 60) return `${Math.round(beforeHours / 60)}시간 전`

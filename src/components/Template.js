@@ -18,7 +18,7 @@ export default function Template(props) {
     <>
       <HeaderAppBar/>
 
-      <Box mt={3}>
+      <Box mt={props.marginNum}>
         {props.element}
       </Box>
     </>
