@@ -21,9 +21,6 @@ export default function Template(props) {
       <Box mt={3}>
         {props.element}
       </Box>
-
-      {/*맨 위 스크롤*/}
-      <ScrollTop/>
     </>
   );
 }

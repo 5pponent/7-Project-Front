@@ -44,6 +44,7 @@ export default function Chat(props) {
           display: 'inline-block', overflowY: 'visible'
         }}>
         <Typography
+          whiteSpace={"pre-wrap"}
           align='left' fontSize={14}
         >{props.content}</Typography>
         <Typography
@@ -51,7 +52,7 @@ export default function Chat(props) {
         >{getDate()}</Typography>
       </Box>
       <Typography variant={"caption"} color={"gray"}>
-        {!props.hasRead && '안읽음'}
+        {/*{!props.hasRead && '안읽음'}*/}
       </Typography>
     </Stack>
   );
