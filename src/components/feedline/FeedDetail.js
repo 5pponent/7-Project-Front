@@ -200,8 +200,8 @@ export default function FeedDetail(props) {
     const createDateTime = feedDate[1].split(':');
     let today = new Date();
 
-    const todayHour = `${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:00`
-    const date = `${createDate[0]}-${createDate[1]}-${createDate[2]} ${createDateTime[0]}:${createDateTime[1]}:00`
+    const todayHour = new Date(`${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:00`);
+    const date = new Date(`${createDate[0]}-${createDate[1]}-${createDate[2]} ${createDateTime[0]}:${createDateTime[1]}:00`);
     const beforeHours = (todayHour - date) / 1000 / 60;
 
     if (beforeHours < 60) return `${beforeHours}분 전`
@@ -339,10 +339,10 @@ export default function FeedDetail(props) {
         </Stack>
 
         {/* 댓글 작성 */}
-        <Stack fullWidth sx={{p: 1, pb: 3, position: 'sticky', bottom: 0, bgcolor: 'white'}}>
+        <Stack fullwidth={"true"} sx={{p: 1, pb: 3, position: 'sticky', bottom: 0, bgcolor: 'white'}}>
           <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
             <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
-            <TextField inputRef={commentRef} multiline size='small' fullWidth error={!!commentErrorMessage}
+            <TextField inputRef={commentRef} multiline size='small' fullwidth={"true"} error={!!commentErrorMessage}
                        helperText={commentErrorMessage}
                        value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}/>
             <Button type='submit' variant='contained' onClick={handleClickCheckButton}>

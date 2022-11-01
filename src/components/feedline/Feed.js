@@ -111,8 +111,8 @@ export default function Feed(props) {
     const createDateTime = feedDate[1].split(':');
     let today = new Date();
 
-    const todayHour = `${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:00`
-    const date = `${createDate[0]}-${createDate[1]}-${createDate[2]} ${createDateTime[0]}:${createDateTime[1]}:00`
+    const todayHour = new Date(`${today.getFullYear()}-${(today.getMonth() + 1)}-${today.getDate()} ${today.getHours()}:${today.getMinutes()}:00`);
+    const date = new Date(`${createDate[0]}-${createDate[1]}-${createDate[2]} ${createDateTime[0]}:${createDateTime[1]}:00`);
     const beforeHours = (todayHour - date) / 1000 / 60;
 
     if (beforeHours < 60) return `${beforeHours}분 전`
