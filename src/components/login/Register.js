@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import axios from "axios";
-import {Box, Button, Grid, Stack, TextField, Typography} from '@mui/material';
+import {Box, Button, Grid, List, ListItem, Stack, TextField, Typography} from '@mui/material';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import {useNavigate} from "react-router-dom";
 import {store} from "../../store/store";
@@ -45,7 +45,7 @@ export default function Register(props) {
   const registValidate = () => {
     let valid = true;
     let regPassword = /^(?=.[a-zA-Z0-9])(?=.[a-zA-Z!@#$%^&])(?=.[0-9!@#$%^&*]).{6,20}$/;
-    if (regPassword.test(registInfo.password)) {
+    if (!registInfo.password) {
       setPwErrorMessage('비밀번호가 형식에 맞지 않습니다.');
       valid = false;
     } else setPwErrorMessage('');
@@ -153,6 +153,12 @@ export default function Register(props) {
             <TextField fullWidth label='이름' onChange={handleValueChange} name="name"
                        error={!!nameErrorMessage} helperText={nameErrorMessage} sx={{display: showForm}}
             />
+
+            <List sx={{display: showForm}}>
+              <ListItem sx={{userSelect: 'none', color: 'darkgrey'}}>
+                ※ 비밀번호는 대소문자, 숫자, 특수문자 중 2가지 이상을 포함하여 6~20자리로 설정해주세요.
+              </ListItem>
+            </List>
 
             <Button type='submit' variant='contained' color='primary' onClick={handleClickRegist} sx={{display: showForm}}>
               회원가입
