@@ -32,7 +32,7 @@ export default function ScrollUpButton() {
       <Fab
         size='large'
         color='primary'
-        sx={{ position: 'fixed', bottom: 50, right: 50 }}
+        sx={{ position: 'fixed', bottom: 100, right: 100 }}
         onClick={handleClickButton}>
         <KeyboardArrowUpIcon/>
       </Fab>

@@ -13,6 +13,7 @@ import {store} from "./store/store";
 import LoadingProcess from "./components/LoadingProcess";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from "@mui/material/IconButton";
+import ScrollTop from "./components/ScrollTop";
 
 export default function App() {
 
@@ -125,6 +126,9 @@ export default function App() {
         TransitionComponent={Transition}
         action={action}
       />
+
+      {/*맨 위 스크롤*/}
+      <ScrollTop/>
 
     </BrowserRouter>
   );

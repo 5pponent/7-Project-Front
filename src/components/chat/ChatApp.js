@@ -121,6 +121,7 @@ export default function ChatApp(props) {
   useEffect(() => {
     loadCurrentSession();
     loadSessionList();
+    scrollToBottom();
     conn();
     return () => client.current.deactivate();
   }, []);
@@ -144,7 +145,7 @@ export default function ChatApp(props) {
   return (
     <Stack direction={"row"} justifyContent={"center"} spacing={1}>
 
-      <Stack spacing={1}>
+      <Stack spacing={1} maxWidth={180}>
         {connected ?
           <ChatUserList
             changeSession={changeSession}
@@ -195,7 +196,7 @@ export default function ChatApp(props) {
                         direction={it.sender.id === userId ? 'right' : 'left'}
                         content={it.message}
                         createTime={it.createTime}
-                        hasRead={it.readUsers.includes(userId) || it.sender.id !== userId ? true : false}
+                        // hasRead={it.readUsers.includes(targetUser.id)}
                       />
                     );
                   }
