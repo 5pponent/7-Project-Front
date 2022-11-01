@@ -1,7 +1,7 @@
-import {Button, Dialog, DialogTitle, Stack, TextField, Typography} from "@mui/material";
 import React, {useContext, useState} from 'react';
 import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
+import {Button, Dialog, DialogTitle, Stack, TextField, Typography, Divider} from "@mui/material";
 import ChatProfile from "./ChatProfile";
 import SmallProfile from "../SmallProfile";
 
