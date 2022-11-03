@@ -12,7 +12,7 @@ export default React.memo(function SmallProfile(props) {
     >
       <Avatar src={props.image ?? ''}/>
       <Stack>
-        <Typography sx={{fontSize: '14px', wordBreak: 'keep-all'}}>{props.name}</Typography>
+        <Typography sx={{fontSize: '14px', fontWeight: 'bold', wordBreak: 'keep-all'}}>{props.name}</Typography>
         {props.getDate &&
           <Typography color="textSecondary" fontSize="14px">{props.getDate()}</Typography>
         }

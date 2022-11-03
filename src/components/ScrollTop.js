@@ -18,7 +18,7 @@ export default function ScrollUpButton() {
   };
 
   useEffect(() => {
-    if (scroll > 600) setShow(true);
+    scroll > 600 ? setShow(true) : setShow(false);
   }, [scroll]);
 
   const watch = () => window.addEventListener('scroll', handleScroll);
@@ -32,7 +32,7 @@ export default function ScrollUpButton() {
       <Fab
         size='large'
         color='primary'
-        sx={{ position: 'fixed', bottom: 100, right: 100 }}
+        sx={{ position: 'fixed', bottom: 150, right: 50 }}
         onClick={handleClickButton}>
         <KeyboardArrowUpIcon/>
       </Fab>
