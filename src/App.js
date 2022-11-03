@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import FeedLineSelect from './components/feedline/FeedLineSelect'
 import Login from './components/login/Login';
 import Profile from './components/profile/Profile';
@@ -6,7 +6,7 @@ import Setting from './components/settingpage/Setting';
 import ChatApp from './components/chat/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
 import Template from "./components/Template";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Route, Routes, useLocation} from "react-router-dom";
 import {Alert, AlertTitle, Box, Button, Dialog, Divider, Slide, Snackbar, Stack, Typography} from "@mui/material";
 import {forwardRef, useContext, useState} from "react";
 import {store} from "./store/store";
@@ -14,13 +14,39 @@ import LoadingProcess from "./components/LoadingProcess";
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from "@mui/material/IconButton";
 import ScrollTop from "./components/ScrollTop";
+import * as StompJS from "@stomp/stompjs";
+import * as SockJS from "sockjs-client";
+import customAxios from "./AxiosProvider";
 
 export default function App() {
 
   const [state, dispatch] = useContext(store);
 
-  const [notice, setNotice] = useState(true);
+  const client = useRef({});
+
+  const [lastMessage, setLastMessage] = useState({});
+  const [notice, setNotice] = useState(false);
   const handleCloseNotice = () => {setNotice(false)}
+
+  const conn = () => {
+    client.current = new StompJS.Client({
+      webSocketFactory: () => new SockJS("/ws/chat"),
+      debug: function (str) {console.log(str)},
+      onConnect: () => {
+        client.current.subscribe(`/sub/chat/${state.user.id}`, (data) => {
+          let payload = JSON.parse(data.body);
+          setLastMessage(payload);
+        });
+      },
+      onStompError: (frame) => {
+        console.error(frame);
+      },
+      reconnectDelay: 3000,
+      heartbeatOutgoing: 4000,
+      heartbeatIncoming: 4000
+    });
+    client.current.activate();
+  }
 
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') return
@@ -38,6 +64,11 @@ export default function App() {
       </IconButton>
     </>
   );
+
+  useEffect(() => {
+    state.user.id !== 0 && conn();
+    return () => state.user.id !== 0 && client.current.deactivate();
+  }, [state.user.id]);
 
   return (
     <BrowserRouter>
@@ -69,7 +100,7 @@ export default function App() {
 
       <Routes>
         <Route path={"/"} element={
-          <Template marginNum={0} element={<FeedLineSelect/>}/>
+          <Template lastMessage={lastMessage} marginNum={0} element={<FeedLineSelect/>}/>
         }></Route>
 
         <Route path={"/login"} element={
@@ -77,19 +108,23 @@ export default function App() {
         }></Route>
 
         <Route path={"/profile"} element={
-          <Template marginNum={3} element={<Profile/>}/>
+          <Template lastMessage={lastMessage} marginNum={3} element={
+            <Profile/>}/>
         }></Route>
 
         <Route path={"/chat"} element={
-          <Template marginNum={3} element={<ChatApp/>}/>
+          <Template lastMessage={lastMessage} marginNum={3} element={
+            <ChatApp client={client} lastMessage={lastMessage}/>}/>
         }></Route>
 
         <Route path={"/schedule"} element={
-          <Template marginNum={3} element={<ScheduleApp/>}/>
+          <Template lastMessage={lastMessage} marginNum={3} element={
+            <ScheduleApp/>}/>
         }></Route>
 
         <Route path={"/setting"} element={
-          <Template marginNum={3} element={<Setting/>}/>
+          <Template lastMessage={lastMessage} marginNum={3} element={
+            <Setting/>}/>
         }></Route>
 
         <Route path={"/server-error"} element={

@@ -2,18 +2,15 @@ import {Button, Stack, TextField, Typography} from "@mui/material";
 import ChatUserList from './ChatUserList';
 import SmallProfile from '../SmallProfile';
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import * as StompJS from "@stomp/stompjs";
-import * as SockJS from 'sockjs-client';
 import Chat from "./Chat";
 import {store} from "../../store/store";
 import customAxios from "../../AxiosProvider";
 import CircularProgress from "@mui/material/CircularProgress";
 import {useLocation, useNavigate} from "react-router-dom";
 
-export default function ChatApp(props) {
+export default function ChatApp({client, lastMessage}) {
   const [state, dispatch] = useContext(store);
 
-  const client = useRef({});
   const scrollRef = useRef();
 
   let navigate = useNavigate();
@@ -21,11 +18,10 @@ export default function ChatApp(props) {
   let session = new URLSearchParams(location.search).get('session');
 
   const [connected, setConnected] = useState(false);
-  const [userId, setUserId] = useState(0);
   const [message, setMessage] = useState('');
-  const [chatLog, setChatLog] = useState([]);
-  const [chatSessionList, setChatSessionList] = useState([]);
+  const [userId, setUserId] = useState(0);
   const [targetUser, setTargetUser] = useState({});
+  const [chatLog, setChatLog] = useState([]);
   const [chatLogLoading, setChatLogLoading] = useState(false);
   const [sessionList, setSessionList] = useState([]);
 
@@ -35,7 +31,7 @@ export default function ChatApp(props) {
   const handleChangeMessage = (e) => {setMessage(e.target.value)}
   const handleSubmitMessage = (e) => {
     e.preventDefault();
-    message !== '' && publish(session, message);
+    message !== '' && publish(message);
     setMessage('');
   }
   const changeSession = (userId) => {
@@ -43,43 +39,14 @@ export default function ChatApp(props) {
       .then(res => {
         navigate(`/chat?session=${res.data.id}`);
         setTargetUser(res.data.users[0]);
-        if (!chatSessionList.includes(res.data.id))
-          subscribe(res.data.id);
       })
-      .catch(err => {console.log(err.response)})
+      .catch(err => {console.log(err.response)});
   }
 
-  const conn = () => {
-    client.current = new StompJS.Client({
-      webSocketFactory: () => new SockJS("/ws/chat"),
-      debug: function (str) {console.log(str)},
-      onConnect: () => {
-        // 연결 성공 시 수행, 여기서 클라이언트에 대한 모든 구독 실행해야 함
-        customAxios.get(`/chat/session`)
-          .then(res => {
-            setChatSessionList(res.data.map(it => it.id));
-            res.data.forEach((it) => {subscribe(it.id);});
-          })
-          .catch(err => {console.log(err.response)});
-        setConnected(true);
-      },
-      onStompError: (frame) => {
-        setConnected(false);
-        console.error(frame);
-      },
-    });
-    client.current.activate();
-  }
-  const subscribe = (sessionId) => {
-    client.current.subscribe(`/sub/chat/${sessionId}`, (data) => {
-      setChatLog(chatLog => [...chatLog, JSON.parse(data.body)]);
-      loadSessionList();
-    });
-  }
-  const publish = (sessionId, message) => {
+  const publish = (message) => {
     if (client.current.connected) {
       client.current.publish({
-        destination: `/pub/chat/${sessionId}`,
+        destination: `/pub/chat/${targetUser.id}`,
         body: JSON.stringify({
           sessionId: session,
           sender: userId,
@@ -90,41 +57,19 @@ export default function ChatApp(props) {
     else return;
     scrollToBottom();
   }
-  const loadCurrentSession = () => {
-    customAxios.get(`/chat/session/${session}`)
-      .then(res => {setTargetUser(res.data.users[0])});
-  }
   const loadSessionList = () => {
     customAxios.get(`/chat/session`)
-      .then(res => {
-        setSessionList(res.data);
-        setChatSessionList(res.data.map(it => it.id));
-      })
+      .then(res => {setSessionList(res.data);})
       .catch(err => {console.log(err.response)});
   }
   const loadChatLog = () => {
     setChatLogLoading(true);
     session &&
-    customAxios.get(`/chat/session/${session}/chat`)
-      .then(res => {
-        setChatLog(res.data.chats);
-      })
-      .catch(err => {console.log(err.response)})
-      .finally(() => {
-        setChatLogLoading(false);
-      });
+      customAxios.get(`/chat/session/${session}/chat`)
+        .then(res => {setChatLog(res.data.chats);})
+        .catch(err => {console.log(err.response)})
+        .finally(() => {setChatLogLoading(false)});
   }
-  const readChat = (chatId) => {
-    customAxios.get(`/chat/session/${session}/chat/${chatId}`).then(r => {})
-  }
-
-  useEffect(() => {
-    loadCurrentSession();
-    loadSessionList();
-    scrollToBottom();
-    conn();
-    return () => client.current.deactivate();
-  }, []);
 
   useEffect(() => {setUserId(state.user.id)}, [state.user.id]);
   useEffect(() => {
@@ -138,9 +83,24 @@ export default function ChatApp(props) {
   }, [client.current.connected]);
 
   useEffect(() => {
-    loadSessionList();
-    scrollToBottom();
-  }, [chatLog]);
+    if (lastMessage) {
+      if (lastMessage.sessionId === parseInt(session)) {
+        customAxios.get(`/chat/session/${session}/chat`)
+          .then(res => {setChatLog(res.data.chats)})
+          .catch(err => {console.log(err.response)});
+      }
+      loadSessionList();
+    }
+  }, [lastMessage]);
+
+  useEffect(() => {
+    session &&
+      customAxios.get(`/chat/session/${session}`)
+        .then(res => setTargetUser(res.data.users[0]))
+        .catch(err => console.log(err));
+  }, []);
+
+  useEffect(() => {scrollToBottom()}, [chatLog]);
 
   return (
     <Stack direction={"row"} justifyContent={"center"} spacing={1}>
@@ -187,19 +147,15 @@ export default function ChatApp(props) {
               :
               (chatLog.length > 0 ?
                 chatLog.map((it) => {
-                  if (it.sessionId === parseInt(session)) {
-                    // 마지막으로 올라온 채팅의 목적지 세션이 내 현재 세션과 같을 경우 읽음 처리
-                    if (it.id === chatLog.at(-1).id) readChat(it.id);
-                    return (
-                      <Chat
-                        key={it.id}
-                        direction={it.sender.id === userId ? 'right' : 'left'}
-                        content={it.message}
-                        createTime={it.createTime}
-                        // hasRead={it.readUsers.includes(targetUser.id)}
-                      />
-                    );
-                  }
+                  return (
+                    <Chat
+                      key={it.id}
+                      direction={it.sender.id === userId ? 'right' : 'left'}
+                      content={it.message}
+                      createTime={it.createTime}
+                      // hasRead={it.readUsers.includes(targetUser.id)}
+                    />
+                  );
                 })
                 :
                 <Stack alignItems={"center"} height={"100%"} justifyContent={"center"}>
