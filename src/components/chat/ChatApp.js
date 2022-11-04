@@ -8,7 +8,7 @@ import customAxios from "../../AxiosProvider";
 import CircularProgress from "@mui/material/CircularProgress";
 import {useLocation, useNavigate} from "react-router-dom";
 
-export default function ChatApp({client, lastMessage}) {
+export default function ChatApp({client, lastMessage, lastSig}) {
   const [state, dispatch] = useContext(store);
 
   const scrollRef = useRef();
@@ -62,17 +62,21 @@ export default function ChatApp({client, lastMessage}) {
       .then(res => {setSessionList(res.data);})
       .catch(err => {console.log(err.response)});
   }
-  const loadChatLog = () => {
-    setChatLogLoading(true);
+  const loadChatLog = (loading = true) => {
+    loading && setChatLogLoading(true);
     session &&
       customAxios.get(`/chat/session/${session}/chat`)
-        .then(res => {setChatLog(res.data.chats);})
+        .then(res => {
+          setChatLog(res.data.chats);
+          loading && publish("");
+        })
         .catch(err => {console.log(err.response)})
         .finally(() => {setChatLogLoading(false)});
   }
 
   useEffect(() => {setUserId(state.user.id)}, [state.user.id]);
   useEffect(() => {
+    console.log("loadChatLog by session")
     loadChatLog();
     loadSessionList();
     scrollToBottom();
@@ -80,18 +84,26 @@ export default function ChatApp({client, lastMessage}) {
 
   useEffect(() => {
     client.current.connected ? setConnected(true) : setConnected(false)
+    scrollToBottom();
   }, [client.current.connected]);
 
   useEffect(() => {
     if (lastMessage) {
-      if (lastMessage.sessionId === parseInt(session)) {
-        customAxios.get(`/chat/session/${session}/chat`)
-          .then(res => {setChatLog(res.data.chats)})
-          .catch(err => {console.log(err.response)});
+      if (lastMessage.sessionId === parseInt(session) && lastMessage.sender !== userId) {
+        console.log("loadChatLog by lastMessage")
+        loadChatLog(false);
+        publish("");
       }
       loadSessionList();
     }
   }, [lastMessage]);
+
+  useEffect(() => {
+    if (lastSig.sessionId === parseInt(session)) {
+      console.log("loadChatLog by lastSig")
+      loadChatLog(false);
+    }
+  }, [lastSig])
 
   useEffect(() => {
     session &&
@@ -153,7 +165,7 @@ export default function ChatApp({client, lastMessage}) {
                       direction={it.sender.id === userId ? 'right' : 'left'}
                       content={it.message}
                       createTime={it.createTime}
-                      // hasRead={it.readUsers.includes(targetUser.id)}
+                      hasRead={it.readUsers.includes(targetUser.id)}
                     />
                   );
                 })

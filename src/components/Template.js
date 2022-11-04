@@ -23,12 +23,8 @@ export default function Template({marginNum, element, lastMessage}) {
 
   const [open, setOpen] = useState(false);
   const [lastMessageId, setLastMessageId] = useState(0);
-  const handleCloseSnackbar = (event, reason) => {
-    reason !== 'clickaway' && setOpen(false);
-  }
-  const handleClickSnackbar = () => {
-    navigate(`/chat?session=${lastMessage?.sessionId}`);
-  }
+  const handleCloseSnackbar = (event, reason) => {reason !== 'clickaway' && setOpen(false)}
+  const handleClickSnackbar = () => {navigate(`/chat?session=${lastMessage?.sessionId}`)}
 
   useEffect(() => {
     customAxios.get("/user")
@@ -37,15 +33,15 @@ export default function Template({marginNum, element, lastMessage}) {
   }, []);
 
   useEffect(() => {
-    if (lastMessageId !== lastMessage?.id && location.pathname !== `/chat`) {
+    if (lastMessageId !== lastMessage.id && location.pathname !== `/chat`) {
       setOpen(true);
-      setLastMessageId(lastMessage?.id);
+      setLastMessageId(lastMessage.id);
     }
   }, [lastMessage]);
 
   return (
     <>
-      {lastMessage?.id &&
+      {lastMessage.id &&
         <Snackbar
           open={open}
           onClose={handleCloseSnackbar}
