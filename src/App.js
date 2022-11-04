@@ -24,7 +24,9 @@ export default function App() {
 
   const client = useRef({});
 
+  const [connect, setConnect] = useState(false);
   const [lastMessage, setLastMessage] = useState({});
+  const [lastSig, setLastSig] = useState({});
   const [notice, setNotice] = useState(false);
   const handleCloseNotice = () => {setNotice(false)}
 
@@ -33,13 +35,17 @@ export default function App() {
       webSocketFactory: () => new SockJS("/ws/chat"),
       debug: function (str) {console.log(str)},
       onConnect: () => {
+        setConnect(true);
         client.current.subscribe(`/sub/chat/${state.user.id}`, (data) => {
           let payload = JSON.parse(data.body);
-          setLastMessage(payload);
+          payload.message.length === 0 ? setLastSig(payload) : setLastMessage(payload);
         });
       },
       onStompError: (frame) => {
         console.error(frame);
+      },
+      onWebSocketClose: () => {
+        setConnect(false);
       },
       reconnectDelay: 3000,
       heartbeatOutgoing: 4000,
@@ -114,7 +120,7 @@ export default function App() {
 
         <Route path={"/chat"} element={
           <Template lastMessage={lastMessage} marginNum={3} element={
-            <ChatApp client={client} lastMessage={lastMessage}/>}/>
+            <ChatApp client={client} lastMessage={lastMessage} lastSig={lastSig}/>}/>
         }></Route>
 
         <Route path={"/schedule"} element={
