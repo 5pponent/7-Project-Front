@@ -360,7 +360,11 @@ export default function FeedDetail(props) {
       </Box>
 
       <Box style={{display: modifyOpen ? 'block' : 'none'}}>
-        <ModifyFeed feedDetail={props.feedDetail} closeModify={closeModify}/>
+        <ModifyFeed
+          feedDetail={props.feedDetail}
+          closeModify={closeModify}
+          modifyFeedDetail={props.getFeedDetail}
+        />
       </Box>
 
       {/* 피드 삭제 다이얼로그 */}
