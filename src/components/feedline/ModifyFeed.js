@@ -78,7 +78,7 @@ export default React.memo(function ModifyFeed(props) {
     });
   };
   const handleAddFeedImage = (e) => {
-    let newImages = [];
+    let newImages = newImage;
     let newDesc = feed.description;
     for (let i = 0; i < e.target.files.length; i++) {
       newImages = newImages.concat({
@@ -105,7 +105,7 @@ export default React.memo(function ModifyFeed(props) {
         dispatch({typSe: 'OpenSnackbar', payload: '피드를 수정하였습니다.'});
         props.modifyFeedDetail(res.data);
       })
-      .catch(error => console.error(error))
+      .catch(error => console.error(error.response))
       .finally(() => dispatch({type: 'CloseLoading'}));
   };
   const handleModifyFeed = async (feedId) => {
@@ -167,7 +167,7 @@ export default React.memo(function ModifyFeed(props) {
       </Grid>
 
       {/* 기존 이미지 */}
-      <Grid item xs={12} sx={{display: originImage.length + feed.image.length === 0 ? 'none' : 'block'}}>
+      <Grid item xs={12} sx={{display: originImage.length + newImage.length === 0 ? 'none' : 'block'}}>
         <Grid container spacing={2} colums={2} sx={{p: 1, maxHeight: 400, overflow: 'auto'}}>
           {originImage.map((item, index) => (
             <Grid key={item.id} item xs={6}>
