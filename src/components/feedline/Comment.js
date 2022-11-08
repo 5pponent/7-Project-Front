@@ -93,6 +93,7 @@ export default function Comment(props) {
     if (isLiked) {
       customAxios.delete(`/feed/${props.feedId}/comment/${id}/like`)
         .then(res => {
+          dispatch({type: 'OpenSnackbar', payload: `${writer.name}님의 댓글을 좋아하지 않습니다.`})
           const newComment = props.commentList.comments.map(item => item.id === id ? res.data : item);
           props.setCommentList({...props.commentList, comments: newComment});
         })
@@ -100,6 +101,7 @@ export default function Comment(props) {
     } else {
       customAxios.post(`/feed/${props.feedId}/comment/${id}/like`)
         .then(res => {
+          dispatch({type: 'OpenSnackbar', payload: `${writer.name}님의 댓글을 좋아합니다.`});
           const newComment = props.commentList.comments.map(item => item.id === id ? res.data : item);
           props.setCommentList({...props.commentList, comments: newComment});
         })
