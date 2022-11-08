@@ -34,13 +34,11 @@ export default function FeedDetail(props) {
   const [myComment, setMyComment] = useState({
     comments: [],
     currentPage: 0,
-    totalElements: undefined,
     totalPages: undefined
   });
   const [comment, setComment] = useState({
     comments: [],
     currentPage: 0,
-    totalElements: undefined,
     totalPages: undefined
   });
   const [commentContent, setCommentContent] = useState({content: ''});

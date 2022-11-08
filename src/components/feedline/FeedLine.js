@@ -1,18 +1,30 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {CircularProgress, Box, Stack} from '@mui/material';
 import Feed from './Feed';
 
 export default function FeedLine(props) {
   const {currentPage, feeds, totalPages} = props.feed;
+  const [target, setTarget] = useState(null);
 
-  const watch = () => window.addEventListener('scroll', props.handleScroll);
+  const onIntersect = async ([entry], observer) => {
+    if (entry.isIntersecting) {
+        observer.unobserve(entry.target);
+        await props.handleScroll();
+        observer.observe(entry.target);
+    }
+  };
+
   useEffect(() => {
-    watch();
-    return () => window.removeEventListener('scroll', props.handleScroll);
-  });
+    let observer;
+    if (target) {
+      observer = new IntersectionObserver(onIntersect);
+      observer.observe(target);
+    }
+    return () => observer && observer.unobserve(target);
+  }, [target]);
 
   return (
-    <Stack spacing={3} sx={{width: "100%", maxWidth: 800}} mb={3}>
+    <Stack spacing={3} sx={{width: "100%", maxWidth: 800, position: 'relative'}} mb={3}>
       {feeds.map(f => {
         return (
           <Feed
@@ -24,8 +36,12 @@ export default function FeedLine(props) {
             getFeedList={props.getFeedList}
           />
         );
-      })
+      })}
+
+      {currentPage < totalPages &&
+        <Box ref={setTarget} sx={{position: 'absolute', bottom: 0, height: '100vh'}}></Box>
       }
+
       {feeds.length === 0 &&
         <Box display="flex" justifyContent="center" style={{padding: 100}}>
           <CircularProgress size={60}></CircularProgress>

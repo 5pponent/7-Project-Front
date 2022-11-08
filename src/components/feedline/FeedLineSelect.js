@@ -8,10 +8,10 @@ import NewFeedLine from "./newFeedLine";
 export default function FeedLineSelect(props) {
   const [feed, setFeed] = useState({
     currentPage: 0,
-    feeds: [],
-    totalElements: 0,
-    totalPages: 0
+    totalPages: 0,
+    feeds: []
   });
+  const [scroll, setScroll] = useState(false);
   const [feedLine, setFeedLine] = useState([]);
   const [selectedFeedLine, setSelectedFeedLine] = useState({title: 'basic', id: 'basic'});
   const [occupationList, setOccupationList] = useState([]);
@@ -30,19 +30,23 @@ export default function FeedLineSelect(props) {
     }
   }, [selectedFeedLine]);
 
-  const handleScroll = () => {
-    const scroll = window.scrollY + document.documentElement.clientHeight;
-    if (scroll === document.documentElement.scrollHeight) {
+  useEffect(() => {
+    if (scroll) {
       customAxios.get(`/feed?page=${feed.currentPage + 1}`)
-        .then(res => loadFeedList(res.data))
-        .catch(error => console.error(error.response))
+        .then(res => {
+          const newFeed = feed.feeds.concat(res.data.feeds);
+          setFeed({...feed, currentPage: res.data.currentPage, feeds: newFeed});
+        })
+        .catch(error => console.error(error))
+        .finally(() => setScroll(false))
     }
+  }, [scroll]);
+
+  const handleScroll = async () => {
+      await setScroll(true);
   };
   const getFeedList = (data) => {
     setFeed({...feed, feeds: data})
-  };
-  const loadFeedList = (data) => {
-    setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})
   };
   const updateFeedDetail = (data) => {
     setFeed({
@@ -97,7 +101,7 @@ export default function FeedLineSelect(props) {
   }));
 
   return (
-    <Stack sx={{alignItems: 'center'}}>
+    <Stack sx={{alignItems: 'center', position: 'relative'}}>
       <Box sx={{width: '100%', bgcolor: 'white', position: 'fixed', pt: 3, zIndex: 10}}>
         <Grid maxWidth={"805px"} container sx={{m: 'auto'}}>
           <Grid item xs={3}>
@@ -129,19 +133,19 @@ export default function FeedLineSelect(props) {
         </Grid>
       </Box>
 
-      <Stack maxWidth={"800px"} sx={{mt: 9}}>
+      <Stack sx={{mt: 9, width: '800px'}}>
         {selectedFeedLine.title === '새 피드' ?
           <NewFeedLine
             occupationList={occupationList}
             feedLoading={feedLoading}
             selectedOccupation={selectedOccupation}
-            handleGetOccupation={handleGetOccupation}/> :
+            handleGetOccupation={handleGetOccupation}
+          /> :
           <FeedLine
             feed={feed}
-            handleScroll={handleScroll}
             getFeedList={getFeedList}
-            loadFeedList={loadFeedList}
             updateFeedDetail={updateFeedDetail}
+            handleScroll={handleScroll}
           />
         }
       </Stack>
