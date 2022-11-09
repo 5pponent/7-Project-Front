@@ -16,7 +16,6 @@ import IconButton from "@mui/material/IconButton";
 import ScrollTop from "./components/ScrollTop";
 import * as StompJS from "@stomp/stompjs";
 import * as SockJS from "sockjs-client";
-import customAxios from "./AxiosProvider";
 
 export default function App() {
 
