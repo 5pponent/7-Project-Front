@@ -6,7 +6,7 @@ import {
   Box,
   Button, Chip,
   CircularProgress,
-  Divider,
+  Divider, Drawer,
   IconButton,
   ImageList,
   ImageListItem,
@@ -226,7 +226,8 @@ export default function FeedDetail(props) {
           bgcolor: 'white',
           pt: 3
         }}>
-          <SmallProfile direction={"row"} spacing={2} getDate={getDate} image={writer.image && writer.image.source} name={writer.name}/>
+          <SmallProfile direction={"row"} spacing={2} getDate={getDate} image={writer.image && writer.image.source}
+                        name={writer.name}/>
 
           <Stack>
             <IconButton onClick={props.closeContent}>
@@ -265,12 +266,14 @@ export default function FeedDetail(props) {
             </IconButton>
             <Chip
               onClick={handleShowLikedList}
-              label={likeCount}
-              style={{padding: 0}}
+              label={likeCount < 99 ? likeCount : '99+'}
               sx={{
                 fontSize: 'large',
                 bgcolor: 'unset',
                 cursor: 'pointer',
+                '& .MuiChip-label': {
+                  p: '3px'
+                },
                 '&:hover': {bgcolor: 'rgba(236,236,236,0.49)'}
               }}/>
 
@@ -280,7 +283,14 @@ export default function FeedDetail(props) {
             <Chip
               label={commentCount}
               style={{padding: 0}}
-              sx={{fontSize: 'large', bgcolor: 'unset', userSelect: 'none'}}/>
+              sx={{
+                fontSize: 'medium',
+                bgcolor: 'unset',
+                userSelect: 'none',
+                '& .MuiChip-label': {
+                  p: '3px'
+                }
+              }}/>
           </Stack>
 
           {/*
@@ -399,7 +409,7 @@ export default function FeedDetail(props) {
       </Box>
 
       {/*좋아요 목록*/}
-      <LikedList feedId={id}/>
+      {/*<LikedList feedId={id}/>*/}
 
       {/* 피드 삭제 다이얼로그 */}
       <NoticeModal

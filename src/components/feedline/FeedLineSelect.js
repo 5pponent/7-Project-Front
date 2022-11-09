@@ -133,7 +133,7 @@ export default function FeedLineSelect(props) {
         </Grid>
       </Box>
 
-      <Stack sx={{mt: 9, width: '800px'}}>
+      <Stack sx={{mt: 9, width: '100%'}}>
         {selectedFeedLine.title === '새 피드' ?
           <NewFeedLine
             occupationList={occupationList}
