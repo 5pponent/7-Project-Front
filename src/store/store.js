@@ -28,7 +28,8 @@ const initialState = {
   snackbar: {
     open: false,
     message: ''
-  }
+  },
+  likedList: false
 };
 
 const store = createContext(initialState);

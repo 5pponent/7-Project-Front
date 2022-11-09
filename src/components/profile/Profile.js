@@ -49,10 +49,10 @@ export default function Profile(props) {
   });
   const [feed, setFeed] = useState({
     currentPage: 0,
-    feeds: [],
-    totalElements: 0,
-    totalPages: 0
+    totalPages: 0,
+    feeds: []
   });
+  const [scroll, setScroll] = useState(false);
   const [updateProfile, setUpdateProfile] = useState(false);
   const [anchorEl, setAnchorEl] = useState(true);
   const [open, setOpen] = useState(false);
@@ -62,9 +62,58 @@ export default function Profile(props) {
   const [searchValue, setSearchValue] = useState('');
   const [searchingMessage, setSearchingMessage] = useState('');
 
-  const getFeedList = (data) => {setFeed({...feed, feeds: data})}
-  const loadFeedList = (data) => {
-    setFeed({...feed, currentPage: data.currentPage, feeds: feed.feeds.concat(data.feeds)})
+  useEffect(() => {
+    customAxios.get(`/user/${searchParams}`)
+      .then(res => setUser(res.data))
+      .catch(error => {
+        console.log(error.response);
+      });
+    openPopper();
+  }, [searchParams]);
+  useEffect(() => {
+    const late = setTimeout(function () {
+      if (searchValue === '') {
+        setFeedLoading(true);
+        customAxios.get(`/feed?userid=${searchParams}`)
+          .then(res => setFeed(res.data))
+          .catch(error => console.log(error.response))
+          .finally(() => {
+            setFeedLoading(false);
+          });
+      } else {
+        setFeedLoading(true);
+        setSearchingMessage('검색 중입니다..');
+        customAxios.get(`/user/${searchParams}/feed?keyword=${searchValue}`)
+          .then(res => {
+            setFeed(res.data)
+          })
+          .catch(err => {
+            console.log(err.response)
+          })
+          .finally(() => {
+            setSearchingMessage('');
+            setFeedLoading(false);
+          });
+      }
+    }, 1000);
+    if (late > 0) clearTimeout(late - 1);
+  }, [searchParams, searchValue]);
+  useEffect(() => {
+    if (scroll) {
+      customAxios.get(`/feed?userid=${searchParams}&page=${feed.currentPage + 1}`)
+        .then(res => setFeed({...feed, currentPage: res.data.currentPage, feeds: feed.feeds.concat(res.data.feeds)}))
+        .catch(error => console.error(error.response))
+        .finally(() => setScroll(false))
+    }
+  }, [scroll]);
+
+  const handleScroll = async () => {
+    if (feed.currentPage < feed.totalPages) {
+      await setScroll(true);
+    }
+  };
+  const getFeedList = (data) => {
+    setFeed({...feed, feeds: data})
   }
   const handleChangeSearchValue = (e) => {
     setSearchValue(e.target.value);
@@ -78,15 +127,9 @@ export default function Profile(props) {
       })
     })
   };
-  const handleScroll = () => {
-    const scroll = window.scrollY + document.documentElement.clientHeight;
-    if (scroll === document.documentElement.scrollHeight) {
-      customAxios.get(`/feed?userid=${searchParams}&page=${feed.currentPage + 1}`)
-        .then(res => loadFeedList(res.data))
-    }
+  const handleCloseDialog = (stat) => {
+    setUpdateProfile(stat)
   }
-
-  const handleCloseDialog = (stat) => {setUpdateProfile(stat)}
   const reloadUser = () => {
     customAxios.get(`/user/${searchParams}`)
       .then(res => setUser(res.data))
@@ -102,51 +145,28 @@ export default function Profile(props) {
   };
   const handleClickFollow = () => {
     customAxios.post(`/user/${searchParams}/follow`)
-      .then(res => {
+      .then(() => {
         dispatch({type: 'OpenSnackbar', payload: `${user.name}님을 팔로우합니다.`});
         reloadUser();
       })
-      .catch(err => {console.log(err.response)})
-      .finally(() => {});
+      .catch(err => {
+        console.log(err.response)
+      })
+      .finally(() => {
+      });
   }
   const handleClickUnfollow = () => {
     customAxios.delete(`/user/${searchParams}/follow`)
-      .then(res => {
+      .then(() => {
         dispatch({type: 'OpenSnackbar', payload: `${user.name}님을 더 이상 팔로우하지 않습니다.`});
         reloadUser();
       })
-      .catch(err => {console.log(err.response)})
-      .finally(() => {});
+      .catch(err => {
+        console.log(err.response)
+      })
+      .finally(() => {
+      });
   }
-
-  useEffect(() => {
-    customAxios.get(`/user/${searchParams}`)
-      .then(res => setUser(res.data))
-      .catch(error => {console.log(error.response);});
-    openPopper();
-  }, [searchParams]);
-  useEffect(() => {
-    const late = setTimeout(function() {
-      if (searchValue === '') {
-        setFeedLoading(true);
-        customAxios.get(`/feed?userid=${searchParams}`)
-          .then(res => setFeed(res.data))
-          .catch(error => console.log(error.response))
-          .finally(() => {setFeedLoading(false);});
-      } else {
-        setFeedLoading(true);
-        setSearchingMessage('검색 중입니다..');
-        customAxios.get(`/user/${searchParams}/feed?keyword=${searchValue}`)
-          .then(res => {setFeed(res.data)})
-          .catch(err => {console.log(err.response)})
-          .finally(() => {
-            setSearchingMessage('');
-            setFeedLoading(false);
-          });
-      }
-    }, 1000);
-    if (late > 0) clearTimeout(late - 1);
-  }, [searchParams, searchValue]);
 
   return (
     <>
@@ -167,7 +187,8 @@ export default function Profile(props) {
                 {todayComment ? user.message : '...'}
               </Typography>
               <Box sx={{textAlign: 'end'}}>
-                <Button onClick={hidePopper} sx={{width: 'max-content', pt: 0, display: todayComment ? 'inline' : 'none'}}>쉿!</Button>
+                <Button onClick={hidePopper}
+                        sx={{width: 'max-content', pt: 0, display: todayComment ? 'inline' : 'none'}}>쉿!</Button>
               </Box>
             </Box>
           </Fade>
@@ -222,29 +243,36 @@ export default function Profile(props) {
                   </Typography>
                   <Stack direction={"row"} alignItems={"center"} spacing={1}>
                     <Typography variant='subtitle2'>직종</Typography>
-                    { user.occupation &&
-                      <Chip size={"small"} style={{backgroundColor: '#e3f2fd'}} label={user.occupation && user.occupation}/>
+                    {user.occupation &&
+                      <Chip size={"small"} style={{backgroundColor: '#e3f2fd'}}
+                            label={user.occupation && user.occupation}/>
                     }
                   </Stack>
                   <Stack direction={"row"} spacing={1}>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 57}}>
+                    <Box sx={{display: 'flex', flexWrap: 'wrap', minWidth: 57}}>
                       <Typography variant='subtitle2'>관심분야</Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center'}}>
+                    <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center'}}>
                       {user.interests.length > 0 && user.interests.map((it) => {
-                        return(<Chip key={it} label={it} size={"small"}/>);
+                        return (<Chip key={it} label={it} size={"small"}/>);
                       })}
                     </Box>
                   </Stack>
                   <Stack direction={"row"} justifyContent={"space-around"}>
-                    <Button variant={"outlined"} size={"small"} onClick={() => {setMode('FOLLOWERS')}}>
+                    <Button variant={"outlined"} size={"small"} onClick={() => {
+                      setMode('FOLLOWERS')
+                    }}>
                       followers<br/>{user.followerCount}
                     </Button>
-                    <Button variant={"outlined"} size={"small"} onClick={() => {setMode('FOLLOWING')}}>
+                    <Button variant={"outlined"} size={"small"} onClick={() => {
+                      setMode('FOLLOWING')
+                    }}>
                       following<br/>{user.followingCount}
                     </Button>
                   </Stack>
-                  <Button fullWidth onClick={() => {setMode('FEED')}}>
+                  <Button fullWidth onClick={() => {
+                    setMode('FEED')
+                  }}>
                     피드({feed.feeds.length})
                   </Button>
                   {state.user.id === user.id ?
@@ -281,53 +309,53 @@ export default function Profile(props) {
         {/*피드, 팔로우, 팔로워*/}
         <Stack height={"85vh"} width={"100%"} maxWidth={"800px"}>
           <Box px={2} pb={2}>
-          {mode === 'FEED' ?
-            <>
-              <OutlinedInput
-                size={"small"}
-                value={searchValue}
-                onChange={handleChangeSearchValue}
-                fullWidth
-                placeholder={"피드 검색"}
-                startAdornment={
-                  <InputAdornment position={"start"}><SearchIcon/></InputAdornment>
-                }
-              />
-              <Typography variant={"caption"} color={"gray"}>{searchingMessage}</Typography>
-            </>
-            :
-            <Stack>
-              <Typography variant={"h6"}>
-                {props.mode === 'FOLLOWERS' ? "팔로워 목록" : "팔로우 중인 유저 목록"}
-              </Typography>
-            </Stack>
-          }
+            {mode === 'FEED' ?
+              <>
+                <OutlinedInput
+                  size={"small"}
+                  value={searchValue}
+                  onChange={handleChangeSearchValue}
+                  fullWidth
+                  placeholder={"피드 검색"}
+                  startAdornment={
+                    <InputAdornment position={"start"}><SearchIcon/></InputAdornment>
+                  }
+                />
+                <Typography variant={"caption"} color={"gray"}>{searchingMessage}</Typography>
+              </>
+              :
+              <Stack>
+                <Typography variant={"h6"}>
+                  {props.mode === 'FOLLOWERS' ? "팔로워 목록" : "팔로우 중인 유저 목록"}
+                </Typography>
+              </Stack>
+            }
           </Box>
 
           <Stack style={{overflowY: "auto"}} p={2}>
             {mode === 'FEED' &&
               (feedLoading ?
-                <Box display="flex" justifyContent="center" style={{padding: 100}}>
-                  <CircularProgress size={60}></CircularProgress>
-                </Box>
-                :
-                (
-                  feed.feeds.length === 0 ?
-                    <Stack alignItems={"center"} spacing={1}>
-                      <SearchOffIcon sx={{fontSize: 70}}/>
-                      <Typography fontWeight={"bold"}>피드가 없습니다..</Typography>
-                    </Stack>
-                    :
-                    <FeedLine
-                      feed={feed}
-                      handleScroll={handleScroll}
-                      getFeedList={getFeedList}
-                      loadFeedList={loadFeedList}
-                      updateFeedDetail={updateFeedDetail}
-                    />
-                )
+                  <Box display="flex" justifyContent="center" style={{padding: 100}}>
+                    <CircularProgress size={60}></CircularProgress>
+                  </Box>
+                  :
+                  (
+                    feed.feeds.length === 0 ?
+                      <Stack alignItems={"center"} spacing={1}>
+                        <SearchOffIcon sx={{fontSize: 70}}/>
+                        <Typography fontWeight={"bold"}>피드가 없습니다..</Typography>
+                      </Stack>
+                      :
+                        <FeedLine
+                          feed={feed}
+                          handleScroll={handleScroll}
+                          getFeedList={getFeedList}
+                          updateFeedDetail={updateFeedDetail}
+                        />
+                  )
               )
             }
+
             {mode === 'FOLLOWERS' &&
               <FollowList
                 mode={mode}
@@ -351,7 +379,9 @@ export default function Profile(props) {
       </Stack>
 
       {/*프로필 수정 다이얼로그*/}
-      <Dialog open={updateProfile} onClose={() => {setUpdateProfile(false)}}>
+      <Dialog open={updateProfile} onClose={() => {
+        setUpdateProfile(false)
+      }}>
         <ProfileUpdateDialog handleCloseDialog={handleCloseDialog} reloadUser={reloadUser}/>
       </Dialog>
 

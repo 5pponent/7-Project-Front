@@ -2,12 +2,14 @@ import React, {useContext, useEffect, useState} from "react";
 import customAxios from "../../AxiosProvider";
 import {useNavigate} from "react-router-dom";
 import {store} from "../../store/store";
-import {Button, Stack, Typography, styled, Box, Avatar} from "@mui/material";
+import {Button, Stack, Typography, styled, Box, Avatar, Checkbox} from "@mui/material";
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import Favorite from '@mui/icons-material/Favorite';
 import ProfileMenu from "../ProfileMenu";
 
 export default function Comment(props) {
   const navigate = useNavigate();
-  const {childCount, content, createTime, id, layer, writer} = props.comment;
+  const {childCount, content, createTime, id, isLiked, layer, likeCount, writer} = props.comment;
   const [state, dispatch] = useContext(store);
   const [count, setCount] = useState(0);
   const [anchor, setAnchor] = useState(null);
@@ -87,6 +89,25 @@ export default function Comment(props) {
   const handleClickProfile = (e) => setAnchor(e.currentTarget);
   const handleCloseProfile = () => setAnchor(null);
   const handleClickProfileView = () => navigate(`/profile?user=${writer.id}`);
+  const handleLikeComment = (e) => {
+    if (isLiked) {
+      customAxios.delete(`/feed/${props.feedId}/comment/${id}/like`)
+        .then(res => {
+          dispatch({type: 'OpenSnackbar', payload: `${writer.name}님의 댓글을 좋아하지 않습니다.`})
+          const newComment = props.commentList.comments.map(item => item.id === id ? res.data : item);
+          props.setCommentList({...props.commentList, comments: newComment});
+        })
+        .catch(error => console.log(error.response))
+    } else {
+      customAxios.post(`/feed/${props.feedId}/comment/${id}/like`)
+        .then(res => {
+          dispatch({type: 'OpenSnackbar', payload: `${writer.name}님의 댓글을 좋아합니다.`});
+          const newComment = props.commentList.comments.map(item => item.id === id ? res.data : item);
+          props.setCommentList({...props.commentList, comments: newComment});
+        })
+        .catch(error => console.log(error.response))
+    }
+  };
   const getDate = () => {
     const feedDate = createTime.split(' ');
     const createDate = feedDate[0].split('-');
@@ -152,6 +173,16 @@ export default function Comment(props) {
               sx={{display: show}}>
               삭제
             </CommentBtn>
+            <Stack direction='row' sx={{alignItems: 'center'}}>
+              <Checkbox
+                onChange={handleLikeComment}
+                checked={isLiked}
+                size={'small'}
+                icon={<FavoriteBorder/>}
+                checkedIcon={<Favorite/>}
+                sx={{'&.Mui-checked': {color: '#da3473'}}}/>
+              <Typography sx={{userSelect: 'none'}}>{likeCount}</Typography>
+            </Stack>
           </Stack>
 
           <Stack direction='row' spacing={1} sx={{display: deleteShow ? 'bock' : 'none'}}>

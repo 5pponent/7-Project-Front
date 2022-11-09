@@ -19,10 +19,10 @@ export default function NewFeedLine(props) {
     )
   } else {
     return (
-      <Stack spacing={1} sx={{boxShadow: 5, borderRadius: 1.5, p: 3}}>
+      <Stack spacing={1} sx={{m: 'auto', width: '100%', maxWidth: 800, boxShadow: 5, borderRadius: 1.5}}>
         <Typography variant={'h6'} sx={{textAlign: 'center', m: 2}}>관심사를 선택해 주세요</Typography>
 
-        <Grid container>
+        <Grid container sx={{p: 3}}>
           {props.occupationList.map((item) => (
             <Grid item key={item.id} xs={3}>
               <FormControlLabel
