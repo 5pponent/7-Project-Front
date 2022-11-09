@@ -20,6 +20,10 @@ export default function reducer(state, action) {
       return {...state, snackbar: {open: false, message: ''}};
     case 'CreateFeed':
       return {...state, feedContent: {...state.feedContent, content: action.payload}};
+    case 'OpenLikedList':
+      return {...state, likedList: true};
+    case 'CloseLikedList':
+      return {...state, likedList: false};
     default:
       return state;
   }

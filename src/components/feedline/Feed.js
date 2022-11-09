@@ -63,6 +63,7 @@ export default function Feed(props) {
   const closeContent = () => {
     setDetailOpen(false);
     setCommentFocus(false);
+    dispatch({type: 'CloseLikedList'});
   };
   const openModify = async () => {
     await customAxios.get(`/feed/${id}`)
@@ -89,8 +90,8 @@ export default function Feed(props) {
         .catch(error => console.error(error.response))
     }
   };
-  const handleClickComment = () => {
-    openContent();
+  const handleClickComment = async () => {
+    await openContent();
     setCommentFocus(commentFocus => !commentFocus);
   };
   const handleClickDelete = () => {

@@ -1,9 +1,10 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import customAxios from '../../AxiosProvider';
 import {store} from '../../store/store';
 import {
   Box,
-  Button,
+  Button, Chip,
   CircularProgress,
   Divider,
   IconButton,
@@ -12,16 +13,19 @@ import {
   Pagination,
   Stack,
   TextField,
+  Tooltip,
   Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import SmallProfile from '../SmallProfile';
 import MoreMenu from './MoreMenu';
 import Comment from './Comment';
 import ModifyFeed from "./ModifyFeed";
 import NoticeModal from "../NoticeModal";
+import LikedList from "./LikedList";
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
@@ -118,6 +122,9 @@ export default function FeedDetail(props) {
         .catch(error => console.error(error.response))
     }
   };
+  const handleShowLikedList = () => {
+    dispatch({type: 'OpenLikedList'});
+  };
   const handleCreateComment = (feedId, content) => {
     if (validate()) {
       dispatch({type: 'OpenLoading', payload: '댓글을 작성중입니다..'});
@@ -184,7 +191,7 @@ export default function FeedDetail(props) {
   const handleClickDelete = () => {
     dispatch({type: 'OpenLoading', payload: '피드를 삭제중입니다..'});
     customAxios.delete(`/feed/${id}`)
-      .then(res => {
+      .then(() => {
         props.closeContent();
         props.getFeedList(props.feedList.filter(item => item.id !== id));
         dispatch({type: 'OpenSnackbar', payload: `피드가 삭제되었습니다.`});
@@ -219,8 +226,7 @@ export default function FeedDetail(props) {
           bgcolor: 'white',
           pt: 3
         }}>
-          <SmallProfile direction={"row"} spacing={2} getDate={getDate} image={writer.image && writer.image.source}
-                        name={writer.name}/>
+          <SmallProfile direction={"row"} spacing={2} getDate={getDate} image={writer.image && writer.image.source} name={writer.name}/>
 
           <Stack>
             <IconButton onClick={props.closeContent}>
@@ -252,13 +258,38 @@ export default function FeedDetail(props) {
           </ImageList>
         </Box>
 
-        <Box>
-          <IconButton onClick={() => handleClickLike(id, writer.name)}>
-            <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
-          </IconButton>{likeCount}
-          <IconButton onClick={() => commentRef.current.focus()} sx={{marginLeft: "20px"}}>
-            <AddCommentRoundedIcon sx={{fontSize: 30}}></AddCommentRoundedIcon>
-          </IconButton>{commentCount}
+        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <Stack direction='row' sx={{alignItems: 'center'}}>
+            <IconButton onClick={() => handleClickLike(id, writer.name)}>
+              <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
+            </IconButton>
+            <Chip
+              onClick={handleShowLikedList}
+              label={likeCount}
+              style={{padding: 0}}
+              sx={{
+                fontSize: 'large',
+                bgcolor: 'unset',
+                cursor: 'pointer',
+                '&:hover': {bgcolor: 'rgba(236,236,236,0.49)'}
+              }}/>
+
+            <IconButton onClick={() => commentRef.current.focus()} sx={{marginLeft: "20px"}}>
+              <AddCommentRoundedIcon sx={{fontSize: 30}}></AddCommentRoundedIcon>
+            </IconButton>
+            <Chip
+              label={commentCount}
+              style={{padding: 0}}
+              sx={{fontSize: 'large', bgcolor: 'unset', userSelect: 'none'}}/>
+          </Stack>
+
+          {/*
+          <Tooltip title='피드를 좋아하는 유저' arrow placement='top'>
+            <IconButton>
+              <FavoriteRoundedIcon fontSize='large' color='action'/>
+            </IconButton>
+          </Tooltip>
+          */}
         </Box>
 
         <Stack spacing={1}>
@@ -340,8 +371,10 @@ export default function FeedDetail(props) {
         <Stack sx={{width: '100%', p: 1, pb: 3, position: 'sticky', bottom: 0, bgcolor: 'white'}}>
           <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
             <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
-            <TextField inputRef={commentRef} multiline size='small' error={!!commentErrorMessage} helperText={commentErrorMessage}
-                       value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment} sx={{width: '100%'}}/>
+            <TextField inputRef={commentRef} multiline size='small' error={!!commentErrorMessage}
+                       helperText={commentErrorMessage}
+                       value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}
+                       sx={{width: '100%'}}/>
             <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
               {modifyComment ? '수정' : '입력'}
             </Button>
@@ -364,6 +397,9 @@ export default function FeedDetail(props) {
           modifyFeedDetail={props.getFeedDetail}
         />
       </Box>
+
+      {/*좋아요 목록*/}
+      <LikedList feedId={id}/>
 
       {/* 피드 삭제 다이얼로그 */}
       <NoticeModal
