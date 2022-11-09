@@ -1,10 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {CircularProgress, Box, Stack} from '@mui/material';
 import Feed from './Feed';
+import LikedList from "./LikedList";
+import {store} from "../../store/store";
 
 export default function FeedLine(props) {
+  const [state, dispatch] = useContext(store);
   const {currentPage, feeds, totalPages} = props.feed;
   const [target, setTarget] = useState(null);
+  const [feedId, setFeedId] = useState();
 
   const onIntersect = async ([entry], observer) => {
     if (entry.isIntersecting) {
@@ -22,9 +26,17 @@ export default function FeedLine(props) {
     }
     return () => observer && observer.unobserve(target);
   }, [target]);
+  useEffect(() => {
+    dispatch({type: 'CloseLikedList'});
+  }, [])
+
+  const handleShowLikedList = async (id) => {
+    await setFeedId(id);
+    dispatch({type: 'OpenLikedList'});
+  };
 
   return (
-    <Stack spacing={3} sx={{width: "100%", maxWidth: 800}} mb={3}>
+    <Stack spacing={3} sx={{width: "100%", maxWidth: 800, m: 'auto'}} mb={3}>
       {feeds.map(f => {
         return (
           <Feed
@@ -34,12 +46,16 @@ export default function FeedLine(props) {
             feedList={feeds}
             updateFeedDetail={props.updateFeedDetail}
             getFeedList={props.getFeedList}
+            handleShowLikedList={handleShowLikedList}
           />
         );
       })}
 
+      {/*좋아요 목록*/}
+      <LikedList feedId={feedId}/>
+
       {currentPage < totalPages &&
-        <Box ref={setTarget} sx={{position: 'absolute', bottom: 0, height: '100vh'}}></Box>
+        <Box ref={setTarget} sx={{position: 'absolute', bottom: 0, height: '30%'}}></Box>
       }
 
       {feeds.length === 0 &&

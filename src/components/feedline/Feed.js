@@ -10,11 +10,10 @@ import {
   IconButton,
   Grid,
   Stack,
-  Badge,
   Dialog,
   DialogContent,
   styled
-  , Button
+  , Button, Chip
 } from '@mui/material';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
@@ -157,18 +156,21 @@ export default function Feed(props) {
             ))}
 
             {files.length > 3 &&
-              <Box sx={{
-                width: '25%',
-                opacity: 0.5,
-                borderRadius: 3,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundImage: `linear-gradient(
+              <Box
+                onClick={openContent}
+                sx={{
+                  cursor: 'pointer',
+                  width: '25%',
+                  opacity: 0.5,
+                  borderRadius: 3,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundImage: `linear-gradient(
                   rgba(0, 0, 0, 0.4),
                   rgba(0, 0, 0, 0.4)
                 ), url(${files[3].source})`
-              }}>
+                }}>
                 <Typography sx={{fontSize: 'xx-large', fontWeight: 'bold', color: '#ffffff'}}>
                   + {files.length - 3}
                 </Typography>
@@ -185,17 +187,42 @@ export default function Feed(props) {
 
         {/*좋아요, 댓글, 프로필*/}
         <Stack direction='row' justifyContent='space-between' alignItems='center' m={1.5}>
-          <Stack direction='row' spacing={3}>
-            <IconButton onClick={() => handleClickLike(id, writer.name)}>
-              <StyledBadge badgeContent={likeCount} bgcolor={''} showZero>
+          <Stack direction='row' spacing={2} sx={{alignItems: 'center'}}>
+            <Box>
+              <IconButton onClick={() => handleClickLike(id, writer.name)}>
                 <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
-              </StyledBadge>
-            </IconButton>
-            <IconButton onClick={handleClickComment}>
-              <StyledBadge badgeContent={commentCount} bgcolor={''} showZero>
-                <AddCommentRoundedIcon sx={{fontSize: 30}}/>
-              </StyledBadge>
-            </IconButton>
+              </IconButton>
+              <Chip
+                onClick={() => props.handleShowLikedList(id)}
+                label={likeCount<99 ? likeCount : '99+'}
+                sx={{
+                  fontSize: 'medium',
+                  bgcolor: 'unset',
+                  cursor: 'pointer',
+                  '& .MuiChip-label': {
+                    p: '3px'
+                  },
+                  '&:hover': {
+                    bgcolor: 'rgba(236,236,236,0.49)'
+                  }
+                }}/>
+            </Box>
+
+            <Box>
+              <IconButton onClick={handleClickComment}>
+                <AddCommentRoundedIcon sx={{fontSize: 30}}></AddCommentRoundedIcon>
+              </IconButton>
+              <Chip
+                label={commentCount}
+                sx={{
+                  fontSize: 'medium',
+                  bgcolor: 'unset',
+                  userSelect: 'none',
+                  '& .MuiChip-label': {
+                    p: '3px'
+                  }
+                }}/>
+            </Box>
           </Stack>
 
           <Box>
@@ -222,7 +249,7 @@ export default function Feed(props) {
       </Box>
 
       {/* 컨텐츠 상세보기 다이얼로그 */}
-      <Dialog open={detailOpen} onClose={closeContent} fullWidth maxWidth='md'>
+      <Dialog open={detailOpen} onClose={closeContent} fullWidth maxWidth='md' sx={{zIndex: 1100}}>
         <DialogContent sx={{pb: 0, pt: 0}}>
           <FeedDetail
             feedDetail={feedDetail}
@@ -235,7 +262,8 @@ export default function Feed(props) {
         </DialogContent>
       </Dialog>
 
-      {/* 컨텐츠 수정하기 다이얼로그 */}
+      {/* 컨텐츠 수정하기 다이얼로그 */
+      }
       <Dialog open={modifyOpen} onClose={closeModify} fullWidth maxWidth='md'>
         <DialogContent>
           <ModifyFeed
@@ -246,7 +274,8 @@ export default function Feed(props) {
         </DialogContent>
       </Dialog>
 
-      {/* 피드 삭제 다이얼로그 */}
+      {/* 피드 삭제 다이얼로그 */
+      }
       <NoticeModal
         open={deleteOpen}
         title={'피드 삭제'}
@@ -256,12 +285,5 @@ export default function Feed(props) {
         onClose={closeDelete}
       />
     </>
-  );
+  )
 }
-
-const StyledBadge = styled(Badge)(() => ({
-  '& .MuiBadge-badge': {
-    right: 15,
-    top: 35
-  }
-}));

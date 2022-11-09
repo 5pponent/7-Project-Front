@@ -100,7 +100,6 @@ export default function Profile(props) {
   }, [searchParams, searchValue]);
   useEffect(() => {
     if (scroll) {
-      console.log(feed.currentPage)
       customAxios.get(`/feed?userid=${searchParams}&page=${feed.currentPage + 1}`)
         .then(res => setFeed({...feed, currentPage: res.data.currentPage, feeds: feed.feeds.concat(res.data.feeds)}))
         .catch(error => console.error(error.response))

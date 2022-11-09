@@ -13,10 +13,11 @@ export default function LikedList(props) {
   const [userList, setUserList] = useState([]);
 
   useEffect(() => {
+    props.feedId &&
     customAxios.get(`/feed/${props.feedId}/like`)
       .then(res => setUserList(res.data))
       .catch(error => console.error(error.response))
-  }, []);
+  }, [props.feedId]);
 
   const handleClickProfileView = (userId) => {
     dispatch({type: 'CloseLikedList'});
@@ -46,8 +47,7 @@ export default function LikedList(props) {
   };
 
   return (
-    <Grow in={state.likedList}
-          sx={{minWidth: '300px', maxHeight: '400px', position: 'fixed', right: '5%', top: '10%', zIndex: 10}}>
+    <Grow in={state.likedList} sx={{minWidth: '300px', maxHeight: '400px', position: 'fixed', right: '10%', top: '10%', zIndex: 1200}}>
       <Card elevation={10}>
         <Stack direction='row' sx={{p: 2, pb: 0, justifyContent: 'space-between', alignItems: 'center'}}>
           <Stack direction='row' spacing={1} sx={{alignItems: 'center'}}>
