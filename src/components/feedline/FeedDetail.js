@@ -1,31 +1,27 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import {useNavigate} from "react-router-dom";
 import customAxios from '../../AxiosProvider';
 import {store} from '../../store/store';
 import {
   Box,
   Button, Chip,
   CircularProgress,
-  Divider, Drawer,
+  Divider,
   IconButton,
   ImageList,
   ImageListItem,
   Pagination,
   Stack,
   TextField,
-  Tooltip,
   Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
-import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import SmallProfile from '../SmallProfile';
 import MoreMenu from './MoreMenu';
 import Comment from './Comment';
 import ModifyFeed from "./ModifyFeed";
 import NoticeModal from "../NoticeModal";
-import LikedList from "./LikedList";
 
 export default function FeedDetail(props) {
   const [state, dispatch] = useContext(store);
@@ -292,14 +288,6 @@ export default function FeedDetail(props) {
                 }
               }}/>
           </Stack>
-
-          {/*
-          <Tooltip title='피드를 좋아하는 유저' arrow placement='top'>
-            <IconButton>
-              <FavoriteRoundedIcon fontSize='large' color='action'/>
-            </IconButton>
-          </Tooltip>
-          */}
         </Box>
 
         <Stack spacing={1}>

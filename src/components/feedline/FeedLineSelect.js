@@ -42,8 +42,8 @@ export default function FeedLineSelect(props) {
     }
   }, [scroll]);
 
-  const handleScroll = async () => {
-      await setScroll(true);
+  const handleScroll = () => {
+      setScroll(true);
   };
   const getFeedList = (data) => {
     setFeed({...feed, feeds: data})
