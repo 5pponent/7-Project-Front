@@ -29,7 +29,8 @@ const initialState = {
     open: false,
     message: ''
   },
-  likedList: false
+  likedList: false,
+  unreadChatCount: 0,
 };
 
 const store = createContext(initialState);

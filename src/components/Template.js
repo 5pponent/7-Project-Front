@@ -21,53 +21,66 @@ export default function Template({marginNum, element, lastMessage}) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  let eventSource = undefined;
+
   const [open, setOpen] = useState(false);
-  const [lastMessageId, setLastMessageId] = useState(0);
   const handleCloseSnackbar = (event, reason) => {reason !== 'clickaway' && setOpen(false)}
   const handleClickSnackbar = () => {navigate(`/chat?session=${lastMessage?.sessionId}`)}
+  const loadUnreadChatCount = () => {
+    customAxios.get(`/chat/session/unread-count`)
+      .then(res => {
+        dispatch({type: 'UnreadChatCount', payload: res.data.count});
+      })
+      .catch(err => {console.log(err)});
+  }
 
   useEffect(() => {
-    customAxios.get("/user")
-      .then(res => {dispatch({type: 'User', payload: res.data});})
+    customAxios.get(`/user`)
+      .then(res => {
+        dispatch({type: 'User', payload: res.data});
+      })
       .catch(err => {console.log(err.response);});
+    loadUnreadChatCount();
+
+    eventSource = new EventSource(`/notice/sub`, {
+      Authorization: localStorage.getItem(`token`),
+    });
   }, []);
 
   useEffect(() => {
-    if (lastMessageId !== lastMessage.id && location.pathname !== `/chat`) {
-      setOpen(true);
-      setLastMessageId(lastMessage.id);
+    loadUnreadChatCount();
+    if (location.pathname !== `/chat` && lastMessage.hasOwnProperty('sender')) {
+      if (lastMessage.sender.id !== state.user.id) {
+        setOpen(true);
+      }
     }
   }, [lastMessage]);
 
   return (
     <>
-      {lastMessage.id &&
-        <Snackbar
-          open={open}
-          onClose={handleCloseSnackbar}
-          autoHideDuration={3000}
-          anchorOrigin={{vertical: "bottom", horizontal: "right"}}
-          style={{zIndex: 1000, cursor: "pointer"}}
-          onClick={handleClickSnackbar}
-        >
-          <Alert severity={"info"} icon={false}>
-            <Stack spacing={1} width={250}>
-              <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                <Avatar sx={{width: 30, height: 30}} src={lastMessage?.sender?.image ? lastMessage.sender.image.source : ""}/>
-                <Typography sx={{fontSize: '14px', fontWeight: 'bold', wordBreak: 'keep-all'}}>{lastMessage?.sender?.name}</Typography>
-              </Stack>
-              <Divider/>
-              <Content>{lastMessage?.message}</Content>
+      <Snackbar
+        open={open}
+        onClose={handleCloseSnackbar}
+        autoHideDuration={3000}
+        anchorOrigin={{vertical: "bottom", horizontal: "right"}}
+        style={{zIndex: 1000, cursor: "pointer"}}
+        onClick={handleClickSnackbar}
+      >
+        <Alert severity={"info"} icon={false}>
+          <Stack spacing={1} width={250}>
+            <Stack direction={"row"} alignItems={"center"} spacing={1}>
+              <Avatar sx={{width: 30, height: 30}} src={lastMessage?.sender?.image ? lastMessage.sender.image.source : ""}/>
+              <Typography sx={{fontSize: '14px', fontWeight: 'bold', wordBreak: 'keep-all'}}>{lastMessage?.sender?.name}</Typography>
             </Stack>
-          </Alert>
-        </Snackbar>
-      }
+            <Divider/>
+            <Content>{lastMessage?.message}</Content>
+          </Stack>
+        </Alert>
+      </Snackbar>
 
       <HeaderAppBar/>
 
-      <Box mt={marginNum}>
-        {element}
-      </Box>
+      <Box mt={marginNum}>{element}</Box>
     </>
   );
 }

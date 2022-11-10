@@ -29,11 +29,11 @@ customAxios.interceptors.response.use(
     // 인증 에러 발생 시
     if (errorResponse.status === 401) {
       localStorage.removeItem('token');
-      window.location.replace('/login');
+      window.location.href = '/login';
     }
     // 서버 에러 발생 시
     else if (errorResponse.status >= 500) {
-      window.location.replace('/server-error');
+      window.location.href = '/server-error';
     }
 
     return Promise.reject(error);

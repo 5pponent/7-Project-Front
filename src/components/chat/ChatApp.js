@@ -62,7 +62,7 @@ export default function ChatApp({client, lastMessage, lastSig}) {
       .then(res => {setSessionList(res.data);})
       .catch(err => {console.log(err.response)});
   }
-  const loadChatLog = (loading = true) => {
+  const loadChatLog = (loading = true, count = false) => {
     loading && setChatLogLoading(true);
     session &&
       customAxios.get(`/chat/session/${session}/chat`)
@@ -71,13 +71,22 @@ export default function ChatApp({client, lastMessage, lastSig}) {
           loading && publish("");
         })
         .catch(err => {console.log(err.response)})
-        .finally(() => {setChatLogLoading(false)});
+        .finally(() => {
+          setChatLogLoading(false);
+          count && loadUnreadChatCount();
+        });
+  }
+  const loadUnreadChatCount = () => {
+    customAxios.get(`/chat/session/unread-count`)
+      .then(res => {
+        dispatch({type: 'UnreadChatCount', payload: res.data.count});
+      })
+      .catch(err => console.log(err));
   }
 
   useEffect(() => {setUserId(state.user.id)}, [state.user.id]);
   useEffect(() => {
-    console.log("loadChatLog by session")
-    loadChatLog();
+    loadChatLog(true, true);
     loadSessionList();
     scrollToBottom();
   }, [session]);
@@ -90,7 +99,6 @@ export default function ChatApp({client, lastMessage, lastSig}) {
   useEffect(() => {
     if (lastMessage) {
       if (lastMessage.sessionId === parseInt(session) && lastMessage.sender !== userId) {
-        console.log("loadChatLog by lastMessage")
         loadChatLog(false);
         publish("");
       }
@@ -100,7 +108,6 @@ export default function ChatApp({client, lastMessage, lastSig}) {
 
   useEffect(() => {
     if (lastSig.sessionId === parseInt(session)) {
-      console.log("loadChatLog by lastSig")
       loadChatLog(false);
     }
   }, [lastSig])

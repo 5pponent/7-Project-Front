@@ -16,6 +16,7 @@ import IconButton from "@mui/material/IconButton";
 import ScrollTop from "./components/ScrollTop";
 import * as StompJS from "@stomp/stompjs";
 import * as SockJS from "sockjs-client";
+import ServerError from "./components/error/ServerError";
 
 export default function App() {
 
@@ -133,8 +134,7 @@ export default function App() {
         }></Route>
 
         <Route path={"/server-error"} element={
-          // TODO (5xx 코드 응답 시 에러 페이지 추가)
-          <p>Server Error</p>
+          <ServerError/>
         }></Route>
 
         <Route path={"*"} element={
