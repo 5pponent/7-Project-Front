@@ -1,7 +1,7 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {store} from "../../store/store";
 import axios from 'axios';
-import {IconButton, Menu, MenuItem, Tooltip} from '@mui/material';
+import {Badge, IconButton, Menu, MenuItem, Tooltip} from '@mui/material';
 import {styled, alpha} from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -11,6 +11,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import CloseIcon from '@mui/icons-material/Close';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {useNavigate} from "react-router-dom";
+import customAxios from "../../AxiosProvider";
 
 
 const StyledMenu = styled((props) => (
@@ -51,6 +52,13 @@ const StyledMenu = styled((props) => (
   },
 }));
 
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: 15,
+    top: 15,
+  },
+}));
+
 export default React.memo(function CustomizedMenus(props) {
   const [state, dispatch] = useContext(store);
 
@@ -58,6 +66,9 @@ export default React.memo(function CustomizedMenus(props) {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
+
   const handleClick = (e) => {
     setAnchorEl(e.currentTarget);
   };
@@ -69,9 +80,6 @@ export default React.memo(function CustomizedMenus(props) {
   };
   const handleClickSchedule = () => {
     navigate('/schedule');
-  };
-  const handleClickMessenger = () => {
-    dispatch({type: 'ChangeMode', payload: 'FRIEND'});
   };
   const handleClickSetting = () => {
     navigate('/setting');
@@ -104,7 +112,9 @@ export default React.memo(function CustomizedMenus(props) {
         onClose={handleClose}
       >
         <Tooltip title="채팅" placement="left" arrow>
-          <MenuItem onClick={handleClickChat} disableRipple><ChatIcon/></MenuItem>
+          <StyledBadge badgeContent={state.unreadChatCount} color={"error"}>
+            <MenuItem onClick={handleClickChat} disableRipple><ChatIcon/></MenuItem>
+          </StyledBadge>
         </Tooltip>
 
         <Tooltip title="스케쥴" placement="left" arrow>

@@ -14,16 +14,8 @@ export default function FollowList(props) {
   const [userList, setUserList] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   const [firstLoading, setFirstLoading] = useState(true);
-  const [anchor, setAnchor] = useState(null);
-  const [target, setTarget] = useState(0);
 
-  const handleClickProfile = (e, id) => {
-    setAnchor(e.currentTarget);
-    setTarget(id);
-  }
-  const handleCloseProfile = () => {setAnchor(null)}
   const handleClickProfileView = (userId) => {
     navigate(`/profile?user=${userId}`);
     props.setMode('FEED');
@@ -63,7 +55,6 @@ export default function FollowList(props) {
         setUserList(res.data.users);
         setCurrentPage(res.data.currentPage);
         setTotalPages(res.data.totalPages);
-        setTotalElements(res.data.totalElements);
         setFirstLoading(false);
       })
       .catch(err => {console.log(err.response)})
@@ -72,13 +63,6 @@ export default function FollowList(props) {
 
   return (
     <Box>
-
-      <ProfileMenu
-        open={Boolean(anchor)}
-        anchor={anchor}
-        onClick={() => {handleClickProfileView(target)}}
-        onClose={handleCloseProfile}
-      />
 
       <Stack>
         {userList.length > 0 ?
@@ -96,7 +80,7 @@ export default function FollowList(props) {
                     spacing={1}
                     image={it.image && it.image.source}
                     name={it.name}
-                    onClick={(e) => handleClickProfile(e, it.id)}
+                    onClick={() => handleClickProfileView(it.id)}
                   />
                   {(props.mode === 'FOLLOWING' && props.isMe) &&
                     <Button onClick={() => {handleClickUnfollow(it.id, it.name)}}>

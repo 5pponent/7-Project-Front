@@ -18,7 +18,7 @@ import {
   Toolbar,
   Tooltip,
   Typography,
-  styled
+  styled, Badge
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -39,7 +39,14 @@ const Title = styled(Typography)`
   -webkit-box-orient: vertical;
 `
 
-export default React.memo(function Header (props) {
+const MoreButtonBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: 8,
+    top: 8,
+  },
+}));
+
+export default React.memo(function Header ({unreadChatCount}) {
   const [state, dispatch] = useContext(store);
 
   const navigate = useNavigate();
@@ -161,7 +168,9 @@ export default React.memo(function Header (props) {
             </ButtonBase>
           </Tooltip>
 
-          <HeaderMenu/>
+          <MoreButtonBadge variant={"dot"} color={"error"} invisible={state.unreadChatCount === 0}>
+            <HeaderMenu/>
+          </MoreButtonBadge>
 
         </Stack>
 
