@@ -1,5 +1,7 @@
 import React, {useContext, useState} from 'react';
 import customAxios from '../../AxiosProvider';
+import {HTML5Backend} from 'react-dnd-html5-backend'
+import {DndProvider} from 'react-dnd'
 import {store} from '../../store/store';
 import {
   Button,
@@ -14,14 +16,12 @@ import {
   TextField,
   Typography,
   Tooltip,
-  Card,
-  CardContent,
-  CardActions,
+  Card
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import SmallProfile from '../SmallProfile';
+import CreateFeedImage from "./CreateFeedImage";
 
 export default function CreateFeed(props) {
   const [state, dispatch] = useContext(store);
@@ -38,12 +38,8 @@ export default function CreateFeed(props) {
     return valid;
   };
 
-  const handleChangeScope = (e) => {
-    setScope(e.target.value)
-  };
-  const closeDrawer = () => {
-    props.getOpen(false)
-  };
+  const handleChangeScope = (e) => setScope(e.target.value);
+  const closeDrawer = () => props.getOpen(false);
   const handleCreateFeed = async () => {
     if (validate()) {
       dispatch({type: 'OpenLoading', payload: '피드를 작성중입니다..'});
@@ -53,7 +49,7 @@ export default function CreateFeed(props) {
       props.feedImage.map(item => feedForm.append('images', item.file));
       feedForm.append('showScope', scope);
       await customAxios.post(`/feed`, feedForm)
-        .then(res => {
+        .then(() => {
           props.resetFeed();
           dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
           closeDrawer();
@@ -72,71 +68,65 @@ export default function CreateFeed(props) {
 
       <Divider/>
 
-      <Stack direction="row" sx={{justifyContent: "space-between", alignItems: "center", pt: 2, mx:2}}>
-      <SmallProfile
-        image={state.user.image && state.user.image.source}
-        name={state.user.name}
-        direction='row'
-        spacing={1}
-      />
+      <Stack direction="row" sx={{justifyContent: "space-between", alignItems: "center", pt: 2, mx: 2}}>
+        <SmallProfile
+          image={state.user.image && state.user.image.source}
+          name={state.user.name}
+          direction='row'
+          spacing={1}
+        />
 
-      <FormControl size="small">
-        <InputLabel id="select-label">공개 범위</InputLabel>
-        <Select labelId="select-label" value={scope} size="small" label="공개 범위" onChange={handleChangeScope}>
-          <MenuItem value='all'>전체 공개</MenuItem>
-          <MenuItem value='followers'>친구 공개</MenuItem>
-          <MenuItem value='me'>나만 보기</MenuItem>
-        </Select>
-      </FormControl>
-    </Stack>
-
-  <Grid container spacing={2} p={2}>
-
-    <Grid item xs={12}>
-      <TextField fullWidth maxRows={10} multiline autoFocus error={!!errorMessage} helperText={errorMessage}
-                 placeholder={'내용을 입력해 주세요.'} value={props.feedContent} onChange={props.handleChangeFeedContent}/>
-    </Grid>
-
-    <Grid item xs={12} sx={{display: props.feedImage.length === 0 ? 'none' : 'block'}}>
-      <Stack spacing={3} sx={{p: 1, maxHeight: 550, overflow: 'auto'}}>
-        {props.feedImage.map((item, index) => (
-          <Card key={index} sx={{height: 300, overflow: 'visible'}}>
-            <CardActions sx={{justifyContent: 'end', pb: 0}}>
-              <DeleteRoundedIcon color={'action'} onClick={() => props.handleDeleteFeedImage(index)}
-                                 sx={{cursor: 'pointer', fontSize: 'xx-large', color: '#931e1e'}}/>
-            </CardActions>
-
-            <CardContent sx={{p: 0}}>
-              <Grid container spacing={1}>
-                <Grid item xs={6} sx={{display: 'flex', alignItems: 'center', maxHeight: '240px'}}>
-                  <img src={item.path} alt={item.originalName} width='100%' height='100%' style={{objectFit: 'contain'}}/>
-                </Grid>
-                <Grid item xs={6} style={{padding: 0}}
-                      sx={{p: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                  <TextField multiline rows={9} placeholder={'설명'} value={props.feedImage[index].description}
-                             onChange={(e) => props.handleChangeDescription(e, index)} sx={{mt: 1, overflow: 'auto'}}/>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        ))}
+        <FormControl size="small">
+          <InputLabel id="select-label">공개 범위</InputLabel>
+          <Select labelId="select-label" value={scope} size="small" label="공개 범위" onChange={handleChangeScope}>
+            <MenuItem value='all'>전체 공개</MenuItem>
+            <MenuItem value='followers'>친구 공개</MenuItem>
+            <MenuItem value='me'>나만 보기</MenuItem>
+          </Select>
+        </FormControl>
       </Stack>
-    </Grid>
 
-    <Grid item xs={12} sx={{textAlign: 'end'}}>
-      <Tooltip title={'사진 추가하기'} arrow>
-        <label htmlFor="feedImage" onChange={props.handleAddFeedImage} onClick={e => e.target.value = null}>
-          <input type="file" id="feedImage" multiple accept='image/*' style={{display: 'none'}}/>
-          <AddPhotoAlternateRoundedIcon color="action" sx={{fontSize: 35, cursor: 'pointer'}}/>
-        </label>
-      </Tooltip>
-    </Grid>
+      <Grid container spacing={2} p={2}>
 
-    <Grid item xs={12}>
-      <Button variant='contained' fullWidth onClick={handleCreateFeed}>게시</Button>
-    </Grid>
-  </Grid>
-</Stack>
-)
-  ;
+        <Grid item xs={12}>
+          <TextField fullWidth maxRows={10} multiline autoFocus error={!!errorMessage} helperText={errorMessage}
+                     placeholder={'내용을 입력해 주세요.'} value={props.feedContent} onChange={props.handleChangeFeedContent}/>
+        </Grid>
+
+        <Grid item xs={12} sx={{display: props.feedImage.length === 0 ? 'none' : 'block'}}>
+          <Stack spacing={3} sx={{p: 1, maxHeight: 550, overflow: 'auto'}}>
+            <DndProvider backend={HTML5Backend}>
+              {props.feedImage.map((item, index) => (
+                <Card key={index} sx={{height: 300, overflow: 'visible', pr: 1, pl: 1}}>
+                  <CreateFeedImage
+                    index={index}
+                    item={item}
+                    feedImage={props.feedImage}
+                    path={item.path}
+                    originalName={item.originalName}
+                    handleDeleteFeedImage={props.handleDeleteFeedImage}
+                    handleMoveFeedImage={props.handleMoveFeedImage}
+                  />
+                </Card>
+              ))}
+            </DndProvider>
+          </Stack>
+        </Grid>
+
+        <Grid item xs={12} sx={{textAlign: 'end'}}>
+          <Tooltip title={'사진 추가하기'} arrow>
+            <label htmlFor="feedImage" onChange={props.handleAddFeedImage} onClick={e => e.target.value = null}>
+              <input type="file" id="feedImage" multiple accept='image/*' style={{display: 'none'}}/>
+              <AddPhotoAlternateRoundedIcon color="action" sx={{fontSize: 35, cursor: 'pointer'}}/>
+            </label>
+          </Tooltip>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Button variant='contained' fullWidth onClick={handleCreateFeed}>게시</Button>
+        </Grid>
+      </Grid>
+    </Stack>
+  )
+    ;
 }

@@ -26,13 +26,12 @@ export default function FeedLine(props) {
     }
     return () => observer && observer.unobserve(target);
   }, [target]);
-  useEffect(() => {
-    dispatch({type: 'CloseLikedList'});
-  }, [])
 
   const handleShowLikedList = async (id) => {
     await setFeedId(id);
     dispatch({type: 'OpenLikedList'});
+
+    return () => dispatch({type: 'CloseLikedList'});
   };
 
   return (
