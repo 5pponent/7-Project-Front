@@ -10,10 +10,10 @@ export default function FeedLine(props) {
   const [target, setTarget] = useState(null);
   const [feedId, setFeedId] = useState();
 
-  const onIntersect = async ([entry], observer) => {
+  const onIntersect = ([entry], observer) => {
     if (entry.isIntersecting) {
         observer.unobserve(entry.target);
-        await props.handleScroll();
+        props.handleScroll();
         observer.observe(entry.target);
     }
   };
@@ -21,7 +21,7 @@ export default function FeedLine(props) {
   useEffect(() => {
     let observer;
     if (target) {
-      observer = new IntersectionObserver(onIntersect);
+      observer = new IntersectionObserver(onIntersect, {threshold: 0.2});
       observer.observe(target);
     }
     return () => observer && observer.unobserve(target);
@@ -35,7 +35,7 @@ export default function FeedLine(props) {
   };
 
   return (
-    <Stack spacing={3} sx={{width: "100%", maxWidth: 800, m: 'auto'}} mb={3}>
+    <Stack spacing={3} sx={{width: "100%", maxWidth: 800, m: 'auto', position: 'relative'}} mb={3}>
       {feeds.map(f => {
         return (
           <Feed

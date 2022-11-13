@@ -42,12 +42,8 @@ export default function FeedLineSelect(props) {
     }
   }, [scroll]);
 
-  const handleScroll = () => {
-      setScroll(true);
-  };
-  const getFeedList = (data) => {
-    setFeed({...feed, feeds: data})
-  };
+  const handleScroll = () => setScroll(true);
+  const getFeedList = (data) => setFeed({...feed, feeds: data})
   const updateFeedDetail = (data) => {
     setFeed({
       ...feed,
@@ -101,7 +97,7 @@ export default function FeedLineSelect(props) {
   }));
 
   return (
-    <Stack sx={{alignItems: 'center', position: 'relative'}}>
+    <Stack sx={{alignItems: 'center'}}>
       <Box sx={{width: '100%', bgcolor: 'white', position: 'fixed', pt: 3, zIndex: 10}}>
         <Grid maxWidth={"805px"} container sx={{m: 'auto'}}>
           <Grid item xs={3}>

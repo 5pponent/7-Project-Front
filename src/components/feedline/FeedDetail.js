@@ -118,8 +118,9 @@ export default function FeedDetail(props) {
         .catch(error => console.error(error.response))
     }
   };
-  const handleShowLikedList = () => {
+  const handleShowLikedList = (id) => {
     dispatch({type: 'OpenLikedList'});
+    props.handleShowLikedList(id)
   };
   const handleCreateComment = (feedId, content) => {
     if (validate()) {
@@ -261,7 +262,7 @@ export default function FeedDetail(props) {
               <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
             </IconButton>
             <Chip
-              onClick={handleShowLikedList}
+              onClick={() => handleShowLikedList(id)}
               label={likeCount < 99 ? likeCount : '99+'}
               sx={{
                 fontSize: 'large',
@@ -395,9 +396,6 @@ export default function FeedDetail(props) {
           modifyFeedDetail={props.getFeedDetail}
         />
       </Box>
-
-      {/*좋아요 목록*/}
-      {/*<LikedList feedId={id}/>*/}
 
       {/* 피드 삭제 다이얼로그 */}
       <NoticeModal
