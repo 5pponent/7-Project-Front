@@ -256,6 +256,7 @@ export default function Feed(props) {
             commentFocus={commentFocus}
             feedList={props.feedList}
             getFeedList={props.getFeedList}
+            handleShowLikedList={props.handleShowLikedList}
             getFeedDetail={getFeedDetail}
             closeContent={closeContent}
           />

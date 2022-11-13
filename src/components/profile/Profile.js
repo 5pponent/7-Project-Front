@@ -77,9 +77,7 @@ export default function Profile(props) {
         customAxios.get(`/feed?userid=${searchParams}`)
           .then(res => setFeed(res.data))
           .catch(error => console.log(error.response))
-          .finally(() => {
-            setFeedLoading(false);
-          });
+          .finally(() => setFeedLoading(false));
       } else {
         setFeedLoading(true);
         setSearchingMessage('검색 중입니다..');
@@ -101,7 +99,10 @@ export default function Profile(props) {
   useEffect(() => {
     if (scroll) {
       customAxios.get(`/feed?userid=${searchParams}&page=${feed.currentPage + 1}`)
-        .then(res => setFeed({...feed, currentPage: res.data.currentPage, feeds: feed.feeds.concat(res.data.feeds)}))
+        .then(res => {
+          const newFeed = feed.feeds.concat(res.data.feeds);
+          setFeed({...feed, currentPage: res.data.currentPage, feeds: newFeed});
+        })
         .catch(error => console.error(error.response))
         .finally(() => setScroll(false))
     }
@@ -346,12 +347,12 @@ export default function Profile(props) {
                         <Typography fontWeight={"bold"}>피드가 없습니다..</Typography>
                       </Stack>
                       :
-                        <FeedLine
-                          feed={feed}
-                          handleScroll={handleScroll}
-                          getFeedList={getFeedList}
-                          updateFeedDetail={updateFeedDetail}
-                        />
+                      <FeedLine
+                        feed={feed}
+                        handleScroll={handleScroll}
+                        getFeedList={getFeedList}
+                        updateFeedDetail={updateFeedDetail}
+                      />
                   )
               )
             }

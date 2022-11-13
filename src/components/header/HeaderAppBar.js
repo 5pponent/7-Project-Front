@@ -18,7 +18,8 @@ import {
   Toolbar,
   Tooltip,
   Typography,
-  styled, Badge
+  styled,
+  Badge
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -39,14 +40,14 @@ const Title = styled(Typography)`
   -webkit-box-orient: vertical;
 `
 
-const MoreButtonBadge = styled(Badge)(({ theme }) => ({
+const MoreButtonBadge = styled(Badge)(({theme}) => ({
   '& .MuiBadge-badge': {
     right: 8,
     top: 8,
   },
 }));
 
-export default React.memo(function Header ({unreadChatCount}) {
+export default React.memo(function Header({unreadChatCount}) {
   const [state, dispatch] = useContext(store);
 
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ export default React.memo(function Header ({unreadChatCount}) {
 
   useEffect(() => {
     setAnchorEl(document.getElementById("search"));
-    const lateSearch = setTimeout(function() {
+    const lateSearch = setTimeout(function () {
       setSearchOpen(true);
       if (searchValue !== '') {
         setSearchLoading(true);
@@ -75,7 +76,9 @@ export default React.memo(function Header ({unreadChatCount}) {
             setSearchResult(res.data);
           })
           .catch(error => console.log(error.response))
-          .finally(() => {setSearchLoading(false)});
+          .finally(() => {
+            setSearchLoading(false)
+          });
       } else {
         setSearchOpen(false);
         setSearchUsers([]);
@@ -84,23 +87,47 @@ export default React.memo(function Header ({unreadChatCount}) {
     if (lateSearch > 0) clearTimeout(lateSearch - 1);
   }, [searchValue]);
 
-  const getOpen = (stat) => {setOpen(stat)};
-  const handleClickDrawer = () => {setOpen(!open)};
-  const handleClickLogo = () => {navigate('/')};
-  const handleClickMyProfile = () => {navigate(`/profile?user=${state.user.id}`)};
-  const handleClickProfile = (id) => {navigate(`/profile?user=${id}`)}
-  const handleChangeSearchValue = (e) => {setSearchValue(e.target.value)}
-  const handleClickClear = () => {setSearchValue('')}
-  const handleChangeFeedContent = (e) => {setFeedContent(e.target.value)};
+  const getOpen = (stat) => {
+    setOpen(stat)
+  };
+  const handleClickDrawer = () => {
+    setOpen(!open)
+  };
+  const handleClickLogo = () => {
+    navigate('/')
+  };
+  const handleClickMyProfile = () => {
+    navigate(`/profile?user=${state.user.id}`)
+  };
+  const handleClickProfile = (id) => {
+    navigate(`/profile?user=${id}`)
+  }
+  const handleChangeSearchValue = (e) => {
+    setSearchValue(e.target.value)
+  }
+  const handleClickClear = () => {
+    setSearchValue('')
+  }
+  const handleChangeFeedContent = (e) => {
+    setFeedContent(e.target.value)
+  };
   const handleAddFeedImage = (e) => {
     let newImage = [];
     for (let i = 0; i < e.target.files.length; i++) {
-      newImage = newImage.concat({file: e.target.files[i], originalName: e.target.files[i].name, path: URL.createObjectURL(e.target.files[i]), description: ' '});
+      newImage = newImage.concat({
+        file: e.target.files[i],
+        originalName: e.target.files[i].name,
+        path: URL.createObjectURL(e.target.files[i]),
+        description: ' '
+      });
     }
     setFeedImage(feedImage.concat(newImage));
   };
   const handleChangeDescription = (e, num) => {
-    const newDescription = feedImage.map((item, index) => index === num ? {...item, description: e.target.value} : item);
+    const newDescription = feedImage.map((item, index) => index === num ? {
+      ...item,
+      description: e.target.value
+    } : item);
     setFeedImage(newDescription);
   };
   const handleDeleteFeedImage = (num) => {
@@ -111,6 +138,13 @@ export default React.memo(function Header ({unreadChatCount}) {
     setFeedContent('');
     setFeedImage([]);
   };
+  const handleMoveFeedImage = (origin, target) => {
+    const index = feedImage.findIndex(item => item === origin);
+    let list = [...feedImage];
+    list.splice(index, 1);
+    list.splice(target, 0, origin);
+    setFeedImage(list);
+  }
 
   return (
     <AppBar style={{userSelect: 'none', position: 'sticky', backgroundColor: '#2c92ff'}}>
@@ -158,7 +192,7 @@ export default React.memo(function Header ({unreadChatCount}) {
 
           <Tooltip title="알림" placement="bottom" arrow>
             <IconButton>
-              <NotificationsIcon sx={{fontSize: 24, color: "#FCFCFC"}} />
+              <NotificationsIcon sx={{fontSize: 24, color: "#FCFCFC"}}/>
             </IconButton>
           </Tooltip>
 
@@ -183,6 +217,7 @@ export default React.memo(function Header ({unreadChatCount}) {
             handleAddFeedImage={handleAddFeedImage}
             handleChangeDescription={handleChangeDescription}
             handleDeleteFeedImage={handleDeleteFeedImage}
+            handleMoveFeedImage={handleMoveFeedImage}
             resetFeed={resetFeed}/>
         </Drawer>
 
@@ -194,7 +229,7 @@ export default React.memo(function Header ({unreadChatCount}) {
           transition
           disablePortal
         >
-          {({ TransitionProps, placement }) => (
+          {({TransitionProps, placement}) => (
             <Grow
               {...TransitionProps}
               style={{
@@ -207,20 +242,20 @@ export default React.memo(function Header ({unreadChatCount}) {
                     <Typography variant={"subtitle2"} px={2}>검색 중입니다..</Typography>
                     :
                     (searchUsers.length > 0 ?
-                      searchUsers.map((it) => {
-                        return (
-                          <MenuItem key={it.id} onClick={() => handleClickProfile(it.id)}>
-                            <SmallProfile
-                              direction={"row"}
-                              spacing={2}
-                              image={it.image ? it.image.source : ''}
-                              name={it.name}
-                            />
-                          </MenuItem>
-                        );
-                      })
-                      :
-                      <Typography variant={"subtitle2"} px={2}>검색 결과가 없습니다.</Typography>
+                        searchUsers.map((it) => {
+                          return (
+                            <MenuItem key={it.id} onClick={() => handleClickProfile(it.id)}>
+                              <SmallProfile
+                                direction={"row"}
+                                spacing={2}
+                                image={it.image ? it.image.source : ''}
+                                name={it.name}
+                              />
+                            </MenuItem>
+                          );
+                        })
+                        :
+                        <Typography variant={"subtitle2"} px={2}>검색 결과가 없습니다.</Typography>
                     )
                   }
                 </Stack>
