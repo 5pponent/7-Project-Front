@@ -56,8 +56,6 @@ export default React.memo(function Header({unreadChatCount}) {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchLoading, setSearchLoading] = useState(true);
-  const [feedContent, setFeedContent] = useState('');
-  const [feedImage, setFeedImage] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [searchResult, setSearchResult] = useState({
     currentPage: 0, totalPages: 0, totalElements: 0, users: []
@@ -87,64 +85,13 @@ export default React.memo(function Header({unreadChatCount}) {
     if (lateSearch > 0) clearTimeout(lateSearch - 1);
   }, [searchValue]);
 
-  const getOpen = (stat) => {
-    setOpen(stat)
-  };
-  const handleClickDrawer = () => {
-    setOpen(!open)
-  };
-  const handleClickLogo = () => {
-    navigate('/')
-  };
-  const handleClickMyProfile = () => {
-    navigate(`/profile?user=${state.user.id}`)
-  };
-  const handleClickProfile = (id) => {
-    navigate(`/profile?user=${id}`)
-  }
-  const handleChangeSearchValue = (e) => {
-    setSearchValue(e.target.value)
-  }
-  const handleClickClear = () => {
-    setSearchValue('')
-  }
-  const handleChangeFeedContent = (e) => {
-    setFeedContent(e.target.value)
-  };
-  const handleAddFeedImage = (e) => {
-    let newImage = [];
-    for (let i = 0; i < e.target.files.length; i++) {
-      newImage = newImage.concat({
-        file: e.target.files[i],
-        originalName: e.target.files[i].name,
-        path: URL.createObjectURL(e.target.files[i]),
-        description: ' '
-      });
-    }
-    setFeedImage(feedImage.concat(newImage));
-  };
-  const handleChangeDescription = (e, num) => {
-    const newDescription = feedImage.map((item, index) => index === num ? {
-      ...item,
-      description: e.target.value
-    } : item);
-    setFeedImage(newDescription);
-  };
-  const handleDeleteFeedImage = (num) => {
-    URL.revokeObjectURL(feedImage[num].path);
-    setFeedImage(feedImage.filter((item, index) => index !== num));
-  };
-  const resetFeed = () => {
-    setFeedContent('');
-    setFeedImage([]);
-  };
-  const handleMoveFeedImage = (origin, target) => {
-    const index = feedImage.findIndex(item => item === origin);
-    let list = [...feedImage];
-    list.splice(index, 1);
-    list.splice(target, 0, origin);
-    setFeedImage(list);
-  }
+  const getOpen = (stat) => setOpen(stat);
+  const handleClickDrawer = () => setOpen(!open);
+  const handleClickLogo = () => navigate('/');
+  const handleClickMyProfile = () => navigate(`/profile?user=${state.user.id}`);
+  const handleClickProfile = (id) => navigate(`/profile?user=${id}`);
+  const handleChangeSearchValue = (e) => setSearchValue(e.target.value);
+  const handleClickClear = () => setSearchValue('');
 
   return (
     <AppBar style={{userSelect: 'none', position: 'sticky', backgroundColor: '#2c92ff'}}>
@@ -209,16 +156,7 @@ export default React.memo(function Header({unreadChatCount}) {
         </Stack>
 
         <Drawer anchor='left' open={open} onClose={handleClickDrawer}>
-          <CreateFeed
-            feedContent={feedContent}
-            feedImage={feedImage}
-            getOpen={getOpen}
-            handleChangeFeedContent={handleChangeFeedContent}
-            handleAddFeedImage={handleAddFeedImage}
-            handleChangeDescription={handleChangeDescription}
-            handleDeleteFeedImage={handleDeleteFeedImage}
-            handleMoveFeedImage={handleMoveFeedImage}
-            resetFeed={resetFeed}/>
+          <CreateFeed getOpen={getOpen}/>
         </Drawer>
 
         {/*검색 결과*/}

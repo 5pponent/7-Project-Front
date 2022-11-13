@@ -22,15 +22,17 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import SmallProfile from '../SmallProfile';
 import CreateFeedImage from "./CreateFeedImage";
+import {feedStore} from "../../store/feedStore";
 
 export default function CreateFeed(props) {
   const [state, dispatch] = useContext(store);
+  const [feedState, feedDispatch] = useContext(feedStore);
   const [scope, setScope] = useState('all');
   const [errorMessage, setErrormessage] = useState('');
 
   const validate = () => {
     let valid = true;
-    if (!props.feedContent && props.feedImage.length === 0) {
+    if (!feedState.feedContent && feedState.feedImage.length === 0) {
       setErrormessage('내용 또는 사진을 입력해 주세요!');
       dispatch({type: 'CloseLoading'});
       valid = false;
@@ -40,17 +42,33 @@ export default function CreateFeed(props) {
 
   const handleChangeScope = (e) => setScope(e.target.value);
   const closeDrawer = () => props.getOpen(false);
+  const handleChangeFeedContent = (e) => {
+    feedDispatch({type: 'AddContent', payload: e.target.value});
+  };
+  const handleAddFeedImage = (e) => {
+    for (let i = 0; i < e.target.files.length; i++) {
+      feedDispatch({
+        type: 'AddImage', payload: {
+          file: e.target.files[i],
+          originalName: e.target.files[i].name,
+          source: URL.createObjectURL(e.target.files[i]),
+          description: ' '
+        }
+      });
+    }
+  };
   const handleCreateFeed = async () => {
     if (validate()) {
       dispatch({type: 'OpenLoading', payload: '피드를 작성중입니다..'});
       const feedForm = new FormData();
-      feedForm.append('content', props.feedContent);
-      props.feedImage.map(item => feedForm.append('descriptions', item.description));
-      props.feedImage.map(item => feedForm.append('images', item.file));
+      feedForm.append('content', feedState.feedContent);
+      feedState.feedImage.map(item => feedForm.append('descriptions', item.description));
+      feedState.feedImage.map(item => feedForm.append('images', item.file));
       feedForm.append('showScope', scope);
+
       await customAxios.post(`/feed`, feedForm)
         .then(() => {
-          props.resetFeed();
+          feedDispatch({type: 'ResetFeed'});
           dispatch({type: 'OpenSnackbar', payload: '피드를 작성하였습니다.'});
           closeDrawer();
         })
@@ -90,32 +108,25 @@ export default function CreateFeed(props) {
 
         <Grid item xs={12}>
           <TextField fullWidth maxRows={10} multiline autoFocus error={!!errorMessage} helperText={errorMessage}
-                     placeholder={'내용을 입력해 주세요.'} value={props.feedContent} onChange={props.handleChangeFeedContent}/>
+                     placeholder={'내용을 입력해 주세요.'} value={feedState.feedContent} onChange={handleChangeFeedContent}/>
         </Grid>
 
-        <Grid item xs={12} sx={{display: props.feedImage.length === 0 ? 'none' : 'block'}}>
+        <Grid item xs={12} sx={{display: feedState.feedImage.length === 0 ? 'none' : 'block'}}>
           <Stack spacing={3} sx={{p: 1, maxHeight: 550, overflow: 'auto'}}>
             <DndProvider backend={HTML5Backend}>
-              {props.feedImage.map((item, index) => (
+              {feedState.feedImage.map((item, index) => (
                 <Card key={index} sx={{height: 300, overflow: 'visible', pr: 1, pl: 1}}>
-                  <CreateFeedImage
-                    index={index}
-                    item={item}
-                    feedImage={props.feedImage}
-                    path={item.path}
-                    originalName={item.originalName}
-                    handleDeleteFeedImage={props.handleDeleteFeedImage}
-                    handleMoveFeedImage={props.handleMoveFeedImage}
-                  />
+                  <CreateFeedImage index={index} item={item}/>
                 </Card>
               ))}
+
             </DndProvider>
           </Stack>
         </Grid>
 
         <Grid item xs={12} sx={{textAlign: 'end'}}>
           <Tooltip title={'사진 추가하기'} arrow>
-            <label htmlFor="feedImage" onChange={props.handleAddFeedImage} onClick={e => e.target.value = null}>
+            <label htmlFor="feedImage" onChange={handleAddFeedImage} onClick={e => e.target.value = null}>
               <input type="file" id="feedImage" multiple accept='image/*' style={{display: 'none'}}/>
               <AddPhotoAlternateRoundedIcon color="action" sx={{fontSize: 35, cursor: 'pointer'}}/>
             </label>

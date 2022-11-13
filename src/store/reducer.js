@@ -25,7 +25,7 @@ export default function reducer(state, action) {
     case 'CloseLikedList':
       return {...state, likedList: false};
     case 'UnreadChatCount':
-      return {...state, unreadChatCount: action.payload}
+      return {...state, unreadChatCount: action.payload};
     default:
       return state;
   }
