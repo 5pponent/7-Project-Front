@@ -8,6 +8,7 @@ const FeedInitialState = {
 
 const feedStore = createContext(FeedInitialState);
 const {Provider} = feedStore;
+
 const FeedStoreProvider = ({children}) => {
   const [feedState, feedDispatch] = useReducer(feedReducer, FeedInitialState);
   return <Provider value={[feedState, feedDispatch]}>{children}</Provider>

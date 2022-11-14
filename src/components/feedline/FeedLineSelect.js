@@ -97,6 +97,7 @@ export default function FeedLineSelect(props) {
   }));
 
   return (
+    /*
     <Stack sx={{alignItems: 'center'}}>
       <Box sx={{width: '100%', bgcolor: 'white', position: 'fixed', pt: 3, zIndex: 10}}>
         <Grid maxWidth={"805px"} container sx={{m: 'auto'}}>
@@ -128,23 +129,27 @@ export default function FeedLineSelect(props) {
           }
         </Grid>
       </Box>
+     */
 
-      <Stack sx={{mt: 9, width: '100%'}}>
-        {selectedFeedLine.title === '새 피드' ?
-          <NewFeedLine
-            occupationList={occupationList}
-            feedLoading={feedLoading}
-            selectedOccupation={selectedOccupation}
-            handleGetOccupation={handleGetOccupation}
-          /> :
-          <FeedLine
-            feed={feed}
-            getFeedList={getFeedList}
-            updateFeedDetail={updateFeedDetail}
-            handleScroll={handleScroll}
-          />
-        }
-      </Stack>
+    // <Stack sx={{mt: 9, width: '100%'}}>
+      <Stack sx={{mt: 4, width: '100%'}}>
+      {selectedFeedLine.title === '새 피드' ?
+        <NewFeedLine
+          occupationList={occupationList}
+          feedLoading={feedLoading}
+          selectedOccupation={selectedOccupation}
+          handleGetOccupation={handleGetOccupation}
+        /> :
+        <FeedLine
+          feed={feed}
+          getFeedList={getFeedList}
+          updateFeedDetail={updateFeedDetail}
+          handleScroll={handleScroll}
+        />
+      }
     </Stack>
+    /*
+    </Stack>
+     */
   );
 }
