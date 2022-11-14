@@ -3,6 +3,7 @@ import customAxios from '../../AxiosProvider';
 import {HTML5Backend} from 'react-dnd-html5-backend'
 import {DndProvider} from 'react-dnd'
 import {store} from '../../store/store';
+import {feedStore} from "../../store/feedStore";
 import {
   Button,
   IconButton,
@@ -22,7 +23,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import SmallProfile from '../SmallProfile';
 import CreateFeedImage from "./CreateFeedImage";
-import {feedStore} from "../../store/feedStore";
 
 export default function CreateFeed(props) {
   const [state, dispatch] = useContext(store);

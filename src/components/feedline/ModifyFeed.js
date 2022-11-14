@@ -1,11 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
+import {DndProvider} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
 import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
 import {
   Button,
-  Card,
-  CardActions,
-  CardContent,
   FormControl,
   Grid,
   InputLabel,
@@ -16,34 +15,37 @@ import {
   Tooltip
 } from "@mui/material";
 import SmallProfile from "../SmallProfile";
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateRounded";
+import ModifyFeedImage from "./ModifyFeedImage";
 
 export default React.memo(function ModifyFeed(props) {
   const [, dispatch] = useContext(store);
   const {content, files, id, showScope, writer} = props.feedDetail;
 
+  const [move, setMove] = useState({target: null, item: null});
   const [scope, setScope] = useState('');
   const [errorMessage, setErrormessage] = useState('');
-  const [feed, setFeed] = useState({
-    content: '',
-    image: [],
-    description: []
-  });
-  const [originImage, setOriginImage] = useState([]);
+  const [feed, setFeed] = useState('');
+  const [image, setImage] = useState([]);
   const [newImage, setNewImage] = useState([]);
 
   useEffect(() => {
-    const imageId = files.map(item => item.id);
-    const imageDesc = files.map(item => item.description);
-    setFeed({content: content, image: imageId, description: imageDesc});
+    setFeed(content);
     setScope(showScope)
-    setOriginImage(files);
+    setImage(files);
   }, []);
-
+  useEffect(() => {
+    if (move.target) {
+      const index = image.findIndex(value => value === move.item);
+      let newImage = [...image];
+      newImage.splice(index, 1);
+      newImage.splice(move.target, 0, move.item);
+      setImage(newImage);
+    }
+  }, [move.target]);
   const validate = () => {
     let valid = true;
-    if (!feed.content && feed.image.length + originImage.length === 0) {
+    if (!feed.content && image.length === 0) {
       setErrormessage('내용 또는 사진을 입력해 주세요!');
       dispatch({type: 'CloseLoading'});
       valid = false;
@@ -51,51 +53,39 @@ export default React.memo(function ModifyFeed(props) {
     return valid;
   };
 
+  const handleMoveImage = (origin, target, item) => setMove({target: target, item: item});
   const handleChangeScope = (e) => setScope(e.target.value);
-  const handleChangeFeedContent = (e) => setFeed({...feed, content: e.target.value});
+  const handleChangeFeedContent = (e) => setFeed(e.target.value);
   const handleDeleteFeedImage = (num) => {
-    URL.revokeObjectURL(newImage[num].path);
-    setNewImage(newImage.filter((item, index) => index !== num));
-  };
-  const handleDeleteOriginFeedImage = (num) => {
-    setOriginImage(originImage.filter((item, index) => index !== num));
-    setFeed({
-      ...feed,
-      image: feed.image.filter((item, index) => index !== num),
-      description: feed.description.filter((item, index) => index !== num)
-    });
+    URL.revokeObjectURL(image[num].source);
+    setImage(image.filter((item, index) => index !== num));
   };
   const handleChangeDescription = (e, num) => {
-    setFeed({
-      ...feed,
-      description: feed.description.map((item, index) => index === num + originImage.length ? e.target.value : item)
-    });
-  };
-  const handleChangeOriginDescription = (e, num) => {
-    setFeed({
-      ...feed,
-      description: feed.description.map((item, index) => index === num ? e.target.value : item)
-    });
+    const newImage = image.map((item, index) => index === num ? {...item, description: e.target.value} : item)
+    setImage(newImage);
   };
   const handleAddFeedImage = (e) => {
-    let newImages = newImage;
-    let newDesc = feed.description;
+    let images = [...image];
+    let newImages = [...newImage];
     for (let i = 0; i < e.target.files.length; i++) {
-      newImages = newImages.concat({
+      images = images.concat({
         file: e.target.files[i],
         originalName: e.target.files[i].name,
-        path: URL.createObjectURL(e.target.files[i])
+        source: URL.createObjectURL(e.target.files[i]),
+        description: ' '
       });
-      newDesc = newDesc.concat('');
+      newImages = newImages.concat(e.target.files[i]);
     }
+    setImage(images);
     setNewImage(newImages);
-    setFeed({...feed, description: newDesc});
   };
-  const putFeed = async (feedId) => {
+  const putFeed = async (feedId, imageList) => {
+    const imageId = imageList.map(item => item.id)
+    const descriptions = image.map(item => item.description);
     const feedForm = {
-      content: feed.content,
-      descriptions: feed.description,
-      images: feed.image,
+      content: feed,
+      descriptions: descriptions,
+      images: imageId,
       showScope: scope
     };
 
@@ -109,24 +99,26 @@ export default React.memo(function ModifyFeed(props) {
       .finally(() => dispatch({type: 'CloseLoading'}));
   };
   const handleModifyFeed = async (feedId) => {
-    dispatch({type: 'OpenLoading', payload: '피드를 수정중입니다..'});
+    if (validate()) {
+      dispatch({type: 'OpenLoading', payload: '피드를 수정중입니다..'});
+      if (newImage.length > 0) {
+        const imageForm = new FormData();
+        newImage.map(item => imageForm.append('files', item));
 
-    if (newImage.length > 0) {
-      const imageForm = new FormData();
-      newImage.map(item => imageForm.append('files', item.file));
-
-      let imageId = feed.image;
-      if (validate()) {
         await customAxios.post(`/upload`, imageForm)
           .then(res => {
-            res.data.map(item => imageId.push(item.id));
-            setFeed({...feed, image: imageId});
-            putFeed(feedId);
+            let list = image;
+            res.data.map(item => {
+                const index = image.findIndex(value => item.originalName === value.originalName & !value.id);
+                list.splice(index, 1, {...item, description: image[index].description});
+              }
+            )
+            putFeed(feedId, list);
           })
-          .catch(error => console.log(error.response))
+          .catch(error => console.log(error))
           .finally(() => dispatch({type: 'CloseLoading'}));
-      }
-    } else await putFeed(feedId);
+      } else await putFeed(feedId, image);
+    }
   };
 
   return (
@@ -153,7 +145,7 @@ export default React.memo(function ModifyFeed(props) {
 
       <Grid item xs={12}>
         <TextField fullWidth rows={6} multiline autoFocus error={!!errorMessage} helperText={errorMessage}
-                   onChange={handleChangeFeedContent} value={feed.content} placeholder={'내용을 입력해 주세요.'}
+                   onChange={handleChangeFeedContent} value={feed} placeholder={'내용을 입력해 주세요.'}
                    sx={{overflow: 'auto'}}/>
       </Grid>
 
@@ -166,61 +158,21 @@ export default React.memo(function ModifyFeed(props) {
         </Tooltip>
       </Grid>
 
-      {/* 기존 이미지 */}
-      <Grid item xs={12} sx={{display: originImage.length + newImage.length === 0 ? 'none' : 'block'}}>
+      <Grid item xs={12} sx={{display: image.length === 0 ? 'none' : 'block'}}>
         <Grid container spacing={2} colums={2} sx={{p: 1, maxHeight: 400, overflow: 'auto'}}>
-          {originImage.map((item, index) => (
-            <Grid key={item.id} item xs={6}>
-              <Card sx={{height: 300, position: 'relative'}}>
-                <CardActions sx={{justifyContent: 'end', pb: 0, position: 'absolute', right: 0}}>
-                  <DeleteRoundedIcon onClick={() => handleDeleteOriginFeedImage(index)} color={'action'}
-                                     sx={{cursor: 'pointer', fontSize: 'xx-large', color: '#931e1e'}}/>
-                </CardActions>
-
-                <CardContent style={{height: '100%'}}>
-                  <Grid container spacing={1}
-                        sx={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                    <Grid item sx={{flex: 0.7, display: 'flex', alignItems: 'center'}}>
-                      <img src={item.source} alt={item.originalName} width='100%' height='100%'
-                           style={{objectFit: 'contain', maxHeight: '200px'}}/>
-                    </Grid>
-                    <Grid item style={{padding: 0}} sx={{flex: 0.2, width: '100%'}}>
-                      <TextField placeholder='설명' value={feed.description[index]}
-                                 onChange={(e) => handleChangeOriginDescription(e, index)}
-                                 multiline fullWidth rows={1} sx={{mt: 1, overflow: 'auto'}}/>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-
-          {/* 추가한 이미지 */}
-          {newImage.map((item, index) => (
-            <Grid key={index} item xs={6}>
-              <Card sx={{height: 300, position: 'relative'}}>
-                <CardActions sx={{justifyContent: 'end', pb: 0, position: 'absolute', right: 0}}>
-                  <DeleteRoundedIcon onClick={() => handleDeleteFeedImage(index)} color='action'
-                                     sx={{cursor: 'pointer', fontSize: 'xx-large', color: '#931e1e'}}/>
-                </CardActions>
-
-                <CardContent style={{height: '100%'}}>
-                  <Grid container spacing={1}
-                        sx={{height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                    <Grid item sx={{flex: 0.7, display: 'flex', alignItems: 'center'}}>
-                      <img src={item.path} alt={item.originalName} width='100%' height='100%'
-                           style={{objectFit: 'contain', maxHeight: '200px'}}/>
-                    </Grid>
-                    <Grid item style={{padding: 0}} sx={{flex: 0.2, width: '100%'}}>
-                      <TextField onChange={e => handleChangeDescription(e, index)} placeholder='설명'
-                                 value={feed.description[originImage.length + index]}
-                                 multiline fullWidth rows={1} sx={{mt: 1, overflow: 'auto'}}/>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+          <DndProvider backend={HTML5Backend}>
+            {image.map((item, index) => (
+              <Grid key={index} item xs={6}>
+                <ModifyFeedImage
+                  image={item}
+                  index={index}
+                  handleChangeDescription={handleChangeDescription}
+                  handleDeleteFeedImage={handleDeleteFeedImage}
+                  handleMoveImage={handleMoveImage}
+                />
+              </Grid>
+            ))}
+          </DndProvider>
         </Grid>
       </Grid>
       <Stack spacing={1} direction='row' sx={{justifyContent: 'center'}}>
