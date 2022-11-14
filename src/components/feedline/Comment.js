@@ -41,7 +41,7 @@ export default function Comment(props) {
 
   useEffect(() => {
     setCount(childCount);
-  }, []);
+  }, [childCount]);
 
   useEffect(() => {
     if (props.newReply && id === props.newReply.parentId) {
@@ -89,7 +89,7 @@ export default function Comment(props) {
   const handleClickProfile = (e) => setAnchor(e.currentTarget);
   const handleCloseProfile = () => setAnchor(null);
   const handleClickProfileView = () => navigate(`/profile?user=${writer.id}`);
-  const handleLikeComment = (e) => {
+  const handleLikeComment = () => {
     if (isLiked) {
       customAxios.delete(`/feed/${props.feedId}/comment/${id}/like`)
         .then(res => {

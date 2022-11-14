@@ -15,7 +15,6 @@ import {
   Typography
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import AddCommentRoundedIcon from '@mui/icons-material/AddCommentRounded';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
 import SmallProfile from '../SmallProfile';
 import MoreMenu from './MoreMenu';
@@ -77,10 +76,12 @@ export default function FeedDetail(props) {
     setCommentContent({content: `@${name} `});
     setCurrentComment({id: commentId, name: name});
     setReply(true);
+    setModifyComment(false);
     commentRef.current.focus();
   };
   const getCommentContent = (comment, commentId, name) => {
     setModifyComment(true);
+    setReply(false);
     setCommentContent({content: comment});
     setCurrentComment({id: commentId, name: name});
     commentRef.current.focus();
@@ -256,41 +257,6 @@ export default function FeedDetail(props) {
           </ImageList>
         </Box>
 
-        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-          <Stack direction='row' sx={{alignItems: 'center'}}>
-            <IconButton onClick={() => handleClickLike(id, writer.name)}>
-              <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
-            </IconButton>
-            <Chip
-              onClick={() => handleShowLikedList(id)}
-              label={likeCount < 99 ? likeCount : '99+'}
-              sx={{
-                fontSize: 'large',
-                bgcolor: 'unset',
-                cursor: 'pointer',
-                '& .MuiChip-label': {
-                  p: '3px'
-                },
-                '&:hover': {bgcolor: 'rgba(236,236,236,0.49)'}
-              }}/>
-
-            <IconButton onClick={() => commentRef.current.focus()} sx={{marginLeft: "20px"}}>
-              <AddCommentRoundedIcon sx={{fontSize: 30}}></AddCommentRoundedIcon>
-            </IconButton>
-            <Chip
-              label={commentCount}
-              style={{padding: 0}}
-              sx={{
-                fontSize: 'medium',
-                bgcolor: 'unset',
-                userSelect: 'none',
-                '& .MuiChip-label': {
-                  p: '3px'
-                }
-              }}/>
-          </Stack>
-        </Box>
-
         <Stack spacing={1}>
           <Stack spacing={1} sx={{display: myComment.comments.length !== 0 ? 'block' : 'none'}}>
             <Divider>내 댓글</Divider>
@@ -329,7 +295,7 @@ export default function FeedDetail(props) {
             </Stack>
           </Stack>
 
-          <Divider>전체 댓글</Divider>
+          <Divider>전체 댓글 ({commentCount})</Divider>
 
           {/*댓글 목록*/}
           <Stack p={1} spacing={3}>
@@ -368,6 +334,25 @@ export default function FeedDetail(props) {
 
         {/* 댓글 작성 */}
         <Stack sx={{width: '100%', p: 1, pb: 3, position: 'sticky', bottom: 0, bgcolor: 'white'}}>
+          <Box sx={{display: 'flex', alignItems: 'center', mb: 1}}>
+            <IconButton onClick={() => handleClickLike(id, writer.name)}>
+              <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
+            </IconButton>
+
+            <Chip
+              onClick={() => handleShowLikedList(id)}
+              label={likeCount < 99 ? likeCount : '99+'}
+              sx={{
+                fontSize: 'large',
+                bgcolor: 'unset',
+                cursor: 'pointer',
+                '& .MuiChip-label': {
+                  p: '3px'
+                },
+                '&:hover': {bgcolor: 'rgba(236,236,236,0.49)'}
+              }}/>
+          </Box>
+
           <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
             <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
             <TextField inputRef={commentRef} multiline size='small' error={!!commentErrorMessage}
@@ -379,13 +364,15 @@ export default function FeedDetail(props) {
             </Button>
           </Stack>
 
-          <Button onClick={handleClickCancelReplay} sx={{width: 'max-content', display: reply ? 'block' : 'none'}}>
-            답글취소
-          </Button>
-          <Button onClick={handleClickCancelModify}
-                  sx={{width: 'max-content', display: modifyComment ? 'block' : 'none'}}>
-            수정취소
-          </Button>
+          <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
+            <Button onClick={handleClickCancelReplay} sx={{width: 'max-content', display: reply ? 'block' : 'none'}}>
+              답글취소
+            </Button>
+            <Button onClick={handleClickCancelModify}
+                    sx={{width: 'max-content', display: modifyComment ? 'block' : 'none'}}>
+              수정취소
+            </Button>
+          </Box>
         </Stack>
       </Box>
 
