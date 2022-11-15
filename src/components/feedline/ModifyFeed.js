@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
-import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
+import customAxios from "../../AxiosProvider";
 import {
   Button,
   FormControl,
@@ -14,8 +14,8 @@ import {
   TextField,
   Tooltip
 } from "@mui/material";
-import SmallProfile from "../SmallProfile";
 import AddPhotoAlternateRoundedIcon from "@mui/icons-material/AddPhotoAlternateRounded";
+import SmallProfile from "../SmallProfile";
 import ModifyFeedImage from "./ModifyFeedImage";
 
 export default React.memo(function ModifyFeed(props) {
@@ -100,7 +100,7 @@ export default React.memo(function ModifyFeed(props) {
     await customAxios.put(`/feed/${feedId}`, feedForm)
       .then(res => {
         props.closeModify();
-        dispatch({typSe: 'OpenSnackbar', payload: '피드를 수정하였습니다.'});
+        dispatch({type: 'OpenSnackbar', payload: '피드를 수정하였습니다.'});
         props.modifyFeedDetail(res.data);
       })
       .catch(error => console.error(error.response))
@@ -131,7 +131,7 @@ export default React.memo(function ModifyFeed(props) {
   };
 
   return (
-    <Grid container spacing={2} sx={{justifyContent: 'center', pt: 5, pb: 5, pr: 3, pl: 3}}>
+    <Grid container spacing={2} sx={{justifyContent: 'center', p: 3, pb: 0}}>
       <Grid item xs={12}>
         <Stack direction={"row"} alignItems={"center"} justifyContent={"space-between"}>
           <SmallProfile
@@ -192,10 +192,13 @@ export default React.memo(function ModifyFeed(props) {
           </DndProvider>
         </Grid>
       </Grid>
-      <Stack spacing={1} direction='row' sx={{justifyContent: 'center'}}>
-        <Button variant='contained' onClick={() => handleModifyFeed(id)}>수정</Button>
-        <Button variant='contained' onClick={props.closeModify}>취소</Button>
-      </Stack>
+
+      <Grid item>
+        <Stack spacing={1} direction='row' sx={{justifyContent: 'center'}}>
+          <Button variant='contained' onClick={() => handleModifyFeed(id)}>수정</Button>
+          <Button variant='contained' onClick={props.closeModify}>취소</Button>
+        </Stack>
+      </Grid>
     </Grid>
   )
 })

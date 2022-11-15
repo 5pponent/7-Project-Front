@@ -12,9 +12,9 @@ export default function FeedLine(props) {
 
   const onIntersect = ([entry], observer) => {
     if (entry.isIntersecting) {
-        observer.unobserve(entry.target);
-        props.handleScroll();
-        observer.observe(entry.target);
+      observer.unobserve(entry.target);
+      props.handleScroll();
+      observer.observe(entry.target);
     }
   };
 
@@ -27,12 +27,7 @@ export default function FeedLine(props) {
     return () => observer && observer.unobserve(target);
   }, [target]);
 
-  const handleShowLikedList = async (id) => {
-    await setFeedId(id);
-    dispatch({type: 'OpenLikedList'});
-
-    return () => dispatch({type: 'CloseLikedList'});
-  };
+  const handleShowLikedList = async (id) => await setFeedId(id);
 
   return (
     <Stack spacing={3} sx={{width: "100%", maxWidth: 800, m: 'auto', position: 'relative'}} mb={3}>
