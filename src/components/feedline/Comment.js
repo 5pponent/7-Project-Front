@@ -73,14 +73,18 @@ export default function Comment(props) {
   const showDeleteButton = () => setDeleteShow(true);
   const hideDeleteButton = () => setDeleteShow(false);
   const deleteCommentList = (commentId) => {
-    const newCommentList = props.commentList.comments.filter(item => item.id !== commentId);
-    props.setCommentList({...props.commentList, comments: newCommentList});
+    props.setCommentList(prev => ({
+      ...prev,
+      comments: prev.comments.filter(item => item.id !== commentId),
+      totalElements: prev.totalElements - 1
+    }));
   };
   const handleDeleteComment = (feedId, commentId) => {
     dispatch({type: 'OpenLoading', payload: '댓글을 삭제중입니다..'});
     customAxios.delete(`/feed/${feedId}/comment/${commentId}`)
       .then(() => {
         deleteCommentList(id);
+        props.handleDeleteComment();
         dispatch({type: 'OpenSnackbar', payload: `댓글이 삭제되었습니다.`});
       })
       .catch(error => console.error(error))
@@ -209,6 +213,7 @@ export default function Comment(props) {
               setCommentList={setReplyComment}
               feedId={props.feedId}
               image={c.writer.image ? c.writer.image.source : ''}
+              handleDeleteComment={props.handleDeleteComment}
               newReply={props.newReply}
               addReply={props.addReply}
               modifyComment={props.modifyComment}

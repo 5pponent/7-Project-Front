@@ -18,6 +18,6 @@ export default function feedReducer(state, action) {
     case 'ResetFeed':
       return {...state, feedContent: '', feedImage: []};
     default:
-      return state;
+      throw Error(`${action.type}: 알 수 없는 타입입니다.`);
   }
 };

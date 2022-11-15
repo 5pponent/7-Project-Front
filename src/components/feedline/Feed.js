@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import customAxios from "../../AxiosProvider";
 import {store} from "../../store/store";
 import {useNavigate} from "react-router-dom";
@@ -36,7 +36,8 @@ const Content = styled(Typography)`
 export default function Feed(props) {
   const navigate = useNavigate();
   const [, dispatch] = useContext(store);
-  const {commentCount, files, id, isLiked, likeCount, writer, content, createTime} = props.feed;
+  const {commentCount, files, id, isLiked, likeCount, writer,  content, createTime} = props.feed;
+  const [commentNum, setCommentNum] = useState(0);
   const [feedDetail, setFeedDetail] = useState(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [modifyOpen, setModifyOpen] = useState(false);
@@ -44,13 +45,22 @@ export default function Feed(props) {
   const [commentFocus, setCommentFocus] = useState(false);
   const [anchor, setAnchor] = useState(null);
 
-  const getFeedDetail = (data) => setFeedDetail(data);
+  useEffect(() => {
+    setCommentNum(commentCount);
+  }, []);
+
   const closeModify = () => setModifyOpen(false);
   const openDelete = () => setDeleteOpen(true);
   const closeDelete = () => setDeleteOpen(false);
   const handleClickProfile = (e) => setAnchor(e.currentTarget);
   const handleCloseProfile = () => setAnchor(null);
   const handleClickProfileView = () => navigate(`/profile?user=${writer.id}`);
+  const handleAddComment = () => setCommentNum(prev => prev + 1);
+  const handleDeleteComment = () => setCommentNum(prev => prev - 1);
+  const modifyFeedDetail = (data) => {
+    props.updateFeedDetail(data);
+    setFeedDetail(data);
+  }
   const openContent = async () => {
     await customAxios.get(`/feed/${id}`)
       .then(res => {
@@ -104,6 +114,10 @@ export default function Feed(props) {
       .finally(() => dispatch({type: 'CloseLoading'}))
   };
   const handleClickImage = (image) => dispatch({type: 'OpenImageView', payload: image});
+  const handleShowLikedList = () => {
+    dispatch({type: 'OpenLikedList'});
+    props.handleShowLikedList(id);
+  }
   const getDate = () => {
     const feedDate = createTime.split(' ');
     const createDate = feedDate[0].split('-');
@@ -193,7 +207,7 @@ export default function Feed(props) {
                 <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
               </IconButton>
               <Chip
-                onClick={() => props.handleShowLikedList(id)}
+                onClick={handleShowLikedList}
                 label={likeCount < 99 ? likeCount : '99+'}
                 sx={{
                   fontSize: 'medium',
@@ -213,7 +227,7 @@ export default function Feed(props) {
                 <AddCommentRoundedIcon sx={{fontSize: 30}}></AddCommentRoundedIcon>
               </IconButton>
               <Chip
-                label={commentCount}
+                label={commentNum}
                 sx={{
                   fontSize: 'medium',
                   bgcolor: 'unset',
@@ -257,20 +271,21 @@ export default function Feed(props) {
             feedList={props.feedList}
             getFeedList={props.getFeedList}
             handleShowLikedList={props.handleShowLikedList}
-            getFeedDetail={getFeedDetail}
+            modifyFeedDetail={modifyFeedDetail}
             closeContent={closeContent}
+            handleAddComment={handleAddComment}
+            handleDeleteComment={handleDeleteComment}
           />
         </DialogContent>
       </Dialog>
 
-      {/* 컨텐츠 수정하기 다이얼로그 */
-      }
+      {/* 컨텐츠 수정하기 다이얼로그 */}
       <Dialog open={modifyOpen} onClose={closeModify} fullWidth maxWidth='md'>
         <DialogContent>
           <ModifyFeed
             feedDetail={feedDetail}
             closeModify={closeModify}
-            modifyFeedDetail={props.updateFeedDetail}
+            modifyFeedDetail={modifyFeedDetail}
           />
         </DialogContent>
       </Dialog>

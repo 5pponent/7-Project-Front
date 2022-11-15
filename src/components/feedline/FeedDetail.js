@@ -3,7 +3,7 @@ import customAxios from '../../AxiosProvider';
 import {store} from '../../store/store';
 import {
   Box,
-  Button, Chip,
+  Button,
   CircularProgress,
   Divider,
   IconButton,
@@ -33,17 +33,19 @@ export default function FeedDetail(props) {
   const [myComment, setMyComment] = useState({
     comments: [],
     currentPage: 0,
+    totalElements: undefined,
     totalPages: undefined
   });
   const [comment, setComment] = useState({
     comments: [],
     currentPage: 0,
+    totalElements: undefined,
     totalPages: undefined
   });
   const [commentContent, setCommentContent] = useState({content: ''});
   const [currentComment, setCurrentComment] = useState({id: 0, name: ''});
   const [commentErrorMessage, setCommentErrorMessage] = useState('');
-  const {commentCount, content, createTime, files, id, isLiked, likeCount, writer} = props.feedDetail;
+  const {content, createTime, files, id, isLiked, likeCount, writer} = props.feedDetail;
   const commentRef = useRef();
 
   useEffect(() => {
@@ -56,6 +58,7 @@ export default function FeedDetail(props) {
       .catch(error => console.error(error.response))
 
     props.commentFocus && commentRef.current.focus();
+    props.handleShowLikedList(id)
   }, []);
 
   const validate = () => {
@@ -87,8 +90,11 @@ export default function FeedDetail(props) {
     commentRef.current.focus();
   };
   const addCommentList = (commentData) => {
-    const newComment = myComment.comments.concat(commentData);
-    setMyComment({...myComment, comments: newComment});
+    setMyComment(prev => ({
+      ...prev,
+      comments: prev.comments.concat(commentData),
+      totalElements: prev.totalElements + 1
+    }));
   };
   const modifyCommentList = (commentData) => {
     const newComment = myComment.comments.map(item => (
@@ -106,23 +112,20 @@ export default function FeedDetail(props) {
     if (isLiked) {
       customAxios.delete(`/feed/${feedId}/like`)
         .then(res => {
-          props.getFeedDetail(res.data);
+          props.modifyFeedDetail(res.data);
           dispatch({type: 'OpenSnackbar', payload: `좋아요가 취소되었습니다.`});
         })
         .catch(error => console.error(error.response))
     } else {
       customAxios.post(`/feed/${feedId}/like`)
         .then(res => {
-          props.getFeedDetail(res.data);
+          props.modifyFeedDetail(res.data);
           dispatch({type: 'OpenSnackbar', payload: `${name}님의 피드를 좋아합니다.`});
         })
         .catch(error => console.error(error.response))
     }
   };
-  const handleShowLikedList = (id) => {
-    dispatch({type: 'OpenLikedList'});
-    props.handleShowLikedList(id)
-  };
+  const handleShowLikedList = () => dispatch({type: 'OpenLikedList'});
   const handleCreateComment = (feedId, content) => {
     if (validate()) {
       dispatch({type: 'OpenLoading', payload: '댓글을 작성중입니다..'});
@@ -130,6 +133,7 @@ export default function FeedDetail(props) {
         .then(res => {
           addCommentList(res.data);
           setCommentContent({content: ''});
+          props.handleAddComment();
           dispatch({type: 'OpenSnackbar', payload: `댓글이 입력되었습니다.`});
         })
         .catch(err => console.log(err.response))
@@ -143,6 +147,7 @@ export default function FeedDetail(props) {
         addReply(res.data);
         setCommentContent({content: ''});
         setReply(false);
+        props.handleAddComment();
         dispatch({type: 'OpenSnackbar', payload: `${currentComment.name}님께 답글이 전송되었습니다.`});
       })
       .catch(error => console.error(error))
@@ -160,13 +165,15 @@ export default function FeedDetail(props) {
       .catch(error => console.error(error))
       .finally(() => dispatch({type: 'CloseLoading'}))
   };
-  const handleClickCancelReplay = () => {
-    setCommentContent({content: ``});
-    setReply(false);
-  };
-  const handleClickCancelModify = () => {
-    setCommentContent({content: ``});
-    setModifyComment(false);
+  const handleClickCancel = () => {
+    if (reply) {
+      setCommentContent({content: ``});
+      setReply(false);
+    }
+    if (modifyComment) {
+      setCommentContent({content: ``});
+      setModifyComment(false);
+    }
   };
   const handleClickCheckButton = () => {
     if (reply) return handleClickReply(id, currentComment.id)
@@ -259,7 +266,7 @@ export default function FeedDetail(props) {
 
         <Stack spacing={1}>
           <Stack spacing={1} sx={{display: myComment.comments.length !== 0 ? 'block' : 'none'}}>
-            <Divider>내 댓글</Divider>
+            <Divider>내 댓글 ({myComment.totalElements})</Divider>
 
             {/*내 댓글 목록*/}
             <Stack p={1} spacing={3}>
@@ -273,9 +280,10 @@ export default function FeedDetail(props) {
                     feedId={id}
                     image={c.writer.image ? c.writer.image.source : ''}
                     newReply={newReply}
-                    addReply={addReply}
                     modifyComment={modifyComment}
-                    handleClickCancelModify={handleClickCancelModify}
+                    handleDeleteComment={props.handleDeleteComment}
+                    addReply={addReply}
+                    handleClickCancelModify={handleClickCancel}
                     getMentionName={getMentionName}
                     getCommentContent={getCommentContent}
                   />
@@ -295,7 +303,7 @@ export default function FeedDetail(props) {
             </Stack>
           </Stack>
 
-          <Divider>전체 댓글 ({commentCount})</Divider>
+          <Divider>전체 댓글 ({comment.totalElements})</Divider>
 
           {/*댓글 목록*/}
           <Stack p={1} spacing={3}>
@@ -308,10 +316,11 @@ export default function FeedDetail(props) {
                   comment={c}
                   feedId={id}
                   image={c.writer.image ? c.writer.image.source : ''}
+                  handleDeleteComment={props.handleDeleteComment}
                   newReply={newReply}
                   addReply={addReply}
                   modifyComment={modifyComment}
-                  handleClickCancelModify={handleClickCancelModify}
+                  handleClickCancelModify={handleClickCancel}
                   getMentionName={getMentionName}
                   getCommentContent={getCommentContent}
                 />
@@ -325,8 +334,9 @@ export default function FeedDetail(props) {
                      sx={{display: load ? 'flex' : 'none'}}>
                   <CircularProgress size={30}/>
                 </Box>
-                <Button
-                  onClick={() => loadCommentList(id, comment.currentPage)}>더보기({comment.totalElements - comment.comments.length})</Button>
+                <Button onClick={() => loadCommentList(id, comment.currentPage)}>
+                  더보기({comment.totalElements - comment.comments.length})
+                </Button>
               </>
             }
           </Stack>
@@ -334,24 +344,23 @@ export default function FeedDetail(props) {
 
         {/* 댓글 작성 */}
         <Stack sx={{width: '100%', p: 1, pb: 3, position: 'sticky', bottom: 0, bgcolor: 'white'}}>
-          <Box sx={{display: 'flex', alignItems: 'center', mb: 1}}>
-            <IconButton onClick={() => handleClickLike(id, writer.name)}>
-              <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
-            </IconButton>
+          <Stack direction={'row'} sx={{alignItems: 'center', mb: 1}}>
+            <Box sx={{display: 'flex', alignItems: 'center'}}>
+              <IconButton onClick={() => handleClickLike(id, writer.name)}>
+                <ThumbUpAltRoundedIcon color={isLiked ? 'primary' : 'action'} sx={{fontSize: 30}}/>
+              </IconButton>
+            </Box>
 
-            <Chip
-              onClick={() => handleShowLikedList(id)}
-              label={likeCount < 99 ? likeCount : '99+'}
+            <Button
+              onClick={handleShowLikedList}
               sx={{
                 fontSize: 'large',
-                bgcolor: 'unset',
-                cursor: 'pointer',
-                '& .MuiChip-label': {
-                  p: '3px'
-                },
-                '&:hover': {bgcolor: 'rgba(236,236,236,0.49)'}
-              }}/>
-          </Box>
+                color: '#9f9f9f',
+                '&: hover': {color: '#3a61c2', fontWeight: 'bold', bgcolor: 'unset'}
+              }}>
+              {likeCount < 99 ? likeCount : '99+'}명이 좋아합니다.
+            </Button>
+          </Stack>
 
           <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
             <SmallProfile image={state.user.image && state.user.image.source} name={state.user.name}/>
@@ -359,28 +368,27 @@ export default function FeedDetail(props) {
                        helperText={commentErrorMessage}
                        value={commentContent.content} placeholder='댓글을 입력해 주세요.' onChange={handleChangeComment}
                        sx={{width: '100%'}}/>
-            <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
-              {modifyComment ? '수정' : '입력'}
-            </Button>
-          </Stack>
 
-          <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
-            <Button onClick={handleClickCancelReplay} sx={{width: 'max-content', display: reply ? 'block' : 'none'}}>
-              답글취소
-            </Button>
-            <Button onClick={handleClickCancelModify}
-                    sx={{width: 'max-content', display: modifyComment ? 'block' : 'none'}}>
-              수정취소
-            </Button>
-          </Box>
+            <Stack direction="row" spacing={1}>
+              <Button type='submit' variant='contained' onClick={handleClickCheckButton}>
+                {modifyComment ? '수정' : '입력'}
+              </Button>
+              <Button
+                variant='contained'
+                onClick={handleClickCancel}
+                sx={{width: 'max-content', display: reply || modifyComment ? 'block' : 'none'}}>
+                취소
+              </Button>
+            </Stack>
+          </Stack>
         </Stack>
       </Box>
 
-      <Box style={{display: modifyOpen ? 'block' : 'none'}}>
+      <Box sx={{display: modifyOpen ? 'block' : 'none', pt: 3, pb: 3}}>
         <ModifyFeed
           feedDetail={props.feedDetail}
+          modifyFeedDetail={props.modifyFeedDetail}
           closeModify={closeModify}
-          modifyFeedDetail={props.getFeedDetail}
         />
       </Box>
 
