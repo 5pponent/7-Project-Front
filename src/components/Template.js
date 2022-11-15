@@ -1,8 +1,8 @@
 import HeaderAppBar from "./header/HeaderAppBar";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {store} from "../store/store";
 import customAxios from "../AxiosProvider";
-import {Alert, Avatar, Box, Divider, Snackbar, Stack, styled, Typography} from "@mui/material";
+import {Alert, Avatar, Box, Button, Divider, Snackbar, Stack, styled, Typography} from "@mui/material";
 import {useLocation, useNavigate} from "react-router-dom";
 
 const Content = styled(Typography)`
@@ -15,13 +15,11 @@ const Content = styled(Typography)`
   font-size: small;
 `
 
-export default function Template({marginNum, element, lastMessage}) {
+export default function Template({marginNum, element, lastMessage, lastNotice}) {
   const [state, dispatch] = useContext(store);
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  let eventSource = undefined;
 
   const [open, setOpen] = useState(false);
   const handleCloseSnackbar = (event, reason) => {reason !== 'clickaway' && setOpen(false)}
@@ -41,10 +39,6 @@ export default function Template({marginNum, element, lastMessage}) {
       })
       .catch(err => {console.log(err.response);});
     loadUnreadChatCount();
-
-    eventSource = new EventSource(`/notice/sub`, {
-      Authorization: localStorage.getItem(`token`),
-    });
   }, []);
 
   useEffect(() => {
@@ -78,7 +72,9 @@ export default function Template({marginNum, element, lastMessage}) {
         </Alert>
       </Snackbar>
 
-      <HeaderAppBar/>
+      <HeaderAppBar
+        lastNotice={lastNotice}
+      />
 
       <Box mt={marginNum}>{element}</Box>
     </>

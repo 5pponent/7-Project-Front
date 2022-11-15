@@ -31,6 +31,7 @@ const initialState = {
   },
   likedList: false,
   unreadChatCount: 0,
+  notification: false,
 };
 
 const store = createContext(initialState);

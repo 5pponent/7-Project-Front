@@ -26,19 +26,26 @@ export default function App() {
 
   const [connect, setConnect] = useState(false);
   const [lastMessage, setLastMessage] = useState({});
+  const [lastNotice, setLastNotice] = useState({});
   const [lastSig, setLastSig] = useState({});
   const [notice, setNotice] = useState(false);
   const handleCloseNotice = () => {setNotice(false)}
 
   const conn = () => {
     client.current = new StompJS.Client({
-      webSocketFactory: () => new SockJS("/ws/chat"),
+      webSocketFactory: () => new SockJS("/ws/socket-client"),
       debug: function (str) {console.log(str)},
       onConnect: () => {
         setConnect(true);
+        // 채팅 토픽 구독
         client.current.subscribe(`/sub/chat/${state.user.id}`, (data) => {
           let payload = JSON.parse(data.body);
           payload.message.length === 0 ? setLastSig(payload) : setLastMessage(payload);
+        });
+        // 알림 토픽 구독
+        client.current.subscribe(`/sub/notice/${state.user.id}`, (data) => {
+          let payload = JSON.parse(data.body);
+          setLastNotice(payload);
         });
       },
       onStompError: (frame) => {
@@ -106,7 +113,7 @@ export default function App() {
 
       <Routes>
         <Route path={"/"} element={
-          <Template lastMessage={lastMessage} marginNum={0} element={<FeedLineSelect/>}/>
+          <Template lastMessage={lastMessage} lastNotice={lastNotice} marginNum={0} element={<FeedLineSelect/>}/>
         }></Route>
 
         <Route path={"/login"} element={
@@ -114,22 +121,22 @@ export default function App() {
         }></Route>
 
         <Route path={"/profile"} element={
-          <Template lastMessage={lastMessage} marginNum={3} element={
+          <Template lastMessage={lastMessage} lastNotice={lastNotice} marginNum={3} element={
             <Profile/>}/>
         }></Route>
 
         <Route path={"/chat"} element={
-          <Template lastMessage={lastMessage} marginNum={3} element={
+          <Template lastMessage={lastMessage} lastNotice={lastNotice} marginNum={3} element={
             <ChatApp client={client} lastMessage={lastMessage} lastSig={lastSig}/>}/>
         }></Route>
 
         <Route path={"/schedule"} element={
-          <Template lastMessage={lastMessage} marginNum={3} element={
+          <Template lastMessage={lastMessage} lastNotice={lastNotice} marginNum={3} element={
             <ScheduleApp/>}/>
         }></Route>
 
         <Route path={"/setting"} element={
-          <Template lastMessage={lastMessage} marginNum={3} element={
+          <Template lastMessage={lastMessage} lastNotice={lastNotice} marginNum={3} element={
             <Setting/>}/>
         }></Route>
 

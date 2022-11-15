@@ -67,8 +67,6 @@ export default React.memo(function CustomizedMenus(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
-  const [unreadChatCount, setUnreadChatCount] = useState(0);
-
   const handleClick = (e) => {
     setAnchorEl(e.currentTarget);
   };

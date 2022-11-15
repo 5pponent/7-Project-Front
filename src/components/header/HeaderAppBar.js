@@ -30,6 +30,7 @@ import HeaderMenu from './HeaderMenu';
 import CreateFeed from '../feedline/CreateFeed';
 
 import SmallProfile from "../SmallProfile";
+import Notification from "./Notification";
 
 const Title = styled(Typography)`
   font-size: 22px;
@@ -47,7 +48,14 @@ const MoreButtonBadge = styled(Badge)(({theme}) => ({
   },
 }));
 
-export default React.memo(function Header({unreadChatCount}) {
+const NotificationBadge = styled(Badge)(({theme}) => ({
+  '& .MuiBadge-badge': {
+    right: 8,
+    top: 8,
+  },
+}));
+
+export default React.memo(function Header({unreadChatCount, lastNotice}) {
   const [state, dispatch] = useContext(store);
 
   const navigate = useNavigate();
@@ -93,6 +101,15 @@ export default React.memo(function Header({unreadChatCount}) {
   const handleChangeSearchValue = (e) => setSearchValue(e.target.value);
   const handleClickClear = () => setSearchValue('');
 
+  useEffect(() => {
+    customAxios.get(`/notice`)
+      .then(res => {
+        if (res.data.totalElements > 0) {
+          dispatch({type: 'Notification', payload: true});
+        }
+      })
+  }, [lastNotice]);
+
   return (
     <AppBar style={{userSelect: 'none', position: 'sticky', backgroundColor: '#2c92ff'}}>
       <Toolbar style={{
@@ -137,11 +154,13 @@ export default React.memo(function Header({unreadChatCount}) {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="알림" placement="bottom" arrow>
-            <IconButton>
-              <NotificationsIcon sx={{fontSize: 24, color: "#FCFCFC"}}/>
-            </IconButton>
-          </Tooltip>
+          <NotificationBadge variant={"dot"} color={"error"} invisible={!state.notification}>
+            <Tooltip title="알림" placement="bottom" arrow>
+              <Notification
+                lastNotice={lastNotice}
+              />
+            </Tooltip>
+          </NotificationBadge>
 
           <Tooltip title="내 프로필" placement="bottom" arrow>
             <ButtonBase onClick={handleClickMyProfile}>
