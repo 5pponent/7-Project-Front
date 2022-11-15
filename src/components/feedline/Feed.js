@@ -194,7 +194,7 @@ export default function Feed(props) {
               </IconButton>
               <Chip
                 onClick={() => props.handleShowLikedList(id)}
-                label={likeCount<99 ? likeCount : '99+'}
+                label={likeCount < 99 ? likeCount : '99+'}
                 sx={{
                   fontSize: 'medium',
                   bgcolor: 'unset',

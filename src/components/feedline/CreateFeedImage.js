@@ -23,8 +23,7 @@ export default function CreateFeedImage(props) {
     feedDispatch({type: 'ChangeDesc', payload: {num: num, description: e.target.value}});
   };
 
-  {/*드래그앤 드롭*/
-  }
+  {/*드래그앤 드롭*/}
   const [, dragRef] = useDrag(() => ({
       type: 'image',
       item: {item, index},
