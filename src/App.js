@@ -126,8 +126,8 @@ export default function App() {
         }></Route>
 
         <Route path={"/chat"} element={
-          <Template lastMessage={lastMessage} marginNum={3} element={
-            <ChatApp client={client} lastMessage={lastMessage} lastNotice={lastNotice} lastSig={lastSig}/>}/>
+          <Template lastMessage={lastMessage} lastNotice={lastNotice} marginNum={3} element={
+            <ChatApp client={client} lastMessage={lastMessage} lastSig={lastSig}/>}/>
         }></Route>
 
         <Route path={"/schedule"} element={
