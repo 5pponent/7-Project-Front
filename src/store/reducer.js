@@ -27,6 +27,6 @@ export default function reducer(state, action) {
     case 'UnreadChatCount':
       return {...state, unreadChatCount: action.payload};
     default:
-      return state;
+      throw Error(`${action.type}: 알 수 없는 타입입니다.`);
   }
 };

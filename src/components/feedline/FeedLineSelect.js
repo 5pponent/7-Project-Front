@@ -43,15 +43,12 @@ export default function FeedLineSelect(props) {
   }, [scroll]);
 
   const handleScroll = () => setScroll(true);
-  const getFeedList = (data) => setFeed({...feed, feeds: data})
+  const getFeedList = (data) => setFeed(prev => ({...prev, feeds: data}))
   const updateFeedDetail = (data) => {
-    setFeed({
-      ...feed,
-      feeds: feed.feeds.map(item => {
-        if (item.id === data.id) return data
-        return item
-      })
-    })
+    setFeed(prev => ({
+      ...prev,
+      feeds: prev.feeds.map(item => item.id === data.id ? data : item)
+    }))
   };
   const handleAddFeedLine = () => {
     const newId = feedLine.length === 0 ? 0 : feedLine[feedLine.length - 1].id + 1;
@@ -132,7 +129,7 @@ export default function FeedLineSelect(props) {
      */
 
     // <Stack sx={{mt: 9, width: '100%'}}>
-      <Stack sx={{mt: 4, width: '100%'}}>
+    <Stack sx={{mt: 4, width: '100%'}}>
       {selectedFeedLine.title === '새 피드' ?
         <NewFeedLine
           occupationList={occupationList}
