@@ -6,24 +6,31 @@ import {useDrag, useDrop} from "react-dnd";
 export default function ModifyFeedImage(props) {
   const {image, index, handleChangeDescription, handleDeleteFeedImage, handleMoveImage} = props;
 
+  {/*드래그앤 드롭*/}
   const [, dragRef] = useDrag(() => ({
-    type: 'modifyImage',
-    item: {image, index},
-    end: (item, monitor) => {
-      const {image: originImage, index: originIndex} = item;
-      const didDrop = monitor.didDrop();
-      if (!didDrop) {
-        handleMoveImage(originIndex, originImage);
+      type: 'modifyImage',
+      item: {image, index},
+      end: (object, monitor) => {
+        const {image: originImage, index: originIndex} = object;
+        const didDrop = monitor.didDrop();
+        if (!didDrop) {
+          handleMoveImage(originIndex, originImage);
+        }
       }
-    }
-  }));
+    }), [image, index]
+  );
 
   const [{isOver}, dropRef] = useDrop(() => ({
     accept: 'modifyImage',
+    collect: (monitor) => ({
+      isOver: monitor.isOver()
+    }),
     hover: ({image: originImage, index: originIndex}) => {
-      handleMoveImage(originIndex, index, originImage);
+      if (index !== originIndex) {
+        handleMoveImage(index, originImage);
+      }
     }
-  }))
+  }));
 
   return (
     <Box ref={dropRef} sx={{opacity: isOver ? 0.5 : 1}}>

@@ -6,7 +6,7 @@ import Setting from './components/settingpage/Setting';
 import ChatApp from './components/chat/ChatApp';
 import ScheduleApp from './components/schedule/ScheduleApp';
 import Template from "./components/Template";
-import {BrowserRouter, Route, Routes, useLocation} from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Alert, AlertTitle, Box, Button, Dialog, Divider, Slide, Snackbar, Stack, Typography} from "@mui/material";
 import {forwardRef, useContext, useState} from "react";
 import {store} from "./store/store";

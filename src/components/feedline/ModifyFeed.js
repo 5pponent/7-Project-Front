@@ -20,6 +20,7 @@ import ModifyFeedImage from "./ModifyFeedImage";
 
 export default React.memo(function ModifyFeed(props) {
   const [, dispatch] = useContext(store);
+
   const {content, files, id, showScope, writer} = props.feedDetail;
 
   const [move, setMove] = useState({target: null, item: null});
@@ -36,16 +37,17 @@ export default React.memo(function ModifyFeed(props) {
   }, []);
   useEffect(() => {
     if (move.target) {
-      const index = image.findIndex(value => value === move.item);
       let newImage = [...image];
+      const index = newImage.findIndex(value => value === move.item);
       newImage.splice(index, 1);
       newImage.splice(move.target, 0, move.item);
       setImage(newImage);
     }
   }, [move.target]);
+
   const validate = () => {
     let valid = true;
-    if (!feed.content && image.length === 0) {
+    if (!feed && image.length === 0) {
       setErrormessage('내용 또는 사진을 입력해 주세요!');
       dispatch({type: 'CloseLoading'});
       valid = false;
@@ -53,12 +55,18 @@ export default React.memo(function ModifyFeed(props) {
     return valid;
   };
 
-  const handleMoveImage = (origin, target, item) => setMove({target: target, item: item});
+  const handleMoveImage = (target, item) => {
+    setMove({target: target, item: item});
+  };
   const handleChangeScope = (e) => setScope(e.target.value);
-  const handleChangeFeedContent = (e) => setFeed(e.target.value);
+  const handleChangeFeedContent = (e) => {
+    setFeed(e.target.value);
+  };
   const handleDeleteFeedImage = (num) => {
     URL.revokeObjectURL(image[num].source);
     setImage(image.filter((item, index) => index !== num));
+    const imageList = newImage.filter(item => item !== image[num].file);
+    setNewImage(imageList);
   };
   const handleChangeDescription = (e, num) => {
     const newImage = image.map((item, index) => index === num ? {...item, description: e.target.value} : item)
@@ -81,7 +89,7 @@ export default React.memo(function ModifyFeed(props) {
   };
   const putFeed = async (feedId, imageList) => {
     const imageId = imageList.map(item => item.id)
-    const descriptions = image.map(item => item.description);
+    const descriptions = imageList.map(item => item.description);
     const feedForm = {
       content: feed,
       descriptions: descriptions,
@@ -111,6 +119,7 @@ export default React.memo(function ModifyFeed(props) {
             res.data.map(item => {
                 const index = image.findIndex(value => item.originalName === value.originalName & !value.id);
                 list.splice(index, 1, {...item, description: image[index].description});
+                return list;
               }
             )
             putFeed(feedId, list);
@@ -144,9 +153,17 @@ export default React.memo(function ModifyFeed(props) {
       </Grid>
 
       <Grid item xs={12}>
-        <TextField fullWidth rows={6} multiline autoFocus error={!!errorMessage} helperText={errorMessage}
-                   onChange={handleChangeFeedContent} value={feed} placeholder={'내용을 입력해 주세요.'}
-                   sx={{overflow: 'auto'}}/>
+        <TextField
+          fullWidth
+          rows={6}
+          multiline
+          autoFocus
+          error={!!errorMessage}
+          helperText={errorMessage}
+          onChange={handleChangeFeedContent}
+          value={feed}
+          placeholder={'내용을 입력해 주세요.'}
+          sx={{overflow: 'auto'}}/>
       </Grid>
 
       <Grid item xs={12} sx={{textAlign: 'end'}}>
