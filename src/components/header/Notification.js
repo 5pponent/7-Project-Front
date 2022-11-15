@@ -13,7 +13,7 @@ const Content = styled(Typography)`
   word-break: break-all;
 `
 
-export default function Notification() {
+export default function Notification({lastNotice}) {
 
   const [state, dispatch] = useContext(store);
 
@@ -31,9 +31,13 @@ export default function Notification() {
         setTotalPages(res.data.totalPages);
         setNotices(res.data.notices);
       })
+      .catch(err => {console.log(err)})
+      .finally(() => {
+        dispatch({type: 'Notification', payload: false});
+      });
   }
   const handleClickNotification = (type) => {
-    console.log(type.split('/'));
+    // TODO 알림 눌렀을 때 로직
     let typeAndId = type.split('/');
   }
 
@@ -57,7 +61,10 @@ export default function Notification() {
                   return(
                     <MenuItem key={it.id} onClick={() => handleClickNotification(it.type)}>
                       <Stack maxWidth={300}>
-                        <Content variant={"subtitle2"}>{it.content}</Content>
+                        <Content variant={"subtitle2"}>
+                          <strong>{it.content.split("|")[0]}</strong>
+                          {it.content.split("|")[1]}
+                        </Content>
                         <Content variant={"caption"} sx={{color: "gray"}}>{it.createTime}</Content>
                       </Stack>
                     </MenuItem>

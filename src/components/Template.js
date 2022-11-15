@@ -49,9 +49,6 @@ export default function Template({marginNum, element, lastMessage, lastNotice}) 
       }
     }
   }, [lastMessage]);
-  useEffect(() => {
-    console.log("notice", lastNotice)
-  }, [lastNotice])
 
   return (
     <>
@@ -75,7 +72,9 @@ export default function Template({marginNum, element, lastMessage, lastNotice}) 
         </Alert>
       </Snackbar>
 
-      <HeaderAppBar/>
+      <HeaderAppBar
+        lastNotice={lastNotice}
+      />
 
       <Box mt={marginNum}>{element}</Box>
     </>
