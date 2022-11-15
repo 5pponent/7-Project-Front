@@ -30,6 +30,7 @@ import HeaderMenu from './HeaderMenu';
 import CreateFeed from '../feedline/CreateFeed';
 
 import SmallProfile from "../SmallProfile";
+import Notification from "./Notification";
 
 const Title = styled(Typography)`
   font-size: 22px;
@@ -191,9 +192,7 @@ export default React.memo(function Header({unreadChatCount}) {
           </Tooltip>
 
           <Tooltip title="알림" placement="bottom" arrow>
-            <IconButton>
-              <NotificationsIcon sx={{fontSize: 24, color: "#FCFCFC"}}/>
-            </IconButton>
+            <Notification/>
           </Tooltip>
 
           <Tooltip title="내 프로필" placement="bottom" arrow>

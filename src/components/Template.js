@@ -4,7 +4,6 @@ import {store} from "../store/store";
 import customAxios from "../AxiosProvider";
 import {Alert, Avatar, Box, Button, Divider, Snackbar, Stack, styled, Typography} from "@mui/material";
 import {useLocation, useNavigate} from "react-router-dom";
-import {EventSourcePolyfill} from "event-source-polyfill"
 
 const Content = styled(Typography)`
   overflow: hidden;
@@ -16,33 +15,11 @@ const Content = styled(Typography)`
   font-size: small;
 `
 
-export default function Template({marginNum, element, lastMessage}) {
+export default function Template({marginNum, element, lastMessage, lastNotice}) {
   const [state, dispatch] = useContext(store);
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  let eventSource = useRef({});
-  const [lastStream, setLastStream] = useState({});
-  const connectSse = () => {
-    eventSource.current = new EventSourcePolyfill(`/notice/sub`, {
-      headers: {
-        Authorization: localStorage.getItem(`token`),
-        'Content-Type': 'text/event-stream',
-        'Connection': 'keep-alive',
-      },
-      heartbeatTimeout: 120000,
-      withCredentials: true,
-    });
-    eventSource.current.onopen = () => {
-      console.log("SSE Connected status: ", eventSource.current.readyState);
-    }
-    eventSource.current.onmessage = (res) => {
-      let data = JSON.parse(res.data);
-      console.log("Stream onmessage: ", data);
-      setLastStream(data);
-    }
-  }
 
   const [open, setOpen] = useState(false);
   const handleCloseSnackbar = (event, reason) => {reason !== 'clickaway' && setOpen(false)}
@@ -59,7 +36,6 @@ export default function Template({marginNum, element, lastMessage}) {
     customAxios.get(`/user`)
       .then(res => {
         dispatch({type: 'User', payload: res.data});
-        connectSse();
       })
       .catch(err => {console.log(err.response);});
     loadUnreadChatCount();
@@ -73,10 +49,9 @@ export default function Template({marginNum, element, lastMessage}) {
       }
     }
   }, [lastMessage]);
-
   useEffect(() => {
-    console.log("lastStream: ", lastStream);
-  }, [lastStream]);
+    console.log("notice", lastNotice)
+  }, [lastNotice])
 
   return (
     <>
@@ -101,10 +76,6 @@ export default function Template({marginNum, element, lastMessage}) {
       </Snackbar>
 
       <HeaderAppBar/>
-
-      <Button onClick={() => {
-        customAxios.get(`/notice/test`)
-      }}>SSE Test</Button>
 
       <Box mt={marginNum}>{element}</Box>
     </>
