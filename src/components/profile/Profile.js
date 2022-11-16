@@ -107,6 +107,9 @@ export default function Profile(props) {
         .finally(() => setScroll(false))
     }
   }, [scroll]);
+  useEffect(() => {
+    setScroll(false);
+  }, [feed.feeds]);
 
   const handleScroll = async () => {
     if (feed.currentPage < feed.totalPages) {

@@ -20,7 +20,7 @@ export default function FeedLine(props) {
 
   useEffect(() => {
     let observer;
-    if (target) {
+    if (!!target) {
       observer = new IntersectionObserver(onIntersect, {threshold: 0.2});
       observer.observe(target);
     }
@@ -49,7 +49,7 @@ export default function FeedLine(props) {
       <LikedList feedId={feedId}/>
 
       {currentPage < totalPages &&
-        <Box ref={setTarget} sx={{position: 'absolute', bottom: 0, height: '20%'}}></Box>
+        <Box ref={setTarget} sx={{position: 'absolute', bottom: 0, height: '1000px'}}></Box>
       }
 
       {feeds.length === 0 &&

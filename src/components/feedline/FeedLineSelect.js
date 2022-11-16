@@ -29,10 +29,16 @@ export default function FeedLineSelect(props) {
         .catch(error => console.error(error.response))
     }
   }, [selectedFeedLine]);
-
   useEffect(() => {
-    if (scroll) {
-      customAxios.get(`/feed?page=${feed.currentPage + 1}`)
+    loadFeedList();
+  }, [scroll]);
+  useEffect(() => {
+    setScroll(false);
+  }, [feed.feeds]);
+
+  const loadFeedList = async () => {
+    if (scroll === true) {
+      await customAxios.get(`/feed?page=${feed.currentPage + 1}`)
         .then(res => {
           const newFeed = feed.feeds.concat(res.data.feeds);
           setFeed({...feed, currentPage: res.data.currentPage, feeds: newFeed});
@@ -40,8 +46,7 @@ export default function FeedLineSelect(props) {
         .catch(error => console.error(error))
         .finally(() => setScroll(false))
     }
-  }, [scroll]);
-
+  };
   const handleScroll = () => setScroll(true);
   const getFeedList = (data) => setFeed(prev => ({...prev, feeds: data}))
   const updateFeedDetail = (data) => {
