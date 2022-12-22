@@ -1,50 +1,28 @@
-## 7팀 웹 프로젝트 [FrontEnd]
+# 7팀 웹 프로젝트 [FrontEnd]
 
-### Techs
+## Description
 
-`HTML` `CSS` `JavaScript` `React` `Node.js`
+>다른 유저들과 일상을 공유하고 소통이 가능한 SNS 어플리케이션 입니다.
 
-### Libraries
+## Functions
+
+- 로그인 / 회원가입 / 회원탈퇴
+- 프로필 수정
+- 게시글 작성 / 수정 / 삭제
+- 댓글 및 대댓글 작성 / 수정 / 삭제
+- 유저 팔로우
+
+## Techs
+
+`HTML` `CSS` `JavaScript` `React` `Node.js` `Context API`
+
+## Libraries
 
 * React
 * axios
 * material-ui
 
-##### `npm install -g create-react-app`
 
-Install React app
+## Develop
 
-##### `npm install --save axios`
-
-Install axios\
-Based Promise HTTP Client.\
-Supports Promise API, Intercepts request and response , Parses JSON data\
-[Usage](https://velog.io/@zofqofhtltm8015/Axios-%EC%82%AC%EC%9A%A9%EB%B2%95-%EC%84%9C%EB%B2%84-%ED%86%B5%EC%8B%A0-%ED%95%B4%EB%B3%B4%EA%B8%B0)
-
-##### `npm install @mui/material @mui/styled-engine-sc styled-components`
-##### `npm install @mui/icons-material`
-[Usage](https://mui.com/getting-started/usage/)\
-[Example Projects](https://mui.com/material-ui/getting-started/example-projects/)
-
-### Develop
-
-#### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-#### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-#### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+`npm install` `npm start`
